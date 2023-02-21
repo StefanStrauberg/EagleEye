@@ -13,7 +13,9 @@ namespace FGLogDog.Application.DataStore
         public FakeDataStore()
         {
             _rnd = new Random();
-            var data = File.ReadAllLines("input.log");
+            _inputLogs = new List<string>();
+            var dirDatabaseScripts = Path.Combine(Directory.GetCurrentDirectory(), "input.log");
+            var data = File.ReadAllLines(dirDatabaseScripts);
             foreach (var item in data)
                 _inputLogs.Add(item);
         }

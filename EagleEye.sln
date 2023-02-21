@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Application", "FGL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Domain", "FGLogDog\FGLogDog.Domain\FGLogDog.Domain.csproj", "{C0006308-D998-4DA8-850E-8021EA0C6210}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Terminal", "FGLogDog\FGLogDog.Terminal\FGLogDog.Terminal.csproj", "{7B4346F8-5E8D-410D-9018-73553CC1A9AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,9 +32,14 @@ Global
 		{40999FFC-179A-4BB0-A45D-CF9D198E7A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40999FFC-179A-4BB0-A45D-CF9D198E7A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40999FFC-179A-4BB0-A45D-CF9D198E7A24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B4346F8-5E8D-410D-9018-73553CC1A9AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B4346F8-5E8D-410D-9018-73553CC1A9AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B4346F8-5E8D-410D-9018-73553CC1A9AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B4346F8-5E8D-410D-9018-73553CC1A9AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BFE5C970-6DBB-4B8B-8010-FE1C444474F1} = {B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}
 		{C0006308-D998-4DA8-850E-8021EA0C6210} = {B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}
+		{7B4346F8-5E8D-410D-9018-73553CC1A9AF} = {B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}
 	EndGlobalSection
 EndGlobal
