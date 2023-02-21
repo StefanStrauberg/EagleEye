@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Application", "FGL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Domain", "FGLogDog\FGLogDog.Domain\FGLogDog.Domain.csproj", "{C0006308-D998-4DA8-850E-8021EA0C6210}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Infrastructure", "FGLogDog\FGLogDog.Infrastructure\FGLogDog.Infrastructure.csproj", "{40999FFC-179A-4BB0-A45D-CF9D198E7A24}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +34,5 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{BFE5C970-6DBB-4B8B-8010-FE1C444474F1} = {B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}
 		{C0006308-D998-4DA8-850E-8021EA0C6210} = {B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}
-		{40999FFC-179A-4BB0-A45D-CF9D198E7A24} = {B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}
 	EndGlobalSection
 EndGlobal

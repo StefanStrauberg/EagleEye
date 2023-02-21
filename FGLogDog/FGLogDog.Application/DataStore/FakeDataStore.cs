@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FGLogDog.Infrastructure.DataStore
+namespace FGLogDog.Application.DataStore
 {
     public class FakeDataStore
     {
