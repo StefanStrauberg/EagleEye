@@ -1,8 +1,8 @@
-﻿using System;
+﻿using System.IO;
 using System.Threading.Tasks;
 using FGLogDog.Application;
-using FGLogDog.Application.Queries;
-using MediatR;
+using FGLogDog.Application.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FGLogDog.Terminal
@@ -11,16 +11,24 @@ namespace FGLogDog.Terminal
     {
         static async Task Main(string[] args)
         {
+            // Setup IConfiguration
+            var builder = new ConfigurationBuilder();
+
+            builder.SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            
+            IConfiguration configuration = builder.Build();
+
             // Setup DI
             var serviceCollection = new ServiceCollection()
+                .AddSingleton<IConfiguration>(configuration)
                 .AddApplicationServices()
                 .BuildServiceProvider();
-            
-            var mediator = serviceCollection.GetRequiredService<IMediator>();
 
-            await mediator.Send(new GetFGLogQuery());
-
-            //Console.WriteLine(line);
+            using(var service = serviceCollection.GetRequiredService<IUdpReceiver>())
+            {
+                await service.Start();
+            }
         }
     }
 }

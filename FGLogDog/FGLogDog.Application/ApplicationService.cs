@@ -1,5 +1,6 @@
 using System.Reflection;
 using FGLogDog.Application.DataStore;
+using FGLogDog.Application.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,7 @@ namespace FGLogDog.Application
         {
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddSingleton<FakeDataStore>();
+            services.AddSingleton<IUdpReceiver,UdpReceiver>();
             return services;
         }
     }
