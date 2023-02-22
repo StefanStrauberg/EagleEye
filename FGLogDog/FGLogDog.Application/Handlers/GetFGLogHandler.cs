@@ -8,7 +8,7 @@ namespace FGLogDog.Application.Handlers
 {
     public class GetFGLogHandler : IRequestHandler<GetFGLogQuery, string>
     {
-        private readonly FakeDataStore _fakeData;
+        private FakeDataStore _fakeData;
 
         public GetFGLogHandler(FakeDataStore fakeData)
             => _fakeData = fakeData;

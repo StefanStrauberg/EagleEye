@@ -18,9 +18,9 @@ namespace FGLogDog.Terminal
             
             var mediator = serviceCollection.GetRequiredService<IMediator>();
 
-            var line = await mediator.Send(new GetFGLogQuery());
+            await mediator.Send(new GetFGLogQuery());
 
-            Console.WriteLine(line);
+            //Console.WriteLine(line);
         }
     }
 }
