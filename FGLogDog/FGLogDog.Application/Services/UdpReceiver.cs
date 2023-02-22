@@ -14,7 +14,7 @@ namespace FGLogDog.Application.Services
         private readonly string _input;
         private readonly string _srcip;
         private readonly string _srcport;
-        private readonly ILogger<UdpReceiver> _logger;
+        private readonly ILogger _logger;
 
         public UdpReceiver(IConfiguration configuration,
                            ILogger<UdpReceiver> logger)
