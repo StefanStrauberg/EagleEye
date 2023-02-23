@@ -68,7 +68,8 @@ namespace FGLogDog.Application.Helper
             foreach (var item in subs)
             {
                 if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                    return ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse));
+                    return ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse))
+                                        .Replace("\"",string.Empty);
             }
             return null;
         }
