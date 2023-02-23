@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace FGLogDog.Application.Services
 {
-    public interface IUdpReceiver : IDisposable
+    public interface IUdpServer : IDisposable
     {
-        Task Start();
+        Task ServerStart();
     }
 }

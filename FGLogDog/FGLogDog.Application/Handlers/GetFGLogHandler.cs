@@ -6,15 +6,18 @@ using MediatR;
 
 namespace FGLogDog.Application.Handlers
 {
-    public class GetFGLogHandler : IRequestHandler<GetFGLogQuery, string>
+    public class GetFGLogHandler : IRequestHandler<GetFGLogQuery, Unit>
     {
         private FakeDataStore _fakeData;
 
         public GetFGLogHandler(FakeDataStore fakeData)
             => _fakeData = fakeData;
 
-        public async Task<string> Handle(GetFGLogQuery request,
+        public async Task<Unit> Handle(GetFGLogQuery request,
                                          CancellationToken cancellationToken)
-            => await _fakeData.GetLog();
+        {
+            
+            return await Task.FromResult(Unit.Value);
+        }
     }
 }

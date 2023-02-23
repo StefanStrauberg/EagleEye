@@ -1,10 +1,9 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using FGLogDog.Application;
 using FGLogDog.Application.Services;
+using FGLogDog.Terminal.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace FGLogDog.Terminal
 {
@@ -22,21 +21,14 @@ namespace FGLogDog.Terminal
 
             // Setup DI
             var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection, configuration);
+            ApplicationServicesConfiguration.ConfigureServices(serviceCollection, configuration);
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            using(var service = serviceProvider.GetRequiredService<IUdpReceiver>())
+            // Startup UDP Server
+            using(var service = serviceProvider.GetRequiredService<IUdpServer>())
             {
-                await service.Start();
+                await service.ServerStart();
             }
-        }
-
-        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddLogging(configure => configure.AddConsole())
-                    .AddTransient<UdpReceiver>();
-            services.AddSingleton<IConfiguration>(configuration);
-            services.AddApplicationServices();
         }
     }
 }
