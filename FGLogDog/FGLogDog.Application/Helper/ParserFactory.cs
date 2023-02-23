@@ -40,29 +40,13 @@ namespace FGLogDog.Application.Helper
             return null;
         }
 
-        public static void SearchSubstring(string inputString, string subStr, ParserTypes typeOfParse, out int outputValue)
-        {
-            outputValue = 0;
-            string[] subs = inputString.Split(' ');
-            foreach (var item in subs)
-            {
-                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                {
-                    outputValue = Int32.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
-                    break;
-                }
-            }
-        }
-
         public static int GetSubstringINT(string inputString, string subStr, ParserTypes typeOfParse)
         {
             string[] subs = inputString.Split(' ');
             foreach (var item in subs)
             {
                 if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                {
                     return Int32.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
-                }
             }
             return 0;
         }
@@ -73,9 +57,7 @@ namespace FGLogDog.Application.Helper
             foreach (var item in subs)
             {
                 if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                {
                     return IPAddress.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
-                }
             }
             return null;
         }
@@ -86,9 +68,7 @@ namespace FGLogDog.Application.Helper
             foreach (var item in subs)
             {
                 if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                {
                     return ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse));
-                }
             }
             return null;
         }

@@ -27,7 +27,7 @@ namespace FGLogDog.Application.Services
             _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
             _localIpEndPoint = new IPEndPoint(ParserFactory.GetSubstringIP(_input, "srcip=", ParserTypes.IP),
                                               ParserFactory.GetSubstringINT(_input, "srcport=", ParserTypes.INT));
-            ParserFactory.SearchSubstring(_input, "bufersize=", ParserTypes.INT, out _buferSize);
+            _buferSize = ParserFactory.GetSubstringINT(_input, "bufersize=", ParserTypes.INT);
             _mediator = mediator;
         }
 

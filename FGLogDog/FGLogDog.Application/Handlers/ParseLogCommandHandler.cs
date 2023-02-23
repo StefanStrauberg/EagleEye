@@ -18,7 +18,7 @@ namespace FGLogDog.Application.Handlers
         private readonly string _filter;
 
         public ParseLogCommandHandler(ILogger<ParseLogCommandHandler> logger,
-                                 IConfiguration configuration)
+                                      IConfiguration configuration)
         {
             _logger = logger;
             _filter = configuration.GetSection("ConfigurationString").GetSection("Filter").Value;
@@ -33,7 +33,6 @@ namespace FGLogDog.Application.Handlers
             for (int i = 0; i < subStrings.Length; i++)
             {
                 var subValues = subStrings[i].Split('=');
-                System.Console.WriteLine($"subValues1:{subValues[0]}, subValues2:{subValues[1]}");
                 ParserTypes type = (ParserTypes) Enum.Parse(typeof(ParserTypes), subValues[1]);
                 object value;
                 switch (type)
@@ -64,8 +63,6 @@ namespace FGLogDog.Application.Handlers
 
             var ouput = JsonConvert.SerializeObject(neObj);
             File.WriteAllText("test.json", ouput);
-
-            System.Console.WriteLine(ouput);
 
             return await Task.FromResult(Unit.Value);
         }
