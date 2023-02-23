@@ -14,7 +14,7 @@ namespace FGLogDog.Terminal.Extensions
             services.AddSingleton<IConfiguration>(configuration);
             services.AddLogging(configure => configure.AddConsole())
                     .AddTransient<UdpServer>()
-                    .AddTransient<ParseFGLogHandler>();
+                    .AddTransient<ParseLogCommandHandler>();
             services.AddApplicationServices();
         }
     }

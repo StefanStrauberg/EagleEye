@@ -40,20 +40,6 @@ namespace FGLogDog.Application.Helper
             return null;
         }
 
-        public static void SearchSubstring(string inputString, string subStr, ParserTypes typeOfParse, out string outputValue)
-        {
-            outputValue = null;
-            string[] subs = inputString.Split(' ');
-            foreach (var item in subs)
-            {
-                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                {
-                    outputValue = ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse));
-                    break;
-                }
-            }
-        }
-
         public static void SearchSubstring(string inputString, string subStr, ParserTypes typeOfParse, out int outputValue)
         {
             outputValue = 0;
@@ -68,7 +54,7 @@ namespace FGLogDog.Application.Helper
             }
         }
 
-        public static int SearchSubstringINT(string inputString, string subStr, ParserTypes typeOfParse)
+        public static int GetSubstringINT(string inputString, string subStr, ParserTypes typeOfParse)
         {
             string[] subs = inputString.Split(' ');
             foreach (var item in subs)
@@ -81,21 +67,7 @@ namespace FGLogDog.Application.Helper
             return 0;
         }
 
-        public static void SearchSubstring(string inputString, string subStr, ParserTypes typeOfParse, out IPAddress outputValue)
-        {
-            outputValue = null;
-            string[] subs = inputString.Split(' ');
-            foreach (var item in subs)
-            {
-                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                {
-                    outputValue = IPAddress.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
-                    break;
-                }
-            }
-        }
-
-        public static IPAddress SearchSubstringIP(string inputString, string subStr, ParserTypes typeOfParse)
+        public static IPAddress GetSubstringIP(string inputString, string subStr, ParserTypes typeOfParse)
         {
             string[] subs = inputString.Split(' ');
             foreach (var item in subs)
@@ -103,6 +75,19 @@ namespace FGLogDog.Application.Helper
                 if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
                 {
                     return IPAddress.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
+                }
+            }
+            return null;
+        }
+
+        public static string GetSubstringSTRING(string inputString, string subStr, ParserTypes typeOfParse)
+        {
+            string[] subs = inputString.Split(' ');
+            foreach (var item in subs)
+            {
+                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
+                {
+                    return ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse));
                 }
             }
             return null;

@@ -3,8 +3,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using FGLogDog.Application.Commands;
 using FGLogDog.Application.Helper;
-using FGLogDog.Application.Queries;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -25,8 +25,8 @@ namespace FGLogDog.Application.Services
         {
             _logger = logger;
             _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
-            _localIpEndPoint = new IPEndPoint(ParserFactory.SearchSubstringIP(_input, "srcip=", ParserTypes.IP),
-                                              ParserFactory.SearchSubstringINT(_input, "srcport=", ParserTypes.INT));
+            _localIpEndPoint = new IPEndPoint(ParserFactory.GetSubstringIP(_input, "srcip=", ParserTypes.IP),
+                                              ParserFactory.GetSubstringINT(_input, "srcport=", ParserTypes.INT));
             ParserFactory.SearchSubstring(_input, "bufersize=", ParserTypes.INT, out _buferSize);
             _mediator = mediator;
         }
@@ -44,7 +44,7 @@ namespace FGLogDog.Application.Services
                     var returnData = await udpSocket.ReceiveFromAsync(receiveBytes, RemoteIpEndPoint);
                     var message = Encoding.UTF8.GetString(receiveBytes, 0, returnData.ReceivedBytes);
                     // Send message to MediatR
-                    await _mediator.Send(new ParseFGLogQuery(message));
+                    await _mediator.Send(new ParseLogCommand(message));
                 }
             }
             catch (Exception ex)
