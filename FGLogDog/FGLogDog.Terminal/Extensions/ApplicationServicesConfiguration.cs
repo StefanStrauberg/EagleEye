@@ -1,4 +1,5 @@
 using FGLogDog.Application;
+using FGLogDog.Application.Handlers;
 using FGLogDog.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,8 @@ namespace FGLogDog.Terminal.Extensions
         {
             services.AddSingleton<IConfiguration>(configuration);
             services.AddLogging(configure => configure.AddConsole())
-                    .AddTransient<UdpServer>();
+                    .AddTransient<UdpServer>()
+                    .AddTransient<ParseFGLogHandler>();
             services.AddApplicationServices();
         }
     }

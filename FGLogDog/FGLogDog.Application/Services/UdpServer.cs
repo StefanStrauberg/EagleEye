@@ -4,6 +4,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using FGLogDog.Application.Helper;
+using FGLogDog.Application.Queries;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -13,19 +15,23 @@ namespace FGLogDog.Application.Services
     {   
         private readonly string _input;
         private readonly string _srcip;
-        private readonly string _srcport;
+        private readonly int _srcport;
         private readonly ILogger _logger;
-        private const int bufSize = 8 * 1024;
+        private readonly int _buferSize;
         private readonly IPEndPoint _localIpEndPoint;
+        private readonly IMediator _mediator;
 
         public UdpServer(IConfiguration configuration,
-                           ILogger<UdpServer> logger)
+                           ILogger<UdpServer> logger,
+                           IMediator mediator)
         {
             _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
             ParserFactory.SearchSubstring(_input, "srcip=", ParserTypes.IP, out _srcip);
             ParserFactory.SearchSubstring(_input, "srcport=", ParserTypes.INT, out _srcport);
+            ParserFactory.SearchSubstring(_input, "bufersize=", ParserTypes.INT, out _buferSize);
             _logger = logger;
-            _localIpEndPoint = new IPEndPoint(IPAddress.Parse(_srcip), Int32.Parse(_srcport));
+            _localIpEndPoint = new IPEndPoint(IPAddress.Parse(_srcip), _srcport);
+            _mediator = mediator;
         }
 
         public async Task ServerStart()
@@ -34,19 +40,23 @@ namespace FGLogDog.Application.Services
             udpSocket.Bind(_localIpEndPoint);
             try
             {
-                _logger.LogInformation($"{DateTime.Now} LogDog server start on ip:{_srcip} and port:{_srcport}");
+                _logger.LogInformation("{0} LogDog server start on ip:{1} and port:{2}",
+                                       DateTime.Now,
+                                       _srcip,
+                                       _srcport);
                 while (true)
                 {
                     EndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                    byte[] receiveBytes = new byte[bufSize];
+                    byte[] receiveBytes = new byte[_buferSize];
                     var returnData = await udpSocket.ReceiveFromAsync(receiveBytes, RemoteIpEndPoint);
                     var message = Encoding.UTF8.GetString(receiveBytes, 0, returnData.ReceivedBytes);
-                    Console.WriteLine(message);
+                    // Send message to MediatR
+                    await _mediator.Send(new ParseFGLogQuery(message));
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{DateTime.Now} Something go wrong the LogDog server crashed.\r\n{0}", ex.Message);
+                _logger.LogError("{0} LogDog server stoped.\n{1}", DateTime.Now, ex.Message);
             }
         }
 

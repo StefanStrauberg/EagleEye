@@ -52,5 +52,19 @@ namespace FGLogDog.Application.Helper
                 }
             }
         }
+
+        public static void SearchSubstring(string inputString, string subStr, ParserTypes typeOfParse, out int outputValue)
+        {
+            outputValue = 0;
+            string[] subs = inputString.Split(' ');
+            foreach (var item in subs)
+            {
+                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
+                {
+                    outputValue = Int32.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
+                    break;
+                }
+            }
+        }
     }
 }
