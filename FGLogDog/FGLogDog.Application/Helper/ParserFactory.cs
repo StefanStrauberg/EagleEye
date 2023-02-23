@@ -1,6 +1,7 @@
 using System.Linq;
 using System;
 using System.Text.RegularExpressions;
+using System.Net;
 
 namespace FGLogDog.Application.Helper
 {
@@ -65,6 +66,46 @@ namespace FGLogDog.Application.Helper
                     break;
                 }
             }
+        }
+
+        public static int SearchSubstringINT(string inputString, string subStr, ParserTypes typeOfParse)
+        {
+            string[] subs = inputString.Split(' ');
+            foreach (var item in subs)
+            {
+                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
+                {
+                    return Int32.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
+                }
+            }
+            return 0;
+        }
+
+        public static void SearchSubstring(string inputString, string subStr, ParserTypes typeOfParse, out IPAddress outputValue)
+        {
+            outputValue = null;
+            string[] subs = inputString.Split(' ');
+            foreach (var item in subs)
+            {
+                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
+                {
+                    outputValue = IPAddress.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
+                    break;
+                }
+            }
+        }
+
+        public static IPAddress SearchSubstringIP(string inputString, string subStr, ParserTypes typeOfParse)
+        {
+            string[] subs = inputString.Split(' ');
+            foreach (var item in subs)
+            {
+                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
+                {
+                    return IPAddress.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
+                }
+            }
+            return null;
         }
     }
 }

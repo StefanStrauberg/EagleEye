@@ -14,10 +14,8 @@ namespace FGLogDog.Application.Services
     public class UdpServer : IUdpServer
     {   
         private readonly string _input;
-        private readonly string _srcip;
-        private readonly int _srcport;
-        private readonly ILogger _logger;
         private readonly int _buferSize;
+        private readonly ILogger _logger;
         private readonly IPEndPoint _localIpEndPoint;
         private readonly IMediator _mediator;
 
@@ -25,12 +23,11 @@ namespace FGLogDog.Application.Services
                            ILogger<UdpServer> logger,
                            IMediator mediator)
         {
-            _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
-            ParserFactory.SearchSubstring(_input, "srcip=", ParserTypes.IP, out _srcip);
-            ParserFactory.SearchSubstring(_input, "srcport=", ParserTypes.INT, out _srcport);
-            ParserFactory.SearchSubstring(_input, "bufersize=", ParserTypes.INT, out _buferSize);
             _logger = logger;
-            _localIpEndPoint = new IPEndPoint(IPAddress.Parse(_srcip), _srcport);
+            _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
+            _localIpEndPoint = new IPEndPoint(ParserFactory.SearchSubstringIP(_input, "srcip=", ParserTypes.IP),
+                                              ParserFactory.SearchSubstringINT(_input, "srcport=", ParserTypes.INT));
+            ParserFactory.SearchSubstring(_input, "bufersize=", ParserTypes.INT, out _buferSize);
             _mediator = mediator;
         }
 
@@ -40,10 +37,6 @@ namespace FGLogDog.Application.Services
             udpSocket.Bind(_localIpEndPoint);
             try
             {
-                _logger.LogInformation("{0} LogDog server start on ip:{1} and port:{2}",
-                                       DateTime.Now,
-                                       _srcip,
-                                       _srcport);
                 while (true)
                 {
                     EndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
