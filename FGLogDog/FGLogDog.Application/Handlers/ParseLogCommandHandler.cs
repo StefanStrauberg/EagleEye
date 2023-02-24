@@ -15,10 +15,10 @@ namespace FGLogDog.Application.Handlers
     public class ParseLogCommandHandler : IRequestHandler<ParseLogCommand, Unit>
     {
         private readonly ILogger<ParseLogCommandHandler> _logger;
-        private readonly IFilters _filters;
+        private readonly IConfigurationFilters _filters;
 
         public ParseLogCommandHandler(ILogger<ParseLogCommandHandler> logger,
-                                      IFilters filters)
+                                      IConfigurationFilters filters)
         {
             _logger = logger;
             _filters = filters;
@@ -29,7 +29,7 @@ namespace FGLogDog.Application.Handlers
         {
             IDictionary<string, object> newObj = new Dictionary<string, object>();
             
-            newObj = ParserFactory.GetParsedDictionary(request.message, _filters.Filter, _filters.Patterns);
+            newObj = ParserFactory.GetParsedDictionary(request.message, _filters.Filters, _filters.Patterns);
             //newObj = ParserFactory.GetParsingDictionry(request.message, _filters.Filter);
 
             // for (int i = 0; i < _filters.Filter.Length; i++)

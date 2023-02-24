@@ -1,8 +1,8 @@
 namespace FGLogDog.FGLogDog.Application.Helper
 {
-    public interface IFilters
+    public interface IConfigurationFilters
     {
-        public string[] Filter { get; }
+        public string[] Filters { get; }
         public string[] Patterns { get; }
     }
 }

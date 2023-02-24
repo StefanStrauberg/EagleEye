@@ -13,7 +13,7 @@ namespace FGLogDog.Terminal.Extensions
         public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<IConfiguration>(configuration);
-            services.AddSingleton<IFilters, Filters>();
+            services.AddSingleton<IConfigurationFilters, ConfigurationFilters>();
             services.AddLogging(configure => configure.AddConsole())
                     .AddTransient<UdpServer>()
                     .AddTransient<ParseLogCommandHandler>();

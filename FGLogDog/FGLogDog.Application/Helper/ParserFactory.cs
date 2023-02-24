@@ -78,14 +78,13 @@ namespace FGLogDog.Application.Helper
             return patterns.ToString().Split(' ');
         }
 
-        internal static IDictionary<string, object> GetParsedDictionary(string message, string[] filter, string[] patterns)
+        internal static IDictionary<string, object> GetParsedDictionary(string message, string[] filters, string[] patterns)
         {
             
             Dictionary<string, object> output = new Dictionary<string, object>();
 
             for (int i = 0; i < patterns.Length; i++)
             {
-                //System.Console.WriteLine(patterns[i]);
                 string test = GetMatch(message, patterns[i]);
                 System.Console.WriteLine(test);
             }
