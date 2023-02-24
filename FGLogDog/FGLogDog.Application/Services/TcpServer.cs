@@ -9,18 +9,17 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FGLogDog.Application.Services
+namespace FGLogDog.FGLogDog.Application.Services
 {
-    public class UdpServer : IUdpServer
-    {   
+    public class TcpServer : ITcpServer
+    {
         private readonly string _input;
         private readonly int _buferSize;
         private readonly ILogger _logger;
         private readonly IPEndPoint _localIpEndPoint;
         private readonly IMediator _mediator;
-
-        public UdpServer(IConfiguration configuration,
-                           ILogger<UdpServer> logger,
+        public TcpServer(IConfiguration configuration,
+                           ILogger<TcpServer> logger,
                            IMediator mediator)
         {
             _logger = logger;
@@ -33,15 +32,16 @@ namespace FGLogDog.Application.Services
 
         public async Task ServerStart()
         {
-            using var udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            udpSocket.Bind(_localIpEndPoint);
+            using var tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            tcpSocket.Bind(_localIpEndPoint);
+
             try
             {
                 while (true)
                 {
                     EndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
                     byte[] receiveBytes = new byte[_buferSize];
-                    var returnData = await udpSocket.ReceiveFromAsync(receiveBytes, RemoteIpEndPoint);
+                    var returnData = await tcpSocket.ReceiveFromAsync(receiveBytes, RemoteIpEndPoint);
                     var message = Encoding.UTF8.GetString(receiveBytes, 0, returnData.ReceivedBytes);
                     // Send message to MediatR
                     await _mediator.Send(new ParseLogCommand(message));

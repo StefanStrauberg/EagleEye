@@ -1,38 +1,38 @@
+using System.Text;
 using System.Linq;
 using System;
 using System.Text.RegularExpressions;
 using System.Net;
+using System.Collections.Generic;
 
 namespace FGLogDog.Application.Helper
 {
     public static class ParserFactory
     {
-        private static string _int = @"{0}(\d+)";
-        private static string _logid = @"{0}""(\d+)""";
-        private static string _time = @"{0}([0-1]?\d|2[0-3])(?::([0-5]?\d))?(?::([0-5]?\d))";
-        private static string _date = @"{0}([12]\d{{3}}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))"; 
-        private static string _string = @"{0}""([^""\\]*(?:\\.[^""\\]*)*)""";
-        private static string _guid = @"{0}""([({{]?[a-fA-F0-9]{{8}}[-]?([a-fA-F0-9]{{4}}[-]?){{3}}[a-fA-F0-9]{{12}}[}})]?)""";
-        private static string _mac = @"{0}""(?:[0-9A-Fa-f]{{2}}[:-]){{5}}(?:[0-9A-Fa-f]{{2}})""";
-        private static string _ip = @"{0}(\b\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}\.\d{{1,3}}\b)";
-        private static string _syslog = @"^([A-Za-z]{3})\s(0[1-9]|[12]\d|3[01])\s([0-1]?\d|2[0-3])(?::([0-5]?\d))?(?::([0-5]?\d))";
+        private const string _int = @"(\d+)";
+        private const string _logid = @"(\d+)";
+        private const string _time = @"([0-1]?\d|2[0-3])(?::([0-5]?\d))?(?::([0-5]?\d))";
+        private const string _date = @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))"; 
+        private const string _string = @"([^""\\]*(?:\\.[^""\\]*)*)";
+        private const string _guid = @"([({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?)";
+        private const string _mac = @"(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2})";
+        private const string _ip = @"(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
 
-        public static string GetPattern(ParserTypes type, string prefix = null)
+        private static string GetPattern(ParserTypes type)
             => type switch
             {
-                ParserTypes.INT => string.Format(_int, prefix),
-                ParserTypes.TIME => string.Format(_time, prefix),
-                ParserTypes.DATE => string.Format(_date, prefix),
-                ParserTypes.STRING => string.Format(_string, prefix),
-                ParserTypes.GUID => string.Format(_guid, prefix),
-                ParserTypes.MAC => string.Format(_mac, prefix),
-                ParserTypes.IP => string.Format(_ip, prefix),
-                ParserTypes.SYSLOG => _syslog,
-                ParserTypes.LOGID => string.Format(_logid, prefix),
+                ParserTypes.INT => _int,
+                ParserTypes.TIME => _time,
+                ParserTypes.DATE => _date,
+                ParserTypes.STRING => _string,
+                ParserTypes.GUID => _guid,
+                ParserTypes.MAC => _mac,
+                ParserTypes.IP => _ip,
+                ParserTypes.LOGID => _logid,
                 _ => throw new ArgumentException("Invalid incoming data of ParserTypes.")
             };
         
-        public static string GetMatch(string input, string pattern)
+        private static string GetMatch(string input, string pattern)
         {
             var matches = Regex.Matches(input, pattern);
             if (matches.Count > 0)
@@ -40,38 +40,57 @@ namespace FGLogDog.Application.Helper
             return null;
         }
 
-        public static int GetSubstringINT(string inputString, string subStr, ParserTypes typeOfParse)
+        private static string GetSubStringFromString(string inputString, string startWith)
         {
-            string[] subs = inputString.Split(' ');
-            foreach (var item in subs)
-            {
-                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                    return Int32.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
-            }
-            return 0;
-        }
-
-        public static IPAddress GetSubstringIP(string inputString, string subStr, ParserTypes typeOfParse)
-        {
-            string[] subs = inputString.Split(' ');
-            foreach (var item in subs)
-            {
-                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                    return IPAddress.Parse(ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse)));
-            }
+            string[] subStrings = inputString.Split(' ');
+            foreach (var item in subStrings)
+                if(item.StartsWith(startWith))
+                    return item;
             return null;
         }
 
-        public static string GetSubstringSTRING(string inputString, string subStr, ParserTypes typeOfParse)
+        private static string GetSTRINGFromSubString(string inputSubString, ParserTypes typeOfParse)
+            => ParserFactory.GetMatch(inputSubString, ParserFactory.GetPattern(typeOfParse));
+
+        internal static string SearchSubstringSTRING(string inputSubString, string startWith, ParserTypes typeOfParse)
+            =>  GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), typeOfParse);
+
+        internal static int SearchSubstringINT(string inputSubString, string startWith, ParserTypes typeOfParse)
+            => Int32.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), typeOfParse));
+
+        internal static IPAddress SearchSubStringIP(string inputSubString, string startWith, ParserTypes typeOfParse)
+            => IPAddress.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), typeOfParse));
+
+        internal static string[] ReplacePatterns(string filters)
         {
-            string[] subs = inputString.Split(' ');
-            foreach (var item in subs)
+            StringBuilder patterns = new StringBuilder(filters);
+            
+            patterns.Replace("STRING", _string);
+            patterns.Replace("INT", _int);
+            patterns.Replace("DATE", _date);
+            patterns.Replace("TIME", _time);
+            patterns.Replace("GUID", _guid);
+            patterns.Replace("MAC", _mac);
+            patterns.Replace("IP", _ip);
+
+            patterns.Replace(";", string.Empty);
+
+            return patterns.ToString().Split(' ');
+        }
+
+        internal static IDictionary<string, object> GetParsedDictionary(string message, string[] filter, string[] patterns)
+        {
+            
+            Dictionary<string, object> output = new Dictionary<string, object>();
+
+            for (int i = 0; i < patterns.Length; i++)
             {
-                if (ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse, subStr)) is not null)
-                    return ParserFactory.GetMatch(item, ParserFactory.GetPattern(typeOfParse))
-                                        .Replace("\"",string.Empty);
+                //System.Console.WriteLine(patterns[i]);
+                string test = GetMatch(message, patterns[i]);
+                System.Console.WriteLine(test);
             }
-            return null;
+
+            return output;
         }
     }
 }
