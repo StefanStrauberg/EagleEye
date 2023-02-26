@@ -1,5 +1,4 @@
 using FGLogDog.Application;
-using FGLogDog.Application.Handlers;
 using FGLogDog.Application.Services;
 using FGLogDog.FGLogDog.Application.Helper;
 using Microsoft.Extensions.Configuration;
@@ -15,8 +14,7 @@ namespace FGLogDog.Terminal.Extensions
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<IConfigurationFilters, ConfigurationFilters>();
             services.AddLogging(configure => configure.AddConsole())
-                    .AddTransient<UdpServer>()
-                    .AddTransient<ParseLogCommandHandler>();
+                    .AddTransient<UdpServer>();
             services.AddApplicationServices();
         }
     }

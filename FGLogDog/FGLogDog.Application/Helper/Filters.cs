@@ -5,16 +5,19 @@ namespace FGLogDog.FGLogDog.Application.Helper
 {
     public class ConfigurationFilters : IConfigurationFilters
     {
-        private readonly string[] _filters;
+        private readonly string[] _filterKeys;
+        private readonly string[] _filterPatterns;
         private readonly string[] _patterns;
 
         public ConfigurationFilters(IConfiguration configuration)
         {
-            _filters = configuration.GetSection("ConfigurationString").GetSection("Filter").Value.Split(" ");
+            _filterKeys = ParserFactory.GetKeysFromConfigurationFilters(configuration.GetSection("ConfigurationString").GetSection("Filter").Value);
+            _filterPatterns = ParserFactory.GetPatternsFromConfigurationFilters(configuration.GetSection("ConfigurationString").GetSection("Filter").Value);
             _patterns = ParserFactory.ReplacePatterns(configuration.GetSection("ConfigurationString").GetSection("Filter").Value);
         }
 
-        public string[] Filters { get => _filters; }
+        public string[] FilterKeys { get => _filterKeys; }
+        public string[] FilterPatterns { get => _filterPatterns; }
         public string[] Patterns { get => _patterns; }
     }
 }
