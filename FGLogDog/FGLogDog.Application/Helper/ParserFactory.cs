@@ -119,7 +119,7 @@ namespace FGLogDog.Application.Helper
             => IPAddress.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), ParserTypes.IP));
 
         internal static string SearchSubStringSTRING(string inputSubString, string startWith)
-            => GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith).Split('=')[1], ParserTypes.STRING);
+            => GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith).Split('=')[1], ParserTypes.STRING).Replace(";", string.Empty);
 
         internal static string[] ReplaceReadablePatterns(string filters)
         {

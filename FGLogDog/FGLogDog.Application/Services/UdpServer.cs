@@ -21,23 +21,18 @@ namespace FGLogDog.FGLogDog.Application.Services
             _mediator = mediator;
         }
 
-        public async Task Start(IPAddress ipAddress, int port, int buferSize)
+        public async Task Start(IPAddress ipAddress, int port)
         {
-            using var udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            var localIpEndPoint = new IPEndPoint(ipAddress, port);
-            
-            udpSocket.Bind(localIpEndPoint);
+            UdpClient udpClient = new UdpClient(port);
+            IPEndPoint RemoteIpEndPoint = null;
 
             try
             {
                 while (true)
                 {
-                    EndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                    byte[] receiveBytes = new byte[buferSize];
-                    var returnData = await udpSocket.ReceiveFromAsync(receiveBytes, RemoteIpEndPoint);
-                    var message = Encoding.UTF8.GetString(receiveBytes, 0, returnData.ReceivedBytes);
-                    // Send message to MediatR
-                    await _mediator.Send(new ParseLogCommand(message));
+                    byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
+                    string message = Encoding.UTF8.GetString(receiveBytes);
+                    await _mediator.Send(new ParseLogCommand(message.ToString()));
                 }
             }
             catch (Exception ex)
