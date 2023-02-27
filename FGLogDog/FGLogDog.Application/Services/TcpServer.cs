@@ -19,8 +19,8 @@ namespace FGLogDog.FGLogDog.Application.Services
         private readonly IPEndPoint _localIpEndPoint;
         private readonly IMediator _mediator;
         public TcpServer(IConfiguration configuration,
-                           ILogger<TcpServer> logger,
-                           IMediator mediator)
+                         ILogger<TcpServer> logger,
+                         IMediator mediator)
         {
             _logger = logger;
             _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
@@ -30,7 +30,7 @@ namespace FGLogDog.FGLogDog.Application.Services
             _mediator = mediator;
         }
 
-        public async Task ServerStart()
+        public async Task Start()
         {
             using var tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             tcpSocket.Bind(_localIpEndPoint);

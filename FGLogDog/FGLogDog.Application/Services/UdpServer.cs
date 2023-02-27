@@ -20,8 +20,8 @@ namespace FGLogDog.Application.Services
         private readonly IMediator _mediator;
 
         public UdpServer(IConfiguration configuration,
-                           ILogger<UdpServer> logger,
-                           IMediator mediator)
+                         ILogger<UdpServer> logger,
+                         IMediator mediator)
         {
             _logger = logger;
             _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
@@ -31,7 +31,7 @@ namespace FGLogDog.Application.Services
             _mediator = mediator;
         }
 
-        public async Task ServerStart()
+        public async Task Start()
         {
             using var udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             udpSocket.Bind(_localIpEndPoint);

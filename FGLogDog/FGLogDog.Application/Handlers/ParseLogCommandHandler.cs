@@ -14,14 +14,12 @@ namespace FGLogDog.Application.Handlers
         private readonly IConfigurationFilters _filters;
 
         public ParseLogCommandHandler(IConfigurationFilters filters)
-        {
-            _filters = filters;
-        }
+            => _filters = filters;
 
         public async Task<Unit> Handle(ParseLogCommand request,
                                        CancellationToken cancellationToken)
         {
-            JsonObject outputObject = ParserFactory.GetParsedDictionary(request.message, _filters, _filters.Patterns);
+            JsonObject outputObject = ParserFactory.GetParsedDictionary(request.inputLog, _filters);
 
             Console.WriteLine(outputObject);
 

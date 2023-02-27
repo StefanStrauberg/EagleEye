@@ -5,6 +5,6 @@ namespace FGLogDog.Application.Services
 {
     public interface IUdpServer : IDisposable
     {
-        Task ServerStart();
+        Task Start();
     }
 }

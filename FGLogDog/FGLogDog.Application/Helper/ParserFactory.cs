@@ -39,7 +39,7 @@ namespace FGLogDog.Application.Helper
             return null;
         }
 
-        private static object GetObjectByPattern(string inputString, ParserTypes pattern)
+        private static Func<object> GetObjectByPattern(string inputString, ParserTypes pattern)
             => pattern switch
             {
                 ParserTypes.DATE => () => 
@@ -52,7 +52,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.TIME => () => 
                 {
-                    var matches = Regex.Matches(inputString, _date);
+                    var matches = Regex.Matches(inputString, _time);
                     if (matches.Count > 0)
                         if (TimeOnly.TryParse(matches.First().Value, out TimeOnly data))
                             return data;
@@ -60,7 +60,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.INT => () => 
                 {
-                    var matches = Regex.Matches(inputString, _date);
+                    var matches = Regex.Matches(inputString, _int);
                     if (matches.Count > 0)
                         if (Int32.TryParse(matches.First().Value, out int data))
                             return data;
@@ -68,7 +68,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.GUID => () => 
                 {
-                    var matches = Regex.Matches(inputString, _date);
+                    var matches = Regex.Matches(inputString, _guid);
                     if (matches.Count > 0)
                         if (Guid.TryParse(matches.First().Value, out Guid data))
                             return data;
@@ -76,24 +76,24 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.MAC => () => 
                 {
-                    var matches = Regex.Matches(inputString, _date);
+                    var matches = Regex.Matches(inputString, _mac);
                     if (matches.Count > 0)
                         return matches.First().Value;
                     return null;
                 },
                 ParserTypes.IP => () => 
                 {
-                    var matches = Regex.Matches(inputString, _date);
+                    var matches = Regex.Matches(inputString, _ip);
                     if (matches.Count > 0)
                         if (IPAddress.TryParse(matches.First().Value, out IPAddress data))
-                            return data;
+                            return data.ToString();
                     return null;
                 },
                 ParserTypes.STRING => () => 
                 {
-                    var matches = Regex.Matches(inputString, _date);
+                    var matches = Regex.Matches(inputString, _string);
                     if (matches.Count > 0)
-                        return matches[1].Value;
+                        return matches[2].Value;
                     return null;
                 },
                 _ => throw new ArgumentException("Invalid incoming data of ParserTypes.")
@@ -131,7 +131,8 @@ namespace FGLogDog.Application.Helper
 
             patterns.Replace(";", string.Empty);
 
-            return patterns.ToString().Split(' ');
+            string[] output = patterns.ToString().Split(' ');
+            return output;
         }
 
         internal static string[] GetKeysFromConfigurationFilters(string value)
@@ -143,7 +144,8 @@ namespace FGLogDog.Application.Helper
                 keys.Append(item.Split('=')[0]);
                 keys.Append(' ');
             }
-            return keys.ToString().Split(' ');
+            string[] output = keys.ToString().Split(' ');
+            return output;
         }
 
         internal static string[] GetPatternsFromConfigurationFilters(string value)
@@ -157,21 +159,19 @@ namespace FGLogDog.Application.Helper
             }
             patterns.Replace(";", string.Empty);
             patterns.Replace("\"", string.Empty);
-            return patterns.ToString().Split(' ');
+            string[] output = patterns.ToString().Split(' ');
+            return output;
         }
 
-        internal static JsonObject GetParsedDictionary(string message, IConfigurationFilters configurationFilters, string[] patterns)
+        internal static JsonObject GetParsedDictionary(string message, IConfigurationFilters filters)
         {
             JsonObject output = new JsonObject();
-
-            for (int i = 0; i < patterns.Length; i++)
+            for (int i = 0; i < filters.Patterns.Length; i++)
             {
-                string subStringFromMessage = GetMatch(message, patterns[i]);
-                ParserTypes pattern = Enum.Parse<ParserTypes>(configurationFilters.FilterPatterns[i]);
-                object value = GetObjectByPattern(subStringFromMessage, pattern);
-                System.Console.WriteLine("Key: {0}, Value: {1}, SubString: {2}, Pattern: {3}", configurationFilters.FilterKeys[i], value.ToString(),subStringFromMessage, pattern);
+                string subStringFromMessage = GetMatch(message, filters.Patterns[i]);
+                object value = GetObjectByPattern(subStringFromMessage, Enum.Parse<ParserTypes>(filters.FilterPatterns[i])).Invoke();
+                output.Add(filters.FilterKeys[i], JsonValue.Create(value));
             }
-
             return output;
         }
     }

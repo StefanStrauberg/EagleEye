@@ -1,10 +1,9 @@
-using System;
 using System.Threading.Tasks;
 
 namespace FGLogDog.FGLogDog.Application.Services
 {
-    public interface ITcpServer : IDisposable
+    public interface IServer
     {
-        Task Start();
+        Task StartServer();
     }
 }

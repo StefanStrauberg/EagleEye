@@ -24,10 +24,10 @@ namespace FGLogDog.Terminal
             ApplicationServicesConfiguration.ConfigureServices(serviceCollection, configuration);
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            // Startup UDP Server
+            // Startup Server
             using(var service = serviceProvider.GetRequiredService<IUdpServer>())
             {
-                await service.ServerStart();
+                await service.Start();
             }
         }
     }
