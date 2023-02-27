@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using FGLogDog.Application.Services;
-using FGLogDog.Terminal.Extensions;
+using FGLogDog.Application;
+using FGLogDog.FGLogDog.Application.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,13 +21,15 @@ namespace FGLogDog.Terminal
 
             // Setup DI
             var serviceCollection = new ServiceCollection();
-            ApplicationServicesConfiguration.ConfigureServices(serviceCollection, configuration);
+                serviceCollection.AddSingleton<IConfiguration>(configuration);
+                serviceCollection.AddApplicationServices();
+            
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             // Startup Server
-            using(var service = serviceProvider.GetRequiredService<IUdpServer>())
+            using(var service = serviceProvider.GetRequiredService<IServer>())
             {
-                await service.Start();
+                await service.StartServer();
             }
         }
     }

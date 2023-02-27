@@ -9,7 +9,7 @@ using System;
 
 namespace FGLogDog.Application.Handlers
 {
-    public class ParseLogCommandHandler : IRequestHandler<ParseLogCommand, Unit>
+    internal class ParseLogCommandHandler : IRequestHandler<ParseLogCommand, Unit>
     {
         private readonly IConfigurationFilters _filters;
 
@@ -19,7 +19,7 @@ namespace FGLogDog.Application.Handlers
         public async Task<Unit> Handle(ParseLogCommand request,
                                        CancellationToken cancellationToken)
         {
-            JsonObject outputObject = ParserFactory.GetParsedDictionary(request.inputLog, _filters);
+            JsonObject outputObject = ParserFactory.GetJsonFromMessage(request.inputLog, _filters);
 
             Console.WriteLine(outputObject);
 

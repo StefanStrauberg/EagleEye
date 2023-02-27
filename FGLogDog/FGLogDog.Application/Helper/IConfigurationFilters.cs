@@ -1,6 +1,6 @@
 namespace FGLogDog.FGLogDog.Application.Helper
 {
-    public interface IConfigurationFilters
+    internal interface IConfigurationFilters
     {
         public string[] FilterKeys { get; }
         public string[] FilterPatterns { get; }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace FGLogDog.FGLogDog.Application.Helper
 {
-    public class ConfigurationFilters : IConfigurationFilters
+    internal class ConfigurationFilters : IConfigurationFilters
     {
         private readonly string[] _filterKeys;
         private readonly string[] _filterPatterns;
@@ -11,9 +11,15 @@ namespace FGLogDog.FGLogDog.Application.Helper
 
         public ConfigurationFilters(IConfiguration configuration)
         {
-            _filterKeys = ParserFactory.GetKeysFromConfigurationFilters(configuration.GetSection("ConfigurationString").GetSection("Filter").Value);
-            _filterPatterns = ParserFactory.GetPatternsFromConfigurationFilters(configuration.GetSection("ConfigurationString").GetSection("Filter").Value);
-            _patterns = ParserFactory.ReplacePatterns(configuration.GetSection("ConfigurationString").GetSection("Filter").Value);
+            _filterKeys = ParserFactory.GetKeysFromConfigurationFilters(configuration.GetSection("ConfigurationString")
+                                                                                     .GetSection("Filter")
+                                                                                     .Value);
+            _filterPatterns = ParserFactory.GetPatternsFromConfigurationFilters(configuration.GetSection("ConfigurationString")
+                                                                                             .GetSection("Filter")
+                                                                                             .Value);
+            _patterns = ParserFactory.ReplaceReadablePatterns(configuration.GetSection("ConfigurationString")
+                                                                           .GetSection("Filter")
+                                                                           .Value);
         }
 
         public string[] FilterKeys { get => _filterKeys; }

@@ -5,10 +5,11 @@ using System.Text.RegularExpressions;
 using System.Net;
 using System.Text.Json.Nodes;
 using FGLogDog.FGLogDog.Application.Helper;
+using FGLogDog.Application.Models;
 
 namespace FGLogDog.Application.Helper
 {
-    public static class ParserFactory
+    internal static class ParserFactory
     {
         private const string _int = @"(\d+)";
         private const string _time = @"([0-1]?\d|2[0-3])(?::([0-5]?\d))?(?::([0-5]?\d))";
@@ -46,7 +47,7 @@ namespace FGLogDog.Application.Helper
                 {
                     var matches = Regex.Matches(inputString, _date);
                     if (matches.Count > 0)
-                        if (DateOnly.TryParse(matches.First().Value, out DateOnly data))
+                        if (DateOnly.TryParse(matches.First().Value, out var data))
                             return data;
                     return DateOnly.MinValue;
                 },
@@ -54,7 +55,7 @@ namespace FGLogDog.Application.Helper
                 {
                     var matches = Regex.Matches(inputString, _time);
                     if (matches.Count > 0)
-                        if (TimeOnly.TryParse(matches.First().Value, out TimeOnly data))
+                        if (TimeOnly.TryParse(matches.First().Value, out var data))
                             return data;
                     return TimeOnly.MinValue;
                 },
@@ -62,7 +63,7 @@ namespace FGLogDog.Application.Helper
                 {
                     var matches = Regex.Matches(inputString, _int);
                     if (matches.Count > 0)
-                        if (Int32.TryParse(matches.First().Value, out int data))
+                        if (Int32.TryParse(matches.First().Value, out var data))
                             return data;
                     return 0;
                 },
@@ -70,7 +71,7 @@ namespace FGLogDog.Application.Helper
                 {
                     var matches = Regex.Matches(inputString, _guid);
                     if (matches.Count > 0)
-                        if (Guid.TryParse(matches.First().Value, out Guid data))
+                        if (Guid.TryParse(matches.First().Value, out var data))
                             return data;
                     return Guid.Empty;
                 },
@@ -85,7 +86,7 @@ namespace FGLogDog.Application.Helper
                 {
                     var matches = Regex.Matches(inputString, _ip);
                     if (matches.Count > 0)
-                        if (IPAddress.TryParse(matches.First().Value, out IPAddress data))
+                        if (IPAddress.TryParse(matches.First().Value, out var data))
                             return data.ToString();
                     return null;
                 },
@@ -111,13 +112,16 @@ namespace FGLogDog.Application.Helper
         private static string GetSTRINGFromSubString(string inputSubString, ParserTypes typeOfParse)
             => ParserFactory.GetMatch(inputSubString, ParserFactory.GetPattern(typeOfParse));
 
-        internal static int SearchSubstringINT(string inputSubString, string startWith, ParserTypes typeOfParse)
-            => Int32.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), typeOfParse));
+        internal static int SearchSubstringINT(string inputSubString, string startWith)
+            => Int32.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), ParserTypes.INT));
 
-        internal static IPAddress SearchSubStringIP(string inputSubString, string startWith, ParserTypes typeOfParse)
-            => IPAddress.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), typeOfParse));
+        internal static IPAddress SearchSubStringIP(string inputSubString, string startWith)
+            => IPAddress.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), ParserTypes.IP));
 
-        internal static string[] ReplacePatterns(string filters)
+        internal static string SearchSubStringSTRING(string inputSubString, string startWith)
+            => GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith).Split('=')[1], ParserTypes.STRING);
+
+        internal static string[] ReplaceReadablePatterns(string filters)
         {
             StringBuilder patterns = new StringBuilder(filters);
 
@@ -163,15 +167,17 @@ namespace FGLogDog.Application.Helper
             return output;
         }
 
-        internal static JsonObject GetParsedDictionary(string message, IConfigurationFilters filters)
+        internal static JsonObject GetJsonFromMessage(string message, IConfigurationFilters filters)
         {
             JsonObject output = new JsonObject();
+
             for (int i = 0; i < filters.Patterns.Length; i++)
             {
-                string subStringFromMessage = GetMatch(message, filters.Patterns[i]);
-                object value = GetObjectByPattern(subStringFromMessage, Enum.Parse<ParserTypes>(filters.FilterPatterns[i])).Invoke();
-                output.Add(filters.FilterKeys[i], JsonValue.Create(value));
+                Func<object> getValue = GetObjectByPattern(GetMatch(message, filters.Patterns[i]),
+                                                           Enum.Parse<ParserTypes>(filters.FilterPatterns[i]));
+                output.Add(filters.FilterKeys[i], JsonValue.Create(getValue.Invoke()));
             }
+
             return output;
         }
     }

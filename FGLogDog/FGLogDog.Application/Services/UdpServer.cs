@@ -4,43 +4,36 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using FGLogDog.Application.Commands;
-using FGLogDog.Application.Helper;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace FGLogDog.Application.Services
+namespace FGLogDog.FGLogDog.Application.Services
 {
-    public class UdpServer : IUdpServer
+    internal class UdpServer : IUdpServer
     {   
-        private readonly string _input;
-        private readonly int _buferSize;
         private readonly ILogger _logger;
-        private readonly IPEndPoint _localIpEndPoint;
         private readonly IMediator _mediator;
 
-        public UdpServer(IConfiguration configuration,
-                         ILogger<UdpServer> logger,
+        public UdpServer(ILogger<UdpServer> logger,
                          IMediator mediator)
         {
             _logger = logger;
-            _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
-            _localIpEndPoint = new IPEndPoint(ParserFactory.SearchSubStringIP(_input, "srcip=", ParserTypes.IP),
-                                              ParserFactory.SearchSubstringINT(_input, "srcport=", ParserTypes.INT));
-            _buferSize = ParserFactory.SearchSubstringINT(_input, "bufersize=", ParserTypes.INT);
             _mediator = mediator;
         }
 
-        public async Task Start()
+        public async Task Start(IPAddress ipAddress, int port, int buferSize)
         {
             using var udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            udpSocket.Bind(_localIpEndPoint);
+            var localIpEndPoint = new IPEndPoint(ipAddress, port);
+            
+            udpSocket.Bind(localIpEndPoint);
+
             try
             {
                 while (true)
                 {
                     EndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                    byte[] receiveBytes = new byte[_buferSize];
+                    byte[] receiveBytes = new byte[buferSize];
                     var returnData = await udpSocket.ReceiveFromAsync(receiveBytes, RemoteIpEndPoint);
                     var message = Encoding.UTF8.GetString(receiveBytes, 0, returnData.ReceivedBytes);
                     // Send message to MediatR

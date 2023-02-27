@@ -1,10 +1,11 @@
+using System.Net;
 using System;
 using System.Threading.Tasks;
 
 namespace FGLogDog.FGLogDog.Application.Services
 {
-    public interface ITcpServer : IDisposable
+    internal interface ITcpServer : IDisposable
     {
-        Task Start();
+        Task Start(IPAddress iPAddress, int port, int buferSize);
     }
 }
