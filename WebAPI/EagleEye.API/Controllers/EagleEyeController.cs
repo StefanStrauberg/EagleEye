@@ -21,41 +21,26 @@ namespace WebAPI.EagleEye.API.Controllers
         [HttpGet("{collectionName}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllCollectionItems(string collectionName)
-        {
-            var data = await _mediator.Send(new GetCollectionQuery(collectionName));
-            return Ok(data);
-        }
+            => Ok(await _mediator.Send(new GetCollectionQuery(collectionName)));
 
         [HttpGet("{collectionName}/{id}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCollectionItem(string collectionName, Guid id)
-        {
-            var data = await _mediator.Send(new GetCollectionItemByIdQuery(collectionName, id));
-            return Ok(data);
-        }
+            => Ok(await _mediator.Send(new GetCollectionItemByIdQuery(collectionName, id)));
 
         [HttpPost("{collectionName}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CreateCollectionItem(string collectionName, object item)
-        {
-            await _mediator.Send(new CreateCollectionItemCommand(collectionName, item));
-            return Ok();
-        }
+            => Ok(await _mediator.Send(new CreateCollectionItemCommand(collectionName, item)));
 
         [HttpPut("{collectionName}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateCollectionItem(string collectionName, object item)
-        {
-            await _mediator.Send(new UpdateCollectionItemCommand(collectionName, item));
-            return Ok();
-        }
+            => Ok(await _mediator.Send(new UpdateCollectionItemCommand(collectionName, item)));
 
         [HttpDelete("{collectionName}/{id}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteCollectionItem(string collectionName, Guid id)
-        {
-            await _mediator.Send(new DeleteCollectionItemCommand(collectionName, id));
-            return Ok();
-        }
+            => Ok(await _mediator.Send(new DeleteCollectionItemCommand(collectionName, id)));
     }
 }
