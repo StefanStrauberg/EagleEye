@@ -1,19 +1,25 @@
-using System;
+using MediatR;
+using MongoDB.Bson;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
+using WebAPI.EagleEye.Application.Exceptions;
 
 namespace WebAPI.EagleEye.Application.Features.Queries.GetCollectionItem
 {
-    internal class GetCollectionItemByIdQueryHandler : IRequestHandler<GetCollectionItemByIdQuery, object>
+    internal class GetCollectionItemByIdQueryHandler : IRequestHandler<GetCollectionItemByIdQuery, string>
     {
         private readonly ICollectionRepository _repository;
 
         public GetCollectionItemByIdQueryHandler(ICollectionRepository repository)
             => _repository = repository;
 
-        public async Task<object> Handle(GetCollectionItemByIdQuery request, CancellationToken cancellationToken)
-            => await _repository.GetByIdAsync(request.CollectionName, request.Id);
+        public async Task<string> Handle(GetCollectionItemByIdQuery request, CancellationToken cancellationToken)
+        {
+            var result = await _repository.GetByIdAsync(request.CollectionName, request.Id);
+            if (result is null)
+                throw new NotFoundException(request.CollectionName, request.Id);
+            return result.ToJson();
+        }
     }
 }

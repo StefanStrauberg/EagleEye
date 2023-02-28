@@ -1,7 +1,8 @@
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
+using WebAPI.EagleEye.Application.Exceptions;
 
 namespace EagleEye.Application.Features.Commands.DeleteCollectionItem
 {
@@ -14,8 +15,9 @@ namespace EagleEye.Application.Features.Commands.DeleteCollectionItem
 
         public async Task<Unit> Handle(DeleteCollectionItemCommand request, CancellationToken cancellationToken)
         {
-            await _repository.DeleteAsync(request.CollectionName, request.Id);
-            return Unit.Value;
+            if (await _repository.DeleteAsync(request.CollectionName, request.Id))
+                return Unit.Value;
+            throw new NotFoundException(request.CollectionName, request.Id);
         }
     }
 }

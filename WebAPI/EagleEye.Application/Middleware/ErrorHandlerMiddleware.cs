@@ -38,7 +38,7 @@ namespace WebAPI.EagleEye.Application.Middleware
                         break;
                 }
 
-                var result = JsonSerializer.Serialize(new { message = error?.Message });
+                var result = JsonSerializer.Serialize(new { statusCode = response.StatusCode, message = error?.Message });
                 await response.WriteAsync(result);
             }
         }
