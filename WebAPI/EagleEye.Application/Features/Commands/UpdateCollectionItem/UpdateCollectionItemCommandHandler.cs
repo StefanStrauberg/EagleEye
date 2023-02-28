@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MediatR;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
 
-namespace WebAPI.EagleEye.Application.Features.Commands.UpdateCollectionItem
+namespace EagleEye.Application.Features.Commands.UpdateCollectionItem
 {
     internal class UpdateCollectionItemCommandHandler : IRequestHandler<UpdateCollectionItemCommand, Unit>
     {
