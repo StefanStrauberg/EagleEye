@@ -1,6 +1,9 @@
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
 
 namespace EagleEye.Application.Features.Commands.UpdateCollectionItem
@@ -14,7 +17,8 @@ namespace EagleEye.Application.Features.Commands.UpdateCollectionItem
 
         public async Task<Unit> Handle(UpdateCollectionItemCommand request, CancellationToken cancellationToken)
         {
-            await _repository.UpdateAsync(request.CollectionName, request.Item);
+            await _repository.UpdateAsync(request.CollectionName,
+                                          BsonSerializer.Deserialize<BsonDocument>(JsonSerializer.Serialize(request.JsonItem)));
             return Unit.Value;
         }
     }

@@ -1,10 +1,11 @@
-using System;
-using System.Net;
-using System.Threading.Tasks;
 using EagleEye.Application.Features.Commands.DeleteCollectionItem;
 using EagleEye.Application.Features.Commands.UpdateCollectionItem;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Net;
+using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Features.Commands.CreateCollectionItem;
 using WebAPI.EagleEye.Application.Features.Queries.GetAllCollectionItems;
 using WebAPI.EagleEye.Application.Features.Queries.GetCollectionItem;
@@ -30,13 +31,13 @@ namespace WebAPI.EagleEye.API.Controllers
 
         [HttpPost("{collectionName}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> CreateCollectionItem(string collectionName, object item)
-            => Ok(await _mediator.Send(new CreateCollectionItemCommand(collectionName, item)));
+        public async Task<IActionResult> CreateCollectionItem(string collectionName, JsonObject JsonItem)
+            => Ok(await _mediator.Send(new CreateCollectionItemCommand(collectionName, JsonItem)));
 
         [HttpPut("{collectionName}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateCollectionItem(string collectionName, object item)
-            => Ok(await _mediator.Send(new UpdateCollectionItemCommand(collectionName, item)));
+        public async Task<IActionResult> UpdateCollectionItem(string collectionName, JsonObject JsonItem)
+            => Ok(await _mediator.Send(new UpdateCollectionItemCommand(collectionName, JsonItem)));
 
         [HttpDelete("{collectionName}/{id}")]
         [ProducesResponseType(typeof(object), (int)HttpStatusCode.OK)]

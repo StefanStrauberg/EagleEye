@@ -6,7 +6,7 @@ using WebAPI.EagleEye.Application.Contracts.Persistence;
 
 namespace WebAPI.EagleEye.Application.Features.Queries.GetCollectionItem
 {
-    internal class GetCollectionItemByIdQueryHandler : IRequestHandler<GetCollectionItemByIdQuery, Object>
+    internal class GetCollectionItemByIdQueryHandler : IRequestHandler<GetCollectionItemByIdQuery, object>
     {
         private readonly ICollectionRepository _repository;
 

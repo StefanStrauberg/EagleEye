@@ -8,8 +8,8 @@ namespace WebAPI.EagleEye.Application.Contracts.Persistence
     {
         Task<IReadOnlyList<T>> GetAllAsync(string collectionName);
         Task<T> GetByIdAsync(string collectionName, Guid id);
-        Task<bool> CreateAsync(string collectionName, T model);
-        Task<bool> UpdateAsync(string collectionName, T model);
+        Task CreateAsync(string collectionName, T data);
+        Task<bool> UpdateAsync(string collectionName, T data);
         Task<bool> DeleteAsync(string collectionName, Guid Id);
     }
 }

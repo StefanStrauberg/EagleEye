@@ -1,5 +1,6 @@
-﻿using EagleEye.Domain;
-using EagleEye.Infrastructure.DatabaseConfig;
+﻿using EagleEye.Infrastructure.DatabaseConfig;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -15,27 +16,26 @@ namespace EagleEye.Infrastructure.Repositories
         public CollectionRepository(IMongoDBConnection connection)
             => _database = new MongoClient(connection.ConnectionString).GetDatabase(connection.DatabaseName);
 
-        public Task<bool> CreateAsync(string collectionName, object model)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task CreateAsync(string collectionName, BsonDocument data)
+            => await _database.GetCollection<BsonDocument>(collectionName)
+                              .InsertOneAsync(data);
 
         public Task<bool> DeleteAsync(string collectionName, Guid Id)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IReadOnlyList<object>> GetAllAsync(string collectionName)
-            => await _database.GetCollection<DomainBaseEntity>(collectionName)
+        public async Task<IReadOnlyList<BsonDocument>> GetAllAsync(string collectionName)
+            => await _database.GetCollection<BsonDocument>(collectionName)
                               .Find(x => true)
                               .ToListAsync();
 
-        public async Task<object> GetByIdAsync(string collectionName, Guid id)
-            => await _database.GetCollection<DomainBaseEntity>(collectionName)
-                              .Find(x => x.Id == id)
+        public async Task<BsonDocument> GetByIdAsync(string collectionName, Guid id)
+            => await _database.GetCollection<BsonDocument>(collectionName)
+                              .Find(new BsonDocument { { "id", id.ToString() } })
                               .FirstOrDefaultAsync();
 
-        public Task<bool> UpdateAsync(string collectionName, object model)
+        public Task<bool> UpdateAsync(string collectionName, BsonDocument data)
         {
             throw new NotImplementedException();
         }
