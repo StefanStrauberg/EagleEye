@@ -5,35 +5,30 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FGLogDog", "FGLogDog", "{B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Application", "FGLogDog\FGLogDog.Application\FGLogDog.Application.csproj", "{BFE5C970-6DBB-4B8B-8010-FE1C444474F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FGLogDog.Application", "FGLogDog\FGLogDog.Application\FGLogDog.Application.csproj", "{BFE5C970-6DBB-4B8B-8010-FE1C444474F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Terminal", "FGLogDog\FGLogDog.Terminal\FGLogDog.Terminal.csproj", "{7B4346F8-5E8D-410D-9018-73553CC1A9AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FGLogDog.Terminal", "FGLogDog\FGLogDog.Terminal\FGLogDog.Terminal.csproj", "{7B4346F8-5E8D-410D-9018-73553CC1A9AF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebAPI", "WebAPI", "{E54C2A68-8DE9-4B7C-A921-46D4138A19F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleEye.API", "WebAPI\EagleEye.API\EagleEye.API.csproj", "{A0E39DAE-18FE-499F-86B2-F0B27632EE60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EagleEye.API", "WebAPI\EagleEye.API\EagleEye.API.csproj", "{A0E39DAE-18FE-499F-86B2-F0B27632EE60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleEye.Application", "WebAPI\EagleEye.Application\EagleEye.Application.csproj", "{1590210E-6A71-411A-BD47-FE273A3DABBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EagleEye.Application", "WebAPI\EagleEye.Application\EagleEye.Application.csproj", "{1590210E-6A71-411A-BD47-FE273A3DABBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleEye.Infrastructure", "WebAPI\EagleEye.Infrastructure\EagleEye.Infrastructure.csproj", "{4442FD8E-6E6A-4B83-8DAE-3983DEBB96A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EagleEye.Infrastructure", "WebAPI\EagleEye.Infrastructure\EagleEye.Infrastructure.csproj", "{4442FD8E-6E6A-4B83-8DAE-3983DEBB96A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleEye.Domain", "WebAPI\EagleEye.Domain\EagleEye.Domain.csproj", "{94F0E122-75E4-4F18-83BA-5309618F8754}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BFE5C970-6DBB-4B8B-8010-FE1C444474F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BFE5C970-6DBB-4B8B-8010-FE1C444474F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFE5C970-6DBB-4B8B-8010-FE1C444474F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFE5C970-6DBB-4B8B-8010-FE1C444474F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40999FFC-179A-4BB0-A45D-CF9D198E7A24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40999FFC-179A-4BB0-A45D-CF9D198E7A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40999FFC-179A-4BB0-A45D-CF9D198E7A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40999FFC-179A-4BB0-A45D-CF9D198E7A24}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7B4346F8-5E8D-410D-9018-73553CC1A9AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7B4346F8-5E8D-410D-9018-73553CC1A9AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B4346F8-5E8D-410D-9018-73553CC1A9AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,6 +45,13 @@ Global
 		{4442FD8E-6E6A-4B83-8DAE-3983DEBB96A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4442FD8E-6E6A-4B83-8DAE-3983DEBB96A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4442FD8E-6E6A-4B83-8DAE-3983DEBB96A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94F0E122-75E4-4F18-83BA-5309618F8754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94F0E122-75E4-4F18-83BA-5309618F8754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94F0E122-75E4-4F18-83BA-5309618F8754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94F0E122-75E4-4F18-83BA-5309618F8754}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BFE5C970-6DBB-4B8B-8010-FE1C444474F1} = {B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}
@@ -57,5 +59,9 @@ Global
 		{A0E39DAE-18FE-499F-86B2-F0B27632EE60} = {E54C2A68-8DE9-4B7C-A921-46D4138A19F9}
 		{1590210E-6A71-411A-BD47-FE273A3DABBD} = {E54C2A68-8DE9-4B7C-A921-46D4138A19F9}
 		{4442FD8E-6E6A-4B83-8DAE-3983DEBB96A0} = {E54C2A68-8DE9-4B7C-A921-46D4138A19F9}
+		{94F0E122-75E4-4F18-83BA-5309618F8754} = {E54C2A68-8DE9-4B7C-A921-46D4138A19F9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8B69E4DE-AF8B-48B6-A829-F730C97AC439}
 	EndGlobalSection
 EndGlobal
