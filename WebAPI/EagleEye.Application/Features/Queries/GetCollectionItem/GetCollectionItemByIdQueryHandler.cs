@@ -17,11 +17,11 @@ namespace WebAPI.EagleEye.Application.Features.Queries.GetCollectionItem
 
         public async Task<string> Handle(GetCollectionItemByIdQuery request, CancellationToken cancellationToken)
         {
-            var result = await _repository.GetByIdAsync(request.CollectionName, request.Id);
-            if (result is null)
+            var data = await _repository.GetByIdAsync(request.CollectionName, request.Id);
+            if (data is null)
                 throw new NotFoundException(request.CollectionName, request.Id);
-            var jsonWritersetting = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
-            return result.ToJson(jsonWritersetting);
+            var jsonWritersetting = new JsonWriterSettings() { OutputMode = JsonOutputMode.Strict };
+            return data.ToJson(jsonWritersetting);
         }
     }
 }

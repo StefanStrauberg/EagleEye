@@ -16,7 +16,7 @@ namespace WebAPI.EagleEye.Application.Features.Queries.GetAllCollectionItems
 
         public async Task<string> Handle(GetCollectionQuery request, CancellationToken cancellationToken)
         {
-            var jsonWritersetting = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
+            var jsonWritersetting = new JsonWriterSettings() { OutputMode = JsonOutputMode.Strict };
             return (await _repository.GetAllAsync(request.CollectionName)).ToJson(jsonWritersetting);
         }
     }
