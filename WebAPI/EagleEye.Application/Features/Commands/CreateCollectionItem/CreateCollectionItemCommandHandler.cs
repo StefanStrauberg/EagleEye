@@ -17,8 +17,9 @@ namespace WebAPI.EagleEye.Application.Features.Commands.CreateCollectionItem
 
         public async Task<Unit> Handle(CreateCollectionItemCommand request, CancellationToken cancellationToken)
         {
+            var jsonData = JsonSerializer.Serialize(request.JsonItem);
             await _repository.CreateAsync(request.CollectionName,
-                                          BsonSerializer.Deserialize<BsonDocument>(JsonSerializer.Serialize(request.JsonItem)));
+                                          BsonSerializer.Deserialize<BsonDocument>(jsonData));
             return Unit.Value;
         }
     }

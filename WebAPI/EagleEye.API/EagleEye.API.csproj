@@ -1,10 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="nlog.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="nlog.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="nlog.config" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.3" />
@@ -14,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EagleEye.Application\EagleEye.Application.csproj" />
     <ProjectReference Include="..\EagleEye.Infrastructure\EagleEye.Infrastructure.csproj" />
+    <ProjectReference Include="..\EagleEye.Logging\EagleEye.Logging.csproj" />
   </ItemGroup>
 
 </Project>

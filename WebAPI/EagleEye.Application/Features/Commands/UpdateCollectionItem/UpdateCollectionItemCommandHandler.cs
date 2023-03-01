@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
+using WebAPI.EagleEye.Application.Exceptions;
 
 namespace EagleEye.Application.Features.Commands.UpdateCollectionItem
 {
@@ -17,10 +18,12 @@ namespace EagleEye.Application.Features.Commands.UpdateCollectionItem
 
         public async Task<Unit> Handle(UpdateCollectionItemCommand request, CancellationToken cancellationToken)
         {
-            await _repository.UpdateAsync(request.CollectionName, 
-                                          request.id,
-                                          BsonSerializer.Deserialize<BsonDocument>(JsonSerializer.Serialize(request.JsonItem)));
-            return Unit.Value;
+            var jsonData = JsonSerializer.Serialize(request.JsonItem);
+            if (await _repository.UpdateAsync(request.CollectionName,
+                                              request.Id,
+                                              BsonSerializer.Deserialize<BsonDocument>(jsonData)))
+                return Unit.Value;
+            throw new NotFoundException(request.CollectionName, request.Id);
         }
     }
 }

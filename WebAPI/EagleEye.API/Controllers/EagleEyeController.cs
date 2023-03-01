@@ -1,8 +1,8 @@
+using EagleEye.Application.Exceptions;
 using EagleEye.Application.Features.Commands.DeleteCollectionItem;
 using EagleEye.Application.Features.Commands.UpdateCollectionItem;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 using System.Net;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -26,7 +26,8 @@ namespace WebAPI.EagleEye.API.Controllers
 
         [HttpGet("{collectionName}/{id}")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetCollectionItem(string collectionName, ObjectId id)
+        [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetCollectionItem(string collectionName, string id)
             => Ok(await _mediator.Send(new GetCollectionItemByIdQuery(collectionName, id)));
 
         [HttpPost("{collectionName}")]
@@ -36,12 +37,14 @@ namespace WebAPI.EagleEye.API.Controllers
 
         [HttpPut("{collectionName}/{id}")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdateCollectionItem(string collectionName, ObjectId id, JsonObject JsonItem)
+        [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> UpdateCollectionItem(string collectionName, string id, JsonObject JsonItem)
             => Ok(await _mediator.Send(new UpdateCollectionItemCommand(collectionName, id, JsonItem)));
 
         [HttpDelete("{collectionName}/{id}")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> DeleteCollectionItem(string collectionName, ObjectId id)
+        [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteCollectionItem(string collectionName, string id)
             => Ok(await _mediator.Send(new DeleteCollectionItemCommand(collectionName, id)));
     }
 }

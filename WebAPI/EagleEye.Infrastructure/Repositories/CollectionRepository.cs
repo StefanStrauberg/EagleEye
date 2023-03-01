@@ -1,7 +1,9 @@
 ﻿using EagleEye.Infrastructure.DatabaseConfig;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
 
@@ -18,28 +20,42 @@ namespace EagleEye.Infrastructure.Repositories
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .InsertOneAsync(data);
 
-        public async Task<bool> DeleteAsync(string collectionName, ObjectId id)
+        public async Task<bool> DeleteAsync(string collectionName, string id)
         {
+            var objectId = new ObjectId(id);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
             var result = await _database.GetCollection<BsonDocument>(collectionName)
-                              .DeleteOneAsync(Builders<BsonDocument>.Filter.Eq("_id", id));
+                              .DeleteOneAsync(filter);
             return (result.IsAcknowledged && result.DeletedCount > 0);
         }
+
+        public async Task<IReadOnlyList<BsonDocument>> FilterBy(string collectionName,
+                                                                Expression<Func<BsonDocument, bool>> filterExpression)
+            => await _database.GetCollection<BsonDocument>(collectionName)
+                              .Find(filterExpression)
+                              .ToListAsync();
 
         public async Task<IReadOnlyList<BsonDocument>> GetAllAsync(string collectionName)
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .Find(x => true)
                               .ToListAsync();
 
-        public async Task<BsonDocument> GetByIdAsync(string collectionName, ObjectId id)
-            => await _database.GetCollection<BsonDocument>(collectionName)
-                              .Find(Builders<BsonDocument>.Filter.Eq("_id", id))
-                              .FirstOrDefaultAsync();
-
-        public async Task<bool> UpdateAsync(string collectionName, ObjectId id, BsonDocument data)
+        public async Task<BsonDocument> GetByIdAsync(string collectionName, string id)
         {
+            var objectId = new ObjectId(id);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
+            return await _database.GetCollection<BsonDocument>(collectionName)
+                                  .Find(filter)
+                                  .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> UpdateAsync(string collectionName, string id, BsonDocument data)
+        {
+            var objectId = new ObjectId(id);
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
             var result = await _database.GetCollection<BsonDocument>(collectionName)
-                                        .ReplaceOneAsync(Builders<BsonDocument>.Filter.Eq("_id", id), data);
-            return (result.IsModifiedCountAvailable && result.ModifiedCount > 0);
+                                        .ReplaceOneAsync(filter, data);
+            return (result.IsAcknowledged && result.ModifiedCount > 0);
         }
     }
 }
