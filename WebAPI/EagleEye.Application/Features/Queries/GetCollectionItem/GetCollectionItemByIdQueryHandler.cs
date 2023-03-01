@@ -1,6 +1,7 @@
 using MediatR;
 using MongoDB.Bson;
-using MongoDB.Bson.IO;
+using System;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
@@ -20,8 +21,11 @@ namespace WebAPI.EagleEye.Application.Features.Queries.GetCollectionItem
             var data = await _repository.GetByIdAsync(request.CollectionName, request.Id);
             if (data is null)
                 throw new NotFoundException(request.CollectionName, request.Id);
-            var jsonWritersetting = new JsonWriterSettings() { OutputMode = JsonOutputMode.Strict };
-            return data.ToJson(jsonWritersetting);
+            var json = data.ToJson();
+            var result = Regex.Match(json, @"ObjectId\(([^\)]*)\)").Value;
+            var id = result.Replace("ObjectId(", string.Empty).Replace(")", String.Empty);
+            var validJson = json.Replace(result, id);
+            return validJson;
         }
     }
 }

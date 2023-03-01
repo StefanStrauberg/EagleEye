@@ -1,6 +1,6 @@
 namespace EagleEye.Application.RequestFeatures
 {
-    public class Parameters
+    public class QueryParameters
     {
         const int maxPageSize = 100; 
         public int PageNumber { get; set; } = 1; 

@@ -1,4 +1,5 @@
-﻿using EagleEye.Infrastructure.DatabaseConfig;
+﻿using EagleEye.Application.RequestFeatures;
+using EagleEye.Infrastructure.DatabaseConfig;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EagleEye.Infrastructure.Repositories
 {
@@ -30,7 +32,7 @@ namespace EagleEye.Infrastructure.Repositories
         }
 
         public async Task<List<BsonDocument>> FilterBy(string collectionName,
-                                                                Expression<Func<BsonDocument, bool>> filterExpression)
+                                                       Expression<Func<BsonDocument, bool>> filterExpression)
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .Find(filterExpression)
                               .ToListAsync();
@@ -40,7 +42,18 @@ namespace EagleEye.Infrastructure.Repositories
                               .Find(x => true)
                               .ToListAsync();
 
-        public async Task<BsonDocument> GetByIdAsync(string collectionName, string id)
+        public async Task<List<BsonDocument>> GetAllAsync(string collectionName,
+                                                          QueryParameters parameters)
+        {
+            return await _database.GetCollection<BsonDocument>(collectionName)
+                                  .Find(x => true)
+                                  .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                                  .Limit(parameters.PageSize)
+                                  .ToListAsync();
+        }
+
+        public async Task<BsonDocument> GetByIdAsync(string collectionName,
+                                                     string id)
         {
             var objectId = new ObjectId(id);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
@@ -49,7 +62,9 @@ namespace EagleEye.Infrastructure.Repositories
                                   .FirstOrDefaultAsync();
         }
 
-        public async Task<bool> UpdateAsync(string collectionName, string id, BsonDocument data)
+        public async Task<bool> UpdateAsync(string collectionName,
+                                            string id,
+                                            BsonDocument data)
         {
             var objectId = new ObjectId(id);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);

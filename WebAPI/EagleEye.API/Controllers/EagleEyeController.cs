@@ -1,9 +1,12 @@
 using EagleEye.Application.Exceptions;
 using EagleEye.Application.Features.Commands.DeleteCollectionItem;
 using EagleEye.Application.Features.Commands.UpdateCollectionItem;
+using EagleEye.Application.Features.Queries.GetPageCollectionItems;
+using EagleEye.Application.RequestFeatures;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Features.Commands.CreateCollectionItem;
@@ -22,13 +25,33 @@ namespace WebAPI.EagleEye.API.Controllers
         [HttpGet("{collectionName}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllCollectionItems(string collectionName)
-            => Ok(await _mediator.Send(new GetCollectionQuery(collectionName)));
+            => Content(await _mediator.Send(new GetCollectionQuery(collectionName)), "application/json");
+
+        [HttpGet("paged/{collectionName}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetPagedCollectionItems(string collectionName, [FromQuery] QueryParameters parameters)
+        {
+            var data = await _mediator.Send(new GetPageCollectionQuery(collectionName, parameters));
+
+            var metadata = new
+            {
+                data.MetaData.TotalCount,
+                data.MetaData.PageSize,
+                data.MetaData.CurrentPage,
+                data.MetaData.TotalPages,
+                data.MetaData.HasNext,
+                data.MetaData.HasPrevious
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+            return Content(data.data, "application/json");
+        }
 
         [HttpGet("{collectionName}/{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound, "application/json")]
         public async Task<IActionResult> GetCollectionItem(string collectionName, string id)
-            => Ok(await _mediator.Send(new GetCollectionItemByIdQuery(collectionName, id)));
+            => Content(await _mediator.Send(new GetCollectionItemByIdQuery(collectionName, id)), "application/json");
 
         [HttpPost("{collectionName}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
