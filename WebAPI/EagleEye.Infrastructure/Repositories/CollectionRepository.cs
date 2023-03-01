@@ -29,13 +29,13 @@ namespace EagleEye.Infrastructure.Repositories
             return (result.IsAcknowledged && result.DeletedCount > 0);
         }
 
-        public async Task<IReadOnlyList<BsonDocument>> FilterBy(string collectionName,
+        public async Task<List<BsonDocument>> FilterBy(string collectionName,
                                                                 Expression<Func<BsonDocument, bool>> filterExpression)
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .Find(filterExpression)
                               .ToListAsync();
 
-        public async Task<IReadOnlyList<BsonDocument>> GetAllAsync(string collectionName)
+        public async Task<List<BsonDocument>> GetAllAsync(string collectionName)
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .Find(x => true)
                               .ToListAsync();

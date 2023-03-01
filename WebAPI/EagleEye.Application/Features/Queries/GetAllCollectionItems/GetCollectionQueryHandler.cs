@@ -1,5 +1,6 @@
 using MediatR;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
@@ -14,6 +15,9 @@ namespace WebAPI.EagleEye.Application.Features.Queries.GetAllCollectionItems
             => _repository = repository;
 
         public async Task<string> Handle(GetCollectionQuery request, CancellationToken cancellationToken)
-            => (await _repository.GetAllAsync(request.CollectionName)).ToJson();
+        {
+            var jsonWritersetting = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
+            return (await _repository.GetAllAsync(request.CollectionName)).ToJson(jsonWritersetting);
+        }
     }
 }
