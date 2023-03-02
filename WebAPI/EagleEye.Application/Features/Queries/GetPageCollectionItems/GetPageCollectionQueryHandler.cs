@@ -1,7 +1,7 @@
-﻿using EagleEye.Application.Paging;
+﻿using EagleEye.Application.Helpers;
+using EagleEye.Application.Paging;
 using MediatR;
 using MongoDB.Bson;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
@@ -18,7 +18,7 @@ namespace EagleEye.Application.Features.Queries.GetPageCollectionItems
         public async Task<PagedList> Handle(GetPageCollectionQuery request, CancellationToken cancellationToken)
         {
             var data = await _repository.GetAllAsync(request.CollectionName, request.Parameters);
-            return new PagedList(data.ToJson(),
+            return new PagedList(JsonHelper.Correction(data.ToJson()),
                                  data.Count,
                                  request.Parameters.PageNumber,
                                  request.Parameters.PageSize);

@@ -2,6 +2,7 @@ using EagleEye.Application.Exceptions;
 using EagleEye.Application.Features.Commands.DeleteCollectionItem;
 using EagleEye.Application.Features.Commands.UpdateCollectionItem;
 using EagleEye.Application.Features.Queries.GetPageCollectionItems;
+using EagleEye.Application.Paging;
 using EagleEye.Application.RequestFeatures;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -23,32 +24,21 @@ namespace WebAPI.EagleEye.API.Controllers
             => _mediator = mediator;
 
         [HttpGet("{collectionName}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(JsonObject), (int)HttpStatusCode.OK, "application/json")]
         public async Task<IActionResult> GetAllCollectionItems(string collectionName)
             => Content(await _mediator.Send(new GetCollectionQuery(collectionName)), "application/json");
 
         [HttpGet("paged/{collectionName}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(JsonObject), (int)HttpStatusCode.OK, "application/json")]
         public async Task<IActionResult> GetPagedCollectionItems(string collectionName, [FromQuery] QueryParameters parameters)
         {
-            var data = await _mediator.Send(new GetPageCollectionQuery(collectionName, parameters));
-
-            var metadata = new
-            {
-                data.MetaData.TotalCount,
-                data.MetaData.PageSize,
-                data.MetaData.CurrentPage,
-                data.MetaData.TotalPages,
-                data.MetaData.HasNext,
-                data.MetaData.HasPrevious
-            };
-
-            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(metadata));
+            PagedList data = await _mediator.Send(new GetPageCollectionQuery(collectionName, parameters));
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(data.MetaData));
             return Content(data.data, "application/json");
         }
 
         [HttpGet("{collectionName}/{id}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(JsonObject), (int)HttpStatusCode.OK, "application/json")]
         [ProducesResponseType(typeof(ErrorDetails), (int)HttpStatusCode.NotFound, "application/json")]
         public async Task<IActionResult> GetCollectionItem(string collectionName, string id)
             => Content(await _mediator.Send(new GetCollectionItemByIdQuery(collectionName, id)), "application/json");
