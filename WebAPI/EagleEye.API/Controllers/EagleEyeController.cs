@@ -7,7 +7,6 @@ using EagleEye.Application.RequestFeatures;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Features.Commands.CreateCollectionItem;
@@ -33,7 +32,7 @@ namespace WebAPI.EagleEye.API.Controllers
         public async Task<IActionResult> GetPagedCollectionItems(string collectionName, [FromQuery] QueryParameters parameters)
         {
             PagedList data = await _mediator.Send(new GetPageCollectionQuery(collectionName, parameters));
-            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(data.MetaData));
+            Response.Headers.Add("X-Pagination", data.MetaData.ToString());
             return Content(data.data, "application/json");
         }
 

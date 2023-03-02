@@ -45,8 +45,12 @@ namespace EagleEye.Infrastructure.Repositories
         public async Task<List<BsonDocument>> GetAllAsync(string collectionName,
                                                           QueryParameters parameters)
         {
+            var minDate = Builders<BsonDocument>.Filter.Gte("date", parameters.MinSearchDate);
+            var maxDate = Builders<BsonDocument>.Filter.Lte("date", parameters.MaxSearchDate);
+            var combineFilters = Builders<BsonDocument>.Filter.And(minDate, maxDate);
             return await _database.GetCollection<BsonDocument>(collectionName)
-                                  .Find(x => true)
+                                  .Find(combineFilters)
+                                  .SortBy(x => x["date"])
                                   .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                                   .Limit(parameters.PageSize)
                                   .ToListAsync();
