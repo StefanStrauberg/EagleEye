@@ -35,15 +35,12 @@ namespace WebAPI.EagleEye.Application.Middleware
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             var response = context.Response;
-            response.ContentType = "application/json";
 
+            response.ContentType = "application/json";
             response.StatusCode = GetStatusCode(ex);
 
-            await response.WriteAsync(new ErrorDetails() 
-                { 
-                    StatusCode = response.StatusCode,
-                    Message = ex.Message
-                }.ToString());
+            await response.WriteAsync(new ApiResponse(statusCode: response.StatusCode,
+                                                      message: ex.Message).ToString());
         }
 
         private int GetStatusCode(Exception ex)

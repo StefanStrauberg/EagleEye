@@ -1,5 +1,4 @@
-﻿using EagleEye.Application.RequestFeatures;
-using EagleEye.Infrastructure.DatabaseConfig;
+﻿using EagleEye.Infrastructure.DatabaseConfig;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -7,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.Application.Contracts.Persistence;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using WebAPI.EagleEye.Application.Models.RequestFeatures;
 
 namespace EagleEye.Infrastructure.Repositories
 {
@@ -42,18 +41,22 @@ namespace EagleEye.Infrastructure.Repositories
                               .Find(x => true)
                               .ToListAsync();
 
-        public async Task<List<BsonDocument>> GetAllAsync(string collectionName,
-                                                          QueryParameters parameters)
+        public async Task<(List<BsonDocument> items, long countOfItemsByFilter)> GetAllAsync(string collectionName,
+                                                                                             QueryParameters parameters)
         {
             var minDate = Builders<BsonDocument>.Filter.Gte("date", parameters.MinSearchDate);
             var maxDate = Builders<BsonDocument>.Filter.Lte("date", parameters.MaxSearchDate);
             var combineFilters = Builders<BsonDocument>.Filter.And(minDate, maxDate);
-            return await _database.GetCollection<BsonDocument>(collectionName)
-                                  .Find(combineFilters)
-                                  .SortBy(x => x["date"])
-                                  .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-                                  .Limit(parameters.PageSize)
-                                  .ToListAsync();
+            long countOfItems = await _database.GetCollection<BsonDocument>(collectionName)
+                                               .Find(combineFilters)
+                                               .CountDocumentsAsync();
+            var data = await _database.GetCollection<BsonDocument>(collectionName)
+                                      .Find(combineFilters)
+                                      .SortBy(x => x["date"])
+                                      .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                                      .Limit(parameters.PageSize)
+                                      .ToListAsync();
+            return (data, countOfItems);
         }
 
         public async Task<BsonDocument> GetByIdAsync(string collectionName,

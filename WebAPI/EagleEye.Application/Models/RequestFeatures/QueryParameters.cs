@@ -1,5 +1,5 @@
 using System;
-namespace EagleEye.Application.RequestFeatures
+namespace WebAPI.EagleEye.Application.Models.RequestFeatures
 {
     public class QueryParameters
     {
