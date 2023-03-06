@@ -25,8 +25,10 @@ namespace EagleEye.Infrastructure.Repositories
         {
             var objectId = new ObjectId(id);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
+
             var result = await _database.GetCollection<BsonDocument>(collectionName)
                               .DeleteOneAsync(filter);
+
             return (result.IsAcknowledged && result.DeletedCount > 0);
         }
 
@@ -41,22 +43,25 @@ namespace EagleEye.Infrastructure.Repositories
                               .Find(x => true)
                               .ToListAsync();
 
-        public async Task<(List<BsonDocument> items, long countOfItemsByFilter)> GetAllAsync(string collectionName,
-                                                                                             QueryParameters parameters)
+        public async Task<(List<BsonDocument> data , long countItemsByFilter)> GetAllAsync(string collectionName,
+                                                                                           QueryParameters parameters)
         {
             var minDate = Builders<BsonDocument>.Filter.Gte("date", parameters.MinSearchDate);
             var maxDate = Builders<BsonDocument>.Filter.Lte("date", parameters.MaxSearchDate);
             var combineFilters = Builders<BsonDocument>.Filter.And(minDate, maxDate);
-            long countOfItems = await _database.GetCollection<BsonDocument>(collectionName)
-                                               .Find(combineFilters)
-                                               .CountDocumentsAsync();
+
+            var countItemsByFilter = await _database.GetCollection<BsonDocument>(collectionName)
+                                                    .Find(combineFilters)
+                                                    .CountDocumentsAsync();
+
             var data = await _database.GetCollection<BsonDocument>(collectionName)
                                       .Find(combineFilters)
                                       .SortBy(x => x["date"])
                                       .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                                       .Limit(parameters.PageSize)
                                       .ToListAsync();
-            return (data, countOfItems);
+
+            return (data, countItemsByFilter);
         }
 
         public async Task<BsonDocument> GetByIdAsync(string collectionName,
@@ -64,6 +69,7 @@ namespace EagleEye.Infrastructure.Repositories
         {
             var objectId = new ObjectId(id);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
+
             return await _database.GetCollection<BsonDocument>(collectionName)
                                   .Find(filter)
                                   .FirstOrDefaultAsync();
@@ -75,8 +81,10 @@ namespace EagleEye.Infrastructure.Repositories
         {
             var objectId = new ObjectId(id);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
+
             var result = await _database.GetCollection<BsonDocument>(collectionName)
                                         .ReplaceOneAsync(filter, data);
+
             return (result.IsAcknowledged && result.ModifiedCount > 0);
         }
     }

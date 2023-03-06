@@ -7,26 +7,23 @@ namespace WebAPI.EagleEye.Application.Models.RequestFeatures
         private int _currentPage;
         private int _totalPages;
         private int _pageSize;
-        private int _totalCount;
-        private long _countOfItemsByFilter;
+        private long _totalCount;
+
         public MetaData(int CurrentPage,
                         int TotalPages,
                         int PageSize,
-                        int TotalCount,
-                        long CountOfItemsByFilter)
+                        long TotalCount)
         {
             _currentPage = CurrentPage;
             _totalPages = TotalPages;
             _pageSize = PageSize;
             _totalCount = TotalCount;
-            _countOfItemsByFilter = CountOfItemsByFilter;
         }
 
         public int CurrentPage { get => _currentPage; }
         public int TotalPages { get => _totalPages; }
         public int PageSize { get => _pageSize; }
-        public int TotalCount { get => _totalCount; }
-        public long CountOfItemsByFilter { get => _countOfItemsByFilter; }
+        public long TotalCount { get => _totalCount; }
         public bool HasPrevious => CurrentPage > 1;
         public bool HasNext => CurrentPage < TotalPages;
 

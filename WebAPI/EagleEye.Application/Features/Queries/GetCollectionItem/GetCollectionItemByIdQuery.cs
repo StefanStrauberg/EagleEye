@@ -1,5 +1,4 @@
 using MediatR;
-using MongoDB.Bson;
 
 namespace WebAPI.EagleEye.Application.Features.Queries.GetCollectionItem
 {

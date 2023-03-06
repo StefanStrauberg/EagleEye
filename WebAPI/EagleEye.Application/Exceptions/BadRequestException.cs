@@ -1,5 +1,3 @@
-using System;
-
 namespace WebAPI.EagleEye.Application.Exceptions
 {
     public class BadRequestException : ApiException

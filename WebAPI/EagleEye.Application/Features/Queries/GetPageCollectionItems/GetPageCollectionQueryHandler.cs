@@ -17,10 +17,9 @@ namespace EagleEye.Application.Features.Queries.GetPageCollectionItems
 
         public async Task<PagedList> Handle(GetPageCollectionQuery request, CancellationToken cancellationToken)
         {
-            var data = await _repository.GetAllAsync(request.CollectionName, request.Parameters);
-            return new PagedList(jsonString: JsonHelper.Correction(data.ToJson()),
-                                 countGetItems: data.items.Count,
-                                 countOfItemsByFilter: data.countOfItemsByFilter,
+            var result = await _repository.GetAllAsync(request.CollectionName, request.Parameters);
+            return new PagedList(jsonString: JsonHelper.Correction(result.data.ToJson()),
+                                 countGetItems: result.countItemsByFilter,
                                  pageNumber: request.Parameters.PageNumber,
                                  pageSize: request.Parameters.PageSize);
         }

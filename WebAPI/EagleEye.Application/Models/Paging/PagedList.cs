@@ -7,10 +7,9 @@ namespace WebAPI.EagleEye.Application.Models.Paging
     {
         public MetaData MetaData { get; }
         public string data { get; }
-        public PagedList(string jsonString, int countGetItems, long countOfItemsByFilter, int pageNumber, int pageSize)
+        public PagedList(string jsonString, long countGetItems, int pageNumber, int pageSize)
         {
             MetaData = new MetaData(TotalCount: countGetItems,
-                                    CountOfItemsByFilter: countOfItemsByFilter,
                                     PageSize: pageSize,
                                     CurrentPage: pageNumber,
                                     TotalPages: (int)Math.Ceiling(countGetItems / (double)pageSize));

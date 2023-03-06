@@ -22,19 +22,19 @@ namespace WebAPI.EagleEye.API.Controllers
         public EagleEyeController(IMediator mediator)
             => _mediator = mediator;
 
-        [HttpGet("{collectionName}")]
-        [ProducesResponseType(typeof(JsonObject), (int)HttpStatusCode.OK, "application/json")]
-        public async Task<IActionResult> GetAllCollectionItems(string collectionName)
-            => Content(await _mediator.Send(new GetCollectionQuery(collectionName)), "application/json");
-
         [HttpGet("paged/{collectionName}")]
         [ProducesResponseType(typeof(JsonObject), (int)HttpStatusCode.OK, "application/json")]
         public async Task<IActionResult> GetPagedCollectionItems(string collectionName, [FromQuery] QueryParameters parameters)
         {
-            PagedList data = await _mediator.Send(new GetPageCollectionQuery(collectionName, parameters));
-            Response.Headers.Add("X-Pagination", data.MetaData.ToString());
-            return Content(data.data, "application/json");
+            PagedList result = await _mediator.Send(new GetPageCollectionQuery(collectionName, parameters));
+            Response.Headers.Add("X-Pagination", result.MetaData.ToString());
+            return Content(result.data, "application/json");
         }
+
+        [HttpGet("{collectionName}")]
+        [ProducesResponseType(typeof(JsonObject), (int)HttpStatusCode.OK, "application/json")]
+        public async Task<IActionResult> GetAllCollectionItems(string collectionName)
+            => Content(await _mediator.Send(new GetCollectionQuery(collectionName)), "application/json");
 
         [HttpGet("{collectionName}/{id}")]
         [ProducesResponseType(typeof(JsonObject), (int)HttpStatusCode.OK, "application/json")]
