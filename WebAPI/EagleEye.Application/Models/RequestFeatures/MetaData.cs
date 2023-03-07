@@ -24,8 +24,8 @@ namespace WebAPI.EagleEye.Application.Models.RequestFeatures
         public int TotalPages { get => _totalPages; }
         public int PageSize { get => _pageSize; }
         public long TotalCount { get => _totalCount; }
-        public bool HasPrevious => CurrentPage > 1;
-        public bool HasNext => CurrentPage < TotalPages;
+        public bool HasPrevious => _currentPage > 1;
+        public bool HasNext => _currentPage < _totalPages;
 
         public override string ToString()
             => JsonSerializer.Serialize(this);

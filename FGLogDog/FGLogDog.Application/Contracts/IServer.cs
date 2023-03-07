@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace FGLogDog.FGLogDog.Application.Services
+namespace FGLogDog.Application.Contracts
 {
     public interface IServer : IDisposable
     {

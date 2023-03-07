@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FGLogDog.Application\FGLogDog.Application.csproj" />
+    <ProjectReference Include="..\Services\FGLogDog.TCP.Receiver\FGLogDog.TCP.Receiver.csproj" />
+    <ProjectReference Include="..\Services\FGLogDog.UDP.Receiver\FGLogDog.UDP.Receiver.csproj" />
   </ItemGroup>
 
   <ItemGroup>

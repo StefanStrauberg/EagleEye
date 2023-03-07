@@ -1,7 +1,9 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using FGLogDog.Application;
-using FGLogDog.FGLogDog.Application.Services;
+using FGLogDog.Application.Contracts;
+using FGLogDog.TCP.Receiver;
+using FGLogDog.UDP.Receiver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +25,9 @@ namespace FGLogDog.Terminal
             var serviceCollection = new ServiceCollection();
                 serviceCollection.AddSingleton<IConfiguration>(configuration);
                 serviceCollection.AddApplicationServices();
-            
+                serviceCollection.AddUDPReciverServices();
+                serviceCollection.AddTCPReciverServices();
+
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
             // Startup Server

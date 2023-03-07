@@ -6,7 +6,7 @@ namespace WebAPI.EagleEye.Application.Models.RequestFeatures
     {
         private const int maxPageSize = 100;
         private const int defPageNumber = 1;
-        private static DateTime _defSearchDate = DateTime.Now;
+        private static DateTime _defDate = DateTime.Now;
 
         private int _pageNumber;
         public int PageNumber 
@@ -22,23 +22,23 @@ namespace WebAPI.EagleEye.Application.Models.RequestFeatures
             set => _pageSize = (value > maxPageSize) ? maxPageSize : value; 
         }
         
-        private DateTime _minSearchDate = _defSearchDate;
+        private DateTime _minSearchDate = _defDate;
         public DateTime MinSearchDate 
         { 
             get => _minSearchDate;
-            set => _minSearchDate = (value > _maxSearchDate) ? new DateTime(_defSearchDate.Year,
-                                                                            _defSearchDate.Month,
-                                                                            _defSearchDate.Day,
+            set => _minSearchDate = (value > _maxSearchDate) ? new DateTime(_defDate.Year,
+                                                                            _defDate.Month,
+                                                                            _defDate.Day,
                                                                             0,
                                                                             0,
                                                                             0) : value;
         }
         
-        private DateTime _maxSearchDate = _defSearchDate;
+        private DateTime _maxSearchDate = _defDate;
         public DateTime MaxSearchDate 
         { 
             get => _maxSearchDate; 
-            set => _maxSearchDate = (value > _defSearchDate && value < _minSearchDate) ? _defSearchDate : value;
+            set => _maxSearchDate = (value > _defDate && value < _minSearchDate) ? _defDate : value;
         }
     }
 }
