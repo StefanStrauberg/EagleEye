@@ -2,13 +2,14 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using FGLogDog.Application.Contracts;
+using FGLogDog.Application.Features.Commands;
 using FGLogDog.Application.Helper;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 
 namespace FGLogDog.FGLogDog.Application.Services
 {
-    public class Server : IServer
+    internal class Server : IServer
     {
         private readonly IConfiguration _configuration;
         private readonly IMediator _mediator;
@@ -39,15 +40,18 @@ namespace FGLogDog.FGLogDog.Application.Services
             switch (_typeOfServer)
             {
                 case "udp":
-                    await _udpServer.Start(_localIPAddress, _localPort, _mediator);
+                    await _udpServer.Start(_localIPAddress, _localPort, Parser);
                     break;
                 case "tcp":
-                    await _tcpServer.Start(_localIPAddress, _localPort, _mediator);
+                    await _tcpServer.Start(_localIPAddress, _localPort, Parser);
                     break;
                 default:
                 throw new ArgumentException("Invalid incomming type of protocol: {0}.", _typeOfServer);
             }
         }
+
+        private async Task Parser(string message)
+            => await _mediator.Send(new ParseLogCommand(message.ToString()));
 
         void IDisposable.Dispose()
             => GC.SuppressFinalize(this);

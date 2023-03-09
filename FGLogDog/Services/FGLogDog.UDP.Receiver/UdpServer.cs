@@ -1,6 +1,5 @@
 using FGLogDog.Application.Contracts;
-using FGLogDog.Application.Features.Commands;
-using MediatR;
+using FGLogDog.FGLogDog.Application.Helper;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
@@ -17,7 +16,7 @@ namespace FGLogDog.UDP.Receiver
         public UdpServer(ILogger<UdpServer> logger)
             => _logger = logger;
 
-        public async Task Start(IPAddress ipAddress, int port, IMediator mediator)
+        public async Task Start(IPAddress ipAddress, int port, ParserDelegate parse)
         {
             IPEndPoint ipPoint = new IPEndPoint(ipAddress, port);
             UdpClient udpClient = new UdpClient(ipPoint);
@@ -31,7 +30,7 @@ namespace FGLogDog.UDP.Receiver
                 {
                     byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
                     string message = Encoding.UTF8.GetString(receiveBytes);
-                    await mediator.Send(new ParseLogCommand(message.ToString()));
+                    await parse(message);
                 }
             }
             catch (Exception ex)

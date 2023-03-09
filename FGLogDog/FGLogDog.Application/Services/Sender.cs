@@ -1,7 +1,13 @@
+using System.Threading.Tasks;
+using FGLogDog.Application.Contracts;
+
 namespace FGLogDog.Application.Services
 {
-    public class Sender
+    internal class Sender : ISender
     {
-        
+        public Task StartSender(string message)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

@@ -1,6 +1,5 @@
 using FGLogDog.Application.Contracts;
-using FGLogDog.Application.Features.Commands;
-using MediatR;
+using FGLogDog.FGLogDog.Application.Helper;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
@@ -17,7 +16,7 @@ namespace FGLogDog.TCP.Receiver
         public TcpServer(ILogger<TcpServer> logger)
             => _logger = logger;
 
-        public async Task Start(IPAddress ipAddress, int port, IMediator mediator)
+        public async Task Start(IPAddress ipAddress, int port, ParserDelegate parse)
         {
             IPEndPoint ipPoint = new IPEndPoint(ipAddress, port);
             TcpListener tcpListener = new TcpListener(ipPoint);
@@ -38,7 +37,7 @@ namespace FGLogDog.TCP.Receiver
                     {
                         bytes = await stream.ReadAsync(responseData);
                         response.Append(Encoding.UTF8.GetString(responseData, 0, bytes));
-                        await mediator.Send(new ParseLogCommand(response.ToString()));
+                        await parse(response.ToString());
                     }
                     while(bytes > 0);
 

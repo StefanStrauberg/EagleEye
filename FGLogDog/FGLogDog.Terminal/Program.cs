@@ -24,8 +24,11 @@ namespace FGLogDog.Terminal
             // Setup DI
             var serviceCollection = new ServiceCollection();
                 serviceCollection.AddSingleton<IConfiguration>(configuration);
+                // Add Main Application
                 serviceCollection.AddApplicationServices();
+                // Inject UDP Server
                 serviceCollection.AddUDPReciverServices();
+                // Inject TCP Server
                 serviceCollection.AddTCPReciverServices();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();

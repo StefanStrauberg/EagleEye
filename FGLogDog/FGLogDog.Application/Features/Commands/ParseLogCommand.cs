@@ -2,5 +2,5 @@ using MediatR;
 
 namespace FGLogDog.Application.Features.Commands
 {
-    public record ParseLogCommand(string inputLog) : IRequest<Unit>;
+    internal record ParseLogCommand(string inputLog) : IRequest<Unit>;
 }
