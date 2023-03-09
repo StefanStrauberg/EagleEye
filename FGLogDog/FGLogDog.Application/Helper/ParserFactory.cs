@@ -1,11 +1,11 @@
-using System.Text;
-using System.Linq;
-using System;
-using System.Text.RegularExpressions;
-using System.Net;
-using System.Text.Json.Nodes;
-using FGLogDog.FGLogDog.Application.Helper;
 using FGLogDog.Application.Models;
+using FGLogDog.FGLogDog.Application.Helper;
+using System;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace FGLogDog.Application.Helper
 {
@@ -45,6 +45,7 @@ namespace FGLogDog.Application.Helper
             {
                 ParserTypes.DATE => () => 
                 {
+                    if (string.IsNullOrWhiteSpace(inputString)) return null;
                     var matches = Regex.Matches(inputString, _date);
                     if (matches.Count > 0)
                         if (DateOnly.TryParse(matches.First().Value, out var data))
@@ -53,6 +54,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.TIME => () => 
                 {
+                    if (string.IsNullOrWhiteSpace(inputString)) return null;
                     var matches = Regex.Matches(inputString, _time);
                     if (matches.Count > 0)
                         if (TimeOnly.TryParse(matches.First().Value, out var data))
@@ -61,6 +63,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.INT => () => 
                 {
+                    if (string.IsNullOrWhiteSpace(inputString)) return null;
                     var matches = Regex.Matches(inputString, _int);
                     if (matches.Count > 0)
                         if (Int32.TryParse(matches.First().Value, out var data))
@@ -69,6 +72,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.GUID => () => 
                 {
+                    if (string.IsNullOrWhiteSpace(inputString)) return null;
                     var matches = Regex.Matches(inputString, _guid);
                     if (matches.Count > 0)
                         if (Guid.TryParse(matches.First().Value, out var data))
@@ -77,6 +81,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.MAC => () => 
                 {
+                    if (string.IsNullOrWhiteSpace(inputString)) return null;
                     var matches = Regex.Matches(inputString, _mac);
                     if (matches.Count > 0)
                         return matches.First().Value;
@@ -84,6 +89,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.IP => () => 
                 {
+                    if (string.IsNullOrWhiteSpace(inputString)) return null;
                     var matches = Regex.Matches(inputString, _ip);
                     if (matches.Count > 0)
                         if (IPAddress.TryParse(matches.First().Value, out var data))
@@ -92,6 +98,7 @@ namespace FGLogDog.Application.Helper
                 },
                 ParserTypes.STRING => () => 
                 {
+                    if (string.IsNullOrWhiteSpace(inputString)) return null;
                     var matches = Regex.Matches(inputString, _string);
                     if (matches.Count > 0)
                         return matches[2].Value;
@@ -112,13 +119,13 @@ namespace FGLogDog.Application.Helper
         private static string GetSTRINGFromSubString(string inputSubString, ParserTypes typeOfParse)
             => ParserFactory.GetMatch(inputSubString, ParserFactory.GetPattern(typeOfParse));
 
-        internal static int SearchSubstringINT(string inputSubString, string startWith)
+        internal static int GetINT(string inputSubString, string startWith)
             => Int32.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), ParserTypes.INT));
 
-        internal static IPAddress SearchSubStringIP(string inputSubString, string startWith)
+        internal static IPAddress GetIP(string inputSubString, string startWith)
             => IPAddress.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), ParserTypes.IP));
 
-        internal static string SearchSubStringSTRING(string inputSubString, string startWith)
+        internal static string GetSTRING(string inputSubString, string startWith)
             => GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith).Split('=')[1], ParserTypes.STRING).Replace(";", string.Empty);
 
         internal static string[] ReplaceReadablePatterns(string filters)
@@ -173,12 +180,19 @@ namespace FGLogDog.Application.Helper
 
             for (int i = 0; i < filters.Patterns.Length; i++)
             {
-                Func<object> getValue = GetObjectByPattern(GetMatch(message, filters.Patterns[i]),
-                                                           Enum.Parse<ParserTypes>(filters.FilterPatterns[i]));
-                output.Add(filters.FilterKeys[i], JsonValue.Create(getValue.Invoke()));
+                object value = GetObjectByPattern(GetMatch(message, filters.Patterns[i]),
+                                                  Enum.Parse<ParserTypes>(filters.FilterPatterns[i])).Invoke();
+                
+                if (value is null)
+                    continue;
+
+                output.Add(filters.FilterKeys[i], JsonValue.Create(value));
             }
 
-            return output;
+            if (output.Count > 0)
+                return output;
+
+            return null;
         }
     }
 }

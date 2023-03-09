@@ -21,7 +21,8 @@ namespace FGLogDog.Application.Features.Handlers
         {
             JsonObject outputObject = ParserFactory.GetJsonFromMessage(request.inputLog, _filters);
 
-            Console.WriteLine(outputObject);
+            if (outputObject is not null)
+                Console.WriteLine(outputObject);
 
             return await Task.FromResult(Unit.Value);
         }

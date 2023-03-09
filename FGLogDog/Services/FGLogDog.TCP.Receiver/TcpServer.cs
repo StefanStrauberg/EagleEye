@@ -1,5 +1,5 @@
 using FGLogDog.Application.Contracts;
-using FGLogDog.FGLogDog.Application.Helper;
+using FGLogDog.Application.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
@@ -16,15 +16,15 @@ namespace FGLogDog.TCP.Receiver
         public TcpServer(ILogger<TcpServer> logger)
             => _logger = logger;
 
-        public async Task Start(IPAddress ipAddress, int port, ParserDelegate parse)
+        public async Task Run(TcpUdpReciverParams parameters)
         {
-            IPEndPoint ipPoint = new IPEndPoint(ipAddress, port);
+            IPEndPoint ipPoint = new IPEndPoint(parameters.ipAddress, parameters.port);
             TcpListener tcpListener = new TcpListener(ipPoint);
 
             try
             {
                 tcpListener.Start();
-                _logger.LogInformation($"{DateTime.Now} LogDog started TCP server on {ipAddress}:{port}");
+                _logger.LogInformation($"{DateTime.Now} LogDog started TCP server on {parameters.ipAddress}:{parameters.port}");
 
                 while (true)
                 {
@@ -37,7 +37,7 @@ namespace FGLogDog.TCP.Receiver
                     {
                         bytes = await stream.ReadAsync(responseData);
                         response.Append(Encoding.UTF8.GetString(responseData, 0, bytes));
-                        await parse(response.ToString());
+                        await parameters.parse(response.ToString());
                     }
                     while(bytes > 0);
 

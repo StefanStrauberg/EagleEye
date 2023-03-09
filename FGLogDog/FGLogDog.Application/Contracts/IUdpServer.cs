@@ -1,12 +1,8 @@
-using System;
-using System.Net;
-using System.Threading.Tasks;
-using FGLogDog.FGLogDog.Application.Helper;
+using FGLogDog.Application.Models;
 
 namespace FGLogDog.Application.Contracts
 {
-    public interface IUdpServer : IDisposable
+    public interface IUdpServer : IReciver<TcpUdpReciverParams>
     {
-        Task Start(IPAddress iPAddress, int port, ParserDelegate parse);
     }
 }

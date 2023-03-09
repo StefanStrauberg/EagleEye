@@ -1,5 +1,5 @@
 using FGLogDog.Application.Contracts;
-using FGLogDog.FGLogDog.Application.Helper;
+using FGLogDog.Application.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
@@ -16,13 +16,13 @@ namespace FGLogDog.UDP.Receiver
         public UdpServer(ILogger<UdpServer> logger)
             => _logger = logger;
 
-        public async Task Start(IPAddress ipAddress, int port, ParserDelegate parse)
+        public async Task Run(TcpUdpReciverParams parameters)
         {
-            IPEndPoint ipPoint = new IPEndPoint(ipAddress, port);
+            IPEndPoint ipPoint = new IPEndPoint(parameters.ipAddress, parameters.port);
             UdpClient udpClient = new UdpClient(ipPoint);
             IPEndPoint RemoteIpEndPoint = null;
             
-            _logger.LogInformation($"{DateTime.Now} LogDog started UDP server on {ipAddress}:{port}");
+            _logger.LogInformation($"{DateTime.Now} LogDog started UDP server on {parameters.ipAddress}:{parameters.port}");
 
             try
             {
@@ -30,7 +30,7 @@ namespace FGLogDog.UDP.Receiver
                 {
                     byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
                     string message = Encoding.UTF8.GetString(receiveBytes);
-                    await parse(message);
+                    await parameters.parse(message);
                 }
             }
             catch (Exception ex)
