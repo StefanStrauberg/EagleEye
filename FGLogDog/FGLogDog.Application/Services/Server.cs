@@ -29,28 +29,23 @@ namespace FGLogDog.FGLogDog.Application.Services
 
         public async Task StartServer()
         {
-            var typeOfServer = ParserFactory.GetSTRING(_input, "protocol=");
+            var typeOfServer = Enum.Parse<TypeOfReciver>(ParserFactory.GetSTRING(_input, "protocol="));
 
             switch (typeOfServer)
             {
-                case "udp":
-                    await ServerRun(_udpServer, _input);
+                case TypeOfReciver.udp:
+                    await ServerRun(_udpServer);
                     break;
-                case "tcp":
-                    await ServerRun(_tcpServer, _input);
+                case TypeOfReciver.tcp:
+                    await ServerRun(_tcpServer);
                     break;
                 default:
                 throw new ArgumentException($"Invalid incomming type of protocol: {typeOfServer}.");
             }
         }
 
-        private async Task ServerRun<T>(T server, string configuration) where T : IReciver<TcpUdpReciverParams>
-            => await server.Run(new TcpUdpReciverParams()
-            {
-                ipAddress = ParserFactory.GetIP(configuration, "srcip="),
-                port = ParserFactory.GetINT(configuration, "srcport="),
-                parse = Parser
-            });
+        private async Task ServerRun<T>(T server) where T : IReciver<TcpUdpReciverParams>
+            => await server.Run(new TcpUdpReciverParams(_input, Parser));
 
         private async Task Parser(string message)
             => await _mediator.Send(new ParseLogCommand(message.ToString()));

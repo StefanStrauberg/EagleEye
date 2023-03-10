@@ -1,11 +1,11 @@
+using FGLogDog.Application.Features.Commands;
+using FGLogDog.Application.Helper;
+using FGLogDog.FGLogDog.Application.Helper;
+using MediatR;
+using System;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using FGLogDog.Application.Helper;
-using MediatR;
-using FGLogDog.FGLogDog.Application.Helper;
-using System.Text.Json.Nodes;
-using System;
-using FGLogDog.Application.Features.Commands;
 
 namespace FGLogDog.Application.Features.Handlers
 {

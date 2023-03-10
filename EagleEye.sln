@@ -17,15 +17,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EagleEye.Application", "Web
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EagleEye.Infrastructure", "WebAPI\EagleEye.Infrastructure\EagleEye.Infrastructure.csproj", "{4442FD8E-6E6A-4B83-8DAE-3983DEBB96A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleEye.Logging", "WebAPI\EagleEye.Logging\EagleEye.Logging.csproj", "{6042E45F-3EBA-4363-8F6B-F09760765E93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EagleEye.Logging", "WebAPI\EagleEye.Logging\EagleEye.Logging.csproj", "{6042E45F-3EBA-4363-8F6B-F09760765E93}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{CBE5FA94-2D57-4675-98E1-40349B33087A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.File.Receiver", "FGLogDog\Services\FGLogDog.File.Receiver\FGLogDog.File.Receiver.csproj", "{8E575F70-B797-49D5-84D6-EC5D057C8734}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FGLogDog.File.Receiver", "FGLogDog\Services\FGLogDog.File.Receiver\FGLogDog.File.Receiver.csproj", "{8E575F70-B797-49D5-84D6-EC5D057C8734}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.TCP.Receiver", "FGLogDog\Services\FGLogDog.TCP.Receiver\FGLogDog.TCP.Receiver.csproj", "{E4B5C330-8EAF-4A04-BD85-0138D372DDD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FGLogDog.TCP.Receiver", "FGLogDog\Services\FGLogDog.TCP.Receiver\FGLogDog.TCP.Receiver.csproj", "{E4B5C330-8EAF-4A04-BD85-0138D372DDD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.UDP.Receiver", "FGLogDog\Services\FGLogDog.UDP.Receiver\FGLogDog.UDP.Receiver.csproj", "{E8562790-CD66-41FC-BDEA-CE8D8CD942B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FGLogDog.UDP.Receiver", "FGLogDog\Services\FGLogDog.UDP.Receiver\FGLogDog.UDP.Receiver.csproj", "{E8562790-CD66-41FC-BDEA-CE8D8CD942B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Console.Producer", "FGLogDog\Services\FGLogDog.Console.Producer\FGLogDog.Console.Producer.csproj", "{91E66D9D-5774-4674-BF43-6FD6FB2EF905}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{E8562790-CD66-41FC-BDEA-CE8D8CD942B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8562790-CD66-41FC-BDEA-CE8D8CD942B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8562790-CD66-41FC-BDEA-CE8D8CD942B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91E66D9D-5774-4674-BF43-6FD6FB2EF905}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91E66D9D-5774-4674-BF43-6FD6FB2EF905}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91E66D9D-5774-4674-BF43-6FD6FB2EF905}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91E66D9D-5774-4674-BF43-6FD6FB2EF905}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{8E575F70-B797-49D5-84D6-EC5D057C8734} = {CBE5FA94-2D57-4675-98E1-40349B33087A}
 		{E4B5C330-8EAF-4A04-BD85-0138D372DDD1} = {CBE5FA94-2D57-4675-98E1-40349B33087A}
 		{E8562790-CD66-41FC-BDEA-CE8D8CD942B4} = {CBE5FA94-2D57-4675-98E1-40349B33087A}
+		{91E66D9D-5774-4674-BF43-6FD6FB2EF905} = {CBE5FA94-2D57-4675-98E1-40349B33087A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8B69E4DE-AF8B-48B6-A829-F730C97AC439}
