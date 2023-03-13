@@ -23,7 +23,10 @@ namespace FGLogDog.Application.Features.Handlers
             JsonObject outputObject = ParserFactory.GetJsonFromMessage(request.inputLog, _filters);
 
             if (outputObject is not null)
-                Buffer.buffer.TryAdd(outputObject);
+            {
+                while(!Buffer.buffer.TryAdd(outputObject))
+                {}
+            }
 
             return await Task.FromResult(Unit.Value);
         }
