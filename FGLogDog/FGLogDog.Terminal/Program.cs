@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using FGLogDog.Application;
 using FGLogDog.Application.Contracts;
-using FGLogDog.TCP.Receiver;
+using FGLogDog.Console.Producer;
 using FGLogDog.UDP.Receiver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,10 +26,11 @@ namespace FGLogDog.Terminal
                 serviceCollection.AddSingleton<IConfiguration>(configuration);
                 // Add Main Application
                 serviceCollection.AddApplicationServices();
-                // Inject UDP Server
+                // Inject UDP Reciver
                 serviceCollection.AddUDPReciverServices();
-                // Inject TCP Server
-                serviceCollection.AddTCPReciverServices();
+                // Inject Console Producer
+                serviceCollection.AddConsoleProducerServices();
+
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
@@ -38,6 +39,9 @@ namespace FGLogDog.Terminal
             {
                 await service.StartServer();
             }
+
+            // Delay
+            System.Console.ReadKey();
         }
     }
 }

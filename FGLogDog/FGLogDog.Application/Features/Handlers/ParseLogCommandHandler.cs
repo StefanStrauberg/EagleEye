@@ -1,11 +1,12 @@
+using System;
 using FGLogDog.Application.Features.Commands;
 using FGLogDog.Application.Helper;
 using FGLogDog.FGLogDog.Application.Helper;
 using MediatR;
-using System;
 using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
+using Buffer = FGLogDog.Application.Models.Buffer;
 
 namespace FGLogDog.Application.Features.Handlers
 {
@@ -22,7 +23,7 @@ namespace FGLogDog.Application.Features.Handlers
             JsonObject outputObject = ParserFactory.GetJsonFromMessage(request.inputLog, _filters);
 
             if (outputObject is not null)
-                Console.WriteLine(outputObject);
+                Buffer.buffer.TryAdd(outputObject);
 
             return await Task.FromResult(Unit.Value);
         }

@@ -1,7 +1,7 @@
 namespace FGLogDog.Application.Models
 {
-    internal enum TypeOfReciver
+    internal enum TypeOfProducer
     {
-        udp
+        console
     }
 }

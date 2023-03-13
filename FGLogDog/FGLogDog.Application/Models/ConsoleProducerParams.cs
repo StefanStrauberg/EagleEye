@@ -2,10 +2,10 @@
 
 namespace FGLogDog.Application.Models
 {
-    public class ConsoleProducerParams : Parameters
+    public class ConsoleProducerParams : ProducerParameters
     {
-        public ConsoleProducerParams(ParserDelegate parser)
-            : base(parser)
+        public ConsoleProducerParams(ProducerDelegate producer)
+            : base(producer)
         {
         }
     }

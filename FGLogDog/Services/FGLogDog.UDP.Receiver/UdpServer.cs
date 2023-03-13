@@ -22,7 +22,7 @@ namespace FGLogDog.UDP.Receiver
             UdpClient udpClient = new UdpClient(ipPoint);
             IPEndPoint RemoteIpEndPoint = null;
             
-            _logger.LogInformation($"{DateTime.Now} LogDog started UDP server on {parameters.ipAddress}:{parameters.port}");
+            _logger.LogInformation($"{DateTime.Now} LogDog started UDP reciver on {parameters.ipAddress}:{parameters.port}");
 
             try
             {
@@ -35,7 +35,7 @@ namespace FGLogDog.UDP.Receiver
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{DateTime.Now} LogDog server stoped.\n{ex.Message}");
+                _logger.LogError($"{DateTime.Now} LogDog reciver stoped.\n{ex.Message}");
             }
         }
 

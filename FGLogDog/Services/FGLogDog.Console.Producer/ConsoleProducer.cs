@@ -13,9 +13,21 @@ namespace FGLogDog.Console.Producer
         public ConsoleProducer(ILogger<ConsoleProducer> logger)
             => _logger = logger;
 
-        public Task Run(ConsoleProducerParams parameters)
+        public async Task Run(ConsoleProducerParams parameters)
         {
-            throw new System.NotImplementedException();
+            _logger.LogInformation($"{DateTime.Now} LogDog started Console producer");
+            try
+            {
+                while (true)
+                {
+                    var message = await parameters.getMessage();
+                    System.Console.WriteLine(message);
+                } 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{DateTime.Now} LogDog producer stoped.\n{ex.Message}");
+            }
         }
 
         void IDisposable.Dispose()

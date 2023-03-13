@@ -4,7 +4,7 @@ using FGLogDog.FGLogDog.Application.Helper;
 
 namespace FGLogDog.Application.Models
 {
-    public class TcpUdpReciverParams : Parameters
+    public class TcpUdpReciverParams : ReciverParameters
     {
         private readonly IPAddress _ipAddress;
         private readonly int _port;
