@@ -10,7 +10,7 @@ namespace WebAPI.EagleEye.Application.Features.Commands.CreateCollectionItem
 {
     internal class CreateCollectionItemCommandHandler : IRequestHandler<CreateCollectionItemCommand, Unit>
     {
-        private readonly ICollectionRepository  _repository;
+        readonly ICollectionRepository  _repository;
 
         public CreateCollectionItemCommandHandler(ICollectionRepository repository)
             => _repository = repository;

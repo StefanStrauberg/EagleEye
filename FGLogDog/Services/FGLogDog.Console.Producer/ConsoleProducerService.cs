@@ -1,4 +1,4 @@
-﻿using FGLogDog.Application.Contracts;
+﻿using FGLogDog.Application.Contracts.Producer;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FGLogDog.Console.Producer

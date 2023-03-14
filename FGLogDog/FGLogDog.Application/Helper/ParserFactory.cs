@@ -1,5 +1,6 @@
 using FGLogDog.Application.Models;
 using FGLogDog.FGLogDog.Application.Helper;
+using MongoDB.Bson;
 using System;
 using System.Linq;
 using System.Net;
@@ -11,15 +12,15 @@ namespace FGLogDog.Application.Helper
 {
     internal static class ParserFactory
     {
-        private const string _int = @"(\d+)";
-        private const string _time = @"([0-1]?\d|2[0-3])(?::([0-5]?\d))?(?::([0-5]?\d))";
-        private const string _date = @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))"; 
-        private const string _string = @"([^""\\]*(?:\\.[^""\\]*)*)";
-        private const string _guid = @"([({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?)";
-        private const string _mac = @"(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2})";
-        private const string _ip = @"(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
+        const string _int = @"(\d+)";
+        const string _time = @"([0-1]?\d|2[0-3])(?::([0-5]?\d))?(?::([0-5]?\d))";
+        const string _date = @"([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))"; 
+        const string _string = @"([^""\\]*(?:\\.[^""\\]*)*)";
+        const string _guid = @"([({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?)";
+        const string _mac = @"(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2})";
+        const string _ip = @"(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
 
-        private static string GetPattern(ParserTypes type)
+        static string GetPattern(ParserTypes type)
             => type switch
             {
                 ParserTypes.INT => _int,
@@ -32,7 +33,7 @@ namespace FGLogDog.Application.Helper
                 _ => throw new ArgumentException("Invalid incoming data of ParserTypes.")
             };
         
-        private static string GetMatch(string input, string pattern)
+        static string GetMatch(string input, string pattern)
         {
             var matches = Regex.Matches(input, pattern);
             if (matches.Count > 0)
@@ -40,74 +41,81 @@ namespace FGLogDog.Application.Helper
             return null;
         }
 
-        private static Func<object> GetObjectByPattern(string inputString, ParserTypes pattern)
-            => pattern switch
-            {
-                ParserTypes.DATE => () => 
-                {
-                    if (string.IsNullOrWhiteSpace(inputString)) return null;
-                    var matches = Regex.Matches(inputString, _date);
-                    if (matches.Count > 0)
-                        if (DateOnly.TryParse(matches.First().Value, out var data))
-                            return data;
-                    return DateOnly.MinValue;
-                },
-                ParserTypes.TIME => () => 
-                {
-                    if (string.IsNullOrWhiteSpace(inputString)) return null;
-                    var matches = Regex.Matches(inputString, _time);
-                    if (matches.Count > 0)
-                        if (TimeOnly.TryParse(matches.First().Value, out var data))
-                            return data;
-                    return TimeOnly.MinValue;
-                },
-                ParserTypes.INT => () => 
-                {
-                    if (string.IsNullOrWhiteSpace(inputString)) return null;
-                    var matches = Regex.Matches(inputString, _int);
-                    if (matches.Count > 0)
-                        if (Int32.TryParse(matches.First().Value, out var data))
-                            return data;
-                    return 0;
-                },
-                ParserTypes.GUID => () => 
-                {
-                    if (string.IsNullOrWhiteSpace(inputString)) return null;
-                    var matches = Regex.Matches(inputString, _guid);
-                    if (matches.Count > 0)
-                        if (Guid.TryParse(matches.First().Value, out var data))
-                            return data;
-                    return Guid.Empty;
-                },
-                ParserTypes.MAC => () => 
-                {
-                    if (string.IsNullOrWhiteSpace(inputString)) return null;
-                    var matches = Regex.Matches(inputString, _mac);
-                    if (matches.Count > 0)
-                        return matches.First().Value;
-                    return null;
-                },
-                ParserTypes.IP => () => 
-                {
-                    if (string.IsNullOrWhiteSpace(inputString)) return null;
-                    var matches = Regex.Matches(inputString, _ip);
-                    if (matches.Count > 0)
-                        if (IPAddress.TryParse(matches.First().Value, out var data))
-                            return data.ToString();
-                    return null;
-                },
-                ParserTypes.STRING => () => 
-                {
-                    if (string.IsNullOrWhiteSpace(inputString)) return null;
-                    var matches = Regex.Matches(inputString, _string);
-                    if (matches.Count > 0)
-                        return matches[2].Value;
-                    return null;
-                },
-                _ => throw new ArgumentException("Invalid incoming data of ParserTypes.")
-            };
+        //static Func<TResult> GetObjectByPattern<TResult>(string inputString, ParserTypes pattern)
+        //    => pattern switch
+        //    {
+        //        ParserTypes.DATE => () =>
+        //        {
+        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
+        //            var matches = Regex.Matches(inputString, _date);
+        //            if (matches.Count > 0)
+        //                if (DateOnly.TryParse(matches.First().Value, out var data))
+        //                    return data;
+        //            return DateOnly.MinValue;
+        //        }
+        //        ,
+        //        ParserTypes.TIME => () =>
+        //        {
+        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
+        //            var matches = Regex.Matches(inputString, _time);
+        //            if (matches.Count > 0)
+        //                if (TimeOnly.TryParse(matches.First().Value, out var data))
+        //                    return data;
+        //            return TimeOnly.MinValue;
+        //        }
+        //        ,
+        //        ParserTypes.INT => () =>
+        //        {
+        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
+        //            var matches = Regex.Matches(inputString, _int);
+        //            if (matches.Count > 0)
+        //                if (Int32.TryParse(matches.First().Value, out var data))
+        //                    return data;
+        //            return 0;
+        //        }
+        //        ,
+        //        ParserTypes.GUID => () =>
+        //        {
+        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
+        //            var matches = Regex.Matches(inputString, _guid);
+        //            if (matches.Count > 0)
+        //                if (Guid.TryParse(matches.First().Value, out var data))
+        //                    return data;
+        //            return Guid.Empty;
+        //        }
+        //        ,
+        //        ParserTypes.MAC => () =>
+        //        {
+        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
+        //            var matches = Regex.Matches(inputString, _mac);
+        //            if (matches.Count > 0)
+        //                return matches.First().Value;
+        //            return null;
+        //        }
+        //        ,
+        //        ParserTypes.IP => () =>
+        //        {
+        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
+        //            var matches = Regex.Matches(inputString, _ip);
+        //            if (matches.Count > 0)
+        //                if (IPAddress.TryParse(matches.First().Value, out var data))
+        //                    return data.ToString();
+        //            return null;
+        //        }
+        //        ,
+        //        ParserTypes.STRING => () =>
+        //        {
+        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
+        //            var matches = Regex.Matches(inputString, _string);
+        //            if (matches.Count > 0)
+        //                return matches[2].Value;
+        //            return null;
+        //        }
+        //        ,
+        //        _ => throw new ArgumentException("Invalid incoming data of ParserTypes.")
+        //    };
 
-        private static string GetSubStringFromString(string inputString, string startWith)
+        static string GetSubStringFromString(string inputString, string startWith)
         {
             string[] subStrings = inputString.Split(' ');
             foreach (var item in subStrings)
@@ -116,7 +124,7 @@ namespace FGLogDog.Application.Helper
             return null;
         }
 
-        private static string GetSTRINGFromSubString(string inputSubString, ParserTypes typeOfParse)
+        static string GetSTRINGFromSubString(string inputSubString, ParserTypes typeOfParse)
             => ParserFactory.GetMatch(inputSubString, ParserFactory.GetPattern(typeOfParse));
 
         internal static int GetINT(string inputSubString, string startWith)
@@ -174,23 +182,48 @@ namespace FGLogDog.Application.Helper
             return output;
         }
 
-        internal static JsonObject GetJsonFromMessage(string message, IConfigurationFilters filters)
+        internal static BsonDocument GetJsonFromMessage(string message, IConfigurationFilters filters)
         {
-            JsonObject output = new JsonObject();
+            BsonDocument bson = new BsonDocument();
 
             for (int i = 0; i < filters.Patterns.Length; i++)
             {
-                object value = GetObjectByPattern(GetMatch(message, filters.Patterns[i]),
-                                                  Enum.Parse<ParserTypes>(filters.FilterPatterns[i])).Invoke();
-                
-                if (value is null)
-                    continue;
+                string inputString = GetMatch(message, filters.Patterns[i]);
+                ParserTypes pattern = Enum.Parse<ParserTypes>(filters.FilterPatterns[i]);
+                //var value = GetObjectByPattern(inputString, pattern);
 
-                output.Add(filters.FilterKeys[i], JsonValue.Create(value));
+                switch (pattern)
+                {
+                    case ParserTypes.INT:
+                        break;
+                    case ParserTypes.TIME:
+                        break;
+                    case ParserTypes.DATE:
+                        break;
+                    case ParserTypes.STRING:
+                        break;
+                    case ParserTypes.GUID:
+                        break;
+                    case ParserTypes.MAC:
+                        break;
+                    case ParserTypes.IP:
+                        break;
+                    case ParserTypes.SYSLOG:
+                        break;
+                    case ParserTypes.LOGID:
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid incoming data of ParserTypes.");
+                }
+
+                //if (value is null)
+                //    continue;
+
+                //output.Add(filters.FilterKeys[i], JsonValue.Create(value));
             }
 
-            if (output.Count > 0)
-                return output;
+            //if (output.Count > 0)
+            //    return output;
 
             return null;
         }

@@ -1,6 +1,6 @@
-﻿using FGLogDog.Application.Contracts;
+﻿using FGLogDog.Application.Contracts.Logger;
+using FGLogDog.Application.Contracts.Producer;
 using FGLogDog.Application.Models;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -8,14 +8,14 @@ namespace FGLogDog.Console.Producer
 {
     internal class ConsoleProducer : IConsoleProducer
     {
-        private readonly ILogger<ConsoleProducer> _logger;
+        readonly IAppLogger<ConsoleProducer> _logger;
 
-        public ConsoleProducer(ILogger<ConsoleProducer> logger)
+        public ConsoleProducer(IAppLogger<ConsoleProducer> logger)
             => _logger = logger;
 
         public async Task Run(ConsoleProducerParams parameters)
         {
-            _logger.LogInformation($"{DateTime.Now} LogDog started Console producer");
+            _logger.LogInformation($"LogDog started console producer");
             try
             {
                 while (true)
@@ -26,7 +26,7 @@ namespace FGLogDog.Console.Producer
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{DateTime.Now} LogDog producer stoped.\n{ex.Message}");
+                _logger.LogWarning($"LogDog producer stoped.\n{ex.Message}");
             }
         }
 

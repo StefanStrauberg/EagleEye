@@ -12,7 +12,7 @@ namespace EagleEye.Infrastructure.Repositories
 {
     internal class CollectionRepository : ICollectionRepository
     {
-        private readonly IMongoDatabase _database;
+        readonly IMongoDatabase _database;
 
         public CollectionRepository(IMongoDBConnection connection)
             => _database = new MongoClient(connection.ConnectionString).GetDatabase(connection.DatabaseName);

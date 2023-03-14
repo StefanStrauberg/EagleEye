@@ -1,4 +1,4 @@
-using FGLogDog.Application.Contracts;
+using FGLogDog.Application.Contracts.Reciver;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FGLogDog.UDP.Receiver

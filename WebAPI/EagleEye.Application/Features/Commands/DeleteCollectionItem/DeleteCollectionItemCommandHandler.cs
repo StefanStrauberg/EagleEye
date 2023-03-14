@@ -6,9 +6,9 @@ using WebAPI.EagleEye.Application.Exceptions;
 
 namespace EagleEye.Application.Features.Commands.DeleteCollectionItem
 {
-    public class DeleteCollectionItemCommandHandler : IRequestHandler<DeleteCollectionItemCommand, Unit>
+    internal class DeleteCollectionItemCommandHandler : IRequestHandler<DeleteCollectionItemCommand, Unit>
     {
-        private readonly ICollectionRepository _repository;
+        readonly ICollectionRepository _repository;
 
         public DeleteCollectionItemCommandHandler(ICollectionRepository repository)
             => _repository = repository;

@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FGLogDog.UDP.Receiver", "FG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Console.Producer", "FGLogDog\Services\FGLogDog.Console.Producer\FGLogDog.Console.Producer.csproj", "{91E66D9D-5774-4674-BF43-6FD6FB2EF905}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FGLogDog.Logging", "FGLogDog\Services\FGLogDog.Logging\FGLogDog.Logging.csproj", "{F12FFED1-B15B-4198-8C25-762AFA06C611}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{91E66D9D-5774-4674-BF43-6FD6FB2EF905}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91E66D9D-5774-4674-BF43-6FD6FB2EF905}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91E66D9D-5774-4674-BF43-6FD6FB2EF905}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F12FFED1-B15B-4198-8C25-762AFA06C611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F12FFED1-B15B-4198-8C25-762AFA06C611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F12FFED1-B15B-4198-8C25-762AFA06C611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F12FFED1-B15B-4198-8C25-762AFA06C611}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{CBE5FA94-2D57-4675-98E1-40349B33087A} = {B5EA1FE3-9E3E-48FA-8171-1EC01A081BAD}
 		{E8562790-CD66-41FC-BDEA-CE8D8CD942B4} = {CBE5FA94-2D57-4675-98E1-40349B33087A}
 		{91E66D9D-5774-4674-BF43-6FD6FB2EF905} = {CBE5FA94-2D57-4675-98E1-40349B33087A}
+		{F12FFED1-B15B-4198-8C25-762AFA06C611} = {CBE5FA94-2D57-4675-98E1-40349B33087A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8B69E4DE-AF8B-48B6-A829-F730C97AC439}

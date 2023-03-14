@@ -10,10 +10,11 @@ namespace WebAPI.EagleEye.Application.Middleware
 {
     public class ExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly ILoggerManager _logger;
+        readonly RequestDelegate _next;
+        readonly IAppLogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next, ILoggerManager logger)
+        public ExceptionMiddleware(RequestDelegate next,
+                                   IAppLogger<ExceptionMiddleware> logger)
         {
             _next = next;
             _logger = logger;
@@ -27,7 +28,7 @@ namespace WebAPI.EagleEye.Application.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong: {ex}");
+                _logger.LogWarning($"Something went wrong: {ex}");
                 await HandleExceptionAsync(context, ex);
             }
         }

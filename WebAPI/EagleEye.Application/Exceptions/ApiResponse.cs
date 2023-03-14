@@ -4,8 +4,8 @@ namespace EagleEye.Application.Exceptions
 {
     public class ApiResponse
     {
-        private int _statusCode;
-        private string _message;
+        readonly int _statusCode;
+        readonly string _message;
 
         public ApiResponse(int statusCode, string message = null)
         {

@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="5.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\EagleEye.Application\EagleEye.Application.csproj" />
   </ItemGroup>
 

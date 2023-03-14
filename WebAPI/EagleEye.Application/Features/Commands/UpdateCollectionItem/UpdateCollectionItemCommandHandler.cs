@@ -11,7 +11,7 @@ namespace EagleEye.Application.Features.Commands.UpdateCollectionItem
 {
     internal class UpdateCollectionItemCommandHandler : IRequestHandler<UpdateCollectionItemCommand, Unit>
     {
-        private readonly ICollectionRepository _repository;
+        readonly ICollectionRepository _repository;
 
         public UpdateCollectionItemCommandHandler(ICollectionRepository repository)
             => _repository = repository;

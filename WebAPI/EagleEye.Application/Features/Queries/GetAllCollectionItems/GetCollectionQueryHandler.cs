@@ -9,7 +9,7 @@ namespace WebAPI.EagleEye.Application.Features.Queries.GetAllCollectionItems
 {
     internal class GetCollectionQueryHandler : IRequestHandler<GetCollectionQuery, string>
     {
-        private readonly ICollectionRepository _repository;
+        readonly ICollectionRepository _repository;
 
         public GetCollectionQueryHandler(ICollectionRepository repository)
             => _repository = repository;

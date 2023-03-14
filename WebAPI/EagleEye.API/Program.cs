@@ -4,28 +4,46 @@ using WebAPI.EagleEye.Application;
 using WebAPI.EagleEye.Infrastructure;
 using WebAPI.EagleEye.Application.Middleware;
 using WebAPI.EagleEye.Logging;
-using NLog;
-using System.IO;
+using Serilog;
+using System;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
-LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
+try
+{
+    Log.Logger.Information("Application Starting");
 
-builder.Services.AddLoggingServices();
-builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    var builder = WebApplication.CreateBuilder(args);
 
+    builder.Services.AddLoggingServices();
+    builder.Services.AddApplicationServices();
+    builder.Services.AddInfrastructureServices(builder.Configuration);
+    builder.Services.AddControllers();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("all",
+                          builder => builder.AllowAnyOrigin()
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod());
+    });
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+    builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console());
 
-var app = builder.Build();
+    var app = builder.Build();
 
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.MapControllers();
-
-app.Run();
+    app.UseCors("all");
+    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.MapControllers();
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Host terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

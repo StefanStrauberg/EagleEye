@@ -5,9 +5,9 @@ namespace FGLogDog.FGLogDog.Application.Helper
 {
     internal class ConfigurationFilters : IConfigurationFilters
     {
-        private readonly string[] _filterKeys;
-        private readonly string[] _filterPatterns;
-        private readonly string[] _patterns;
+        readonly string[] _filterKeys;
+        readonly string[] _filterPatterns;
+        readonly string[] _patterns;
 
         public ConfigurationFilters(IConfiguration configuration)
         {

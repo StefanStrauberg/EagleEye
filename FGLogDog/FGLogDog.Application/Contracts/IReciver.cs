@@ -1,6 +1,6 @@
+using FGLogDog.Application.Models;
 using System;
 using System.Threading.Tasks;
-using FGLogDog.Application.Models;
 
 namespace FGLogDog.Application.Contracts
 {

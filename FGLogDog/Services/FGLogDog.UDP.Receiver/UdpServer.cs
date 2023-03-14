@@ -1,6 +1,6 @@
-using FGLogDog.Application.Contracts;
+using FGLogDog.Application.Contracts.Logger;
+using FGLogDog.Application.Contracts.Reciver;
 using FGLogDog.Application.Models;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -11,9 +11,9 @@ namespace FGLogDog.UDP.Receiver
 {
     internal class UdpServer : IUdpServer
     {   
-        private readonly ILogger _logger;
+        readonly IAppLogger<UdpServer> _logger;
 
-        public UdpServer(ILogger<UdpServer> logger)
+        public UdpServer(IAppLogger<UdpServer> logger)
             => _logger = logger;
 
         public async Task Run(TcpUdpReciverParams parameters)
@@ -22,7 +22,7 @@ namespace FGLogDog.UDP.Receiver
             UdpClient udpClient = new UdpClient(ipPoint);
             IPEndPoint RemoteIpEndPoint = null;
             
-            _logger.LogInformation($"{DateTime.Now} LogDog started UDP reciver on {parameters.ipAddress}:{parameters.port}");
+            _logger.LogInformation($"LogDog started UDP reciver on {parameters.ipAddress}:{parameters.port}");
 
             try
             {
@@ -35,7 +35,7 @@ namespace FGLogDog.UDP.Receiver
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{DateTime.Now} LogDog reciver stoped.\n{ex.Message}");
+                _logger.LogWarning($"LogDog reciver stoped.\n{ex.Message}");
             }
         }
 

@@ -10,7 +10,7 @@ namespace EagleEye.Application.Features.Queries.GetPageCollectionItems
 {
     internal class GetPageCollectionQueryHandler : IRequestHandler<GetPageCollectionQuery, PagedList>
     {
-        private readonly ICollectionRepository _repository;
+        readonly ICollectionRepository _repository;
 
         public GetPageCollectionQueryHandler(ICollectionRepository repository)
             => _repository = repository;

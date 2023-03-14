@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace WebAPI.EagleEye.Application.Exceptions
 {
-    public class ApiException : Exception
+    internal class ApiException : Exception
     {
         public ApiException() : base() {}
 

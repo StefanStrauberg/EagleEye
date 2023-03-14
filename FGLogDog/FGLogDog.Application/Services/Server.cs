@@ -1,21 +1,24 @@
 using FGLogDog.Application.Contracts;
+using FGLogDog.Application.Contracts.Producer;
+using FGLogDog.Application.Contracts.Reciver;
 using FGLogDog.Application.Features.Commands;
 using FGLogDog.Application.Helper;
 using FGLogDog.Application.Models;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using System;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+
 namespace FGLogDog.FGLogDog.Application.Services
 {
     internal class Server : IServer
     {
-        private readonly IMediator _mediator;
-        private readonly string _input;
-        private readonly string _output;
-        private readonly IUdpServer _udpServer;
-        private readonly IConsoleProducer _consoleProducer;
+        readonly IMediator _mediator;
+        readonly string _input;
+        readonly string _output;
+        readonly IUdpServer _udpServer;
+        readonly IConsoleProducer _consoleProducer;
 
         public Server(IConfiguration configuration,
                       IMediator mediator,
@@ -64,7 +67,7 @@ namespace FGLogDog.FGLogDog.Application.Services
         private async Task Parser(string message)
             => await _mediator.Send(new ParseLogCommand(message.ToString()));
 
-        private async Task<JsonObject> Producer()
+        private async Task<BsonDocument> Producer()
             => await _mediator.Send(new GetMessageCommand());
 
         void IDisposable.Dispose()
