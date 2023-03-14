@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 
 namespace FGLogDog.Application.Helper
@@ -40,80 +39,6 @@ namespace FGLogDog.Application.Helper
                 return matches.First().Value;
             return null;
         }
-
-        //static Func<TResult> GetObjectByPattern<TResult>(string inputString, ParserTypes pattern)
-        //    => pattern switch
-        //    {
-        //        ParserTypes.DATE => () =>
-        //        {
-        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
-        //            var matches = Regex.Matches(inputString, _date);
-        //            if (matches.Count > 0)
-        //                if (DateOnly.TryParse(matches.First().Value, out var data))
-        //                    return data;
-        //            return DateOnly.MinValue;
-        //        }
-        //        ,
-        //        ParserTypes.TIME => () =>
-        //        {
-        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
-        //            var matches = Regex.Matches(inputString, _time);
-        //            if (matches.Count > 0)
-        //                if (TimeOnly.TryParse(matches.First().Value, out var data))
-        //                    return data;
-        //            return TimeOnly.MinValue;
-        //        }
-        //        ,
-        //        ParserTypes.INT => () =>
-        //        {
-        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
-        //            var matches = Regex.Matches(inputString, _int);
-        //            if (matches.Count > 0)
-        //                if (Int32.TryParse(matches.First().Value, out var data))
-        //                    return data;
-        //            return 0;
-        //        }
-        //        ,
-        //        ParserTypes.GUID => () =>
-        //        {
-        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
-        //            var matches = Regex.Matches(inputString, _guid);
-        //            if (matches.Count > 0)
-        //                if (Guid.TryParse(matches.First().Value, out var data))
-        //                    return data;
-        //            return Guid.Empty;
-        //        }
-        //        ,
-        //        ParserTypes.MAC => () =>
-        //        {
-        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
-        //            var matches = Regex.Matches(inputString, _mac);
-        //            if (matches.Count > 0)
-        //                return matches.First().Value;
-        //            return null;
-        //        }
-        //        ,
-        //        ParserTypes.IP => () =>
-        //        {
-        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
-        //            var matches = Regex.Matches(inputString, _ip);
-        //            if (matches.Count > 0)
-        //                if (IPAddress.TryParse(matches.First().Value, out var data))
-        //                    return data.ToString();
-        //            return null;
-        //        }
-        //        ,
-        //        ParserTypes.STRING => () =>
-        //        {
-        //            if (string.IsNullOrWhiteSpace(inputString)) return null;
-        //            var matches = Regex.Matches(inputString, _string);
-        //            if (matches.Count > 0)
-        //                return matches[2].Value;
-        //            return null;
-        //        }
-        //        ,
-        //        _ => throw new ArgumentException("Invalid incoming data of ParserTypes.")
-        //    };
 
         static string GetSubStringFromString(string inputString, string startWith)
         {
@@ -156,29 +81,26 @@ namespace FGLogDog.Application.Helper
 
         internal static string[] GetKeysFromConfigurationFilters(string value)
         {
-            StringBuilder keys = new StringBuilder();
             string[] substrings = value.Split(' ');
-            foreach (var item in substrings)
+            string[] output = new string[substrings.Length];
+            for (int i = 0; i < substrings.Length; i++)
             {
-                keys.Append(item.Split('=')[0]);
-                keys.Append(' ');
+                output[i] = (substrings[i].Split('=')[0]);
             }
-            string[] output = keys.ToString().Split(' ');
             return output;
         }
 
         internal static string[] GetPatternsFromConfigurationFilters(string value)
         {
-            StringBuilder patterns = new StringBuilder();
             string[] substrings = value.Split(' ');
-            foreach (var item in substrings)
+            string[] output = new string[substrings.Length];
+            for (int i = 0; i < substrings.Length; i++)
             {
-                patterns.Append(item.Split('=')[1]);
-                patterns.Append(' ');
+                StringBuilder sb = new StringBuilder(substrings[i].Split('=')[1]);
+                sb.Replace("\"", string.Empty);
+                sb.Replace(";", string.Empty);
+                output[i] = (sb.ToString());
             }
-            patterns.Replace(";", string.Empty);
-            patterns.Replace("\"", string.Empty);
-            string[] output = patterns.ToString().Split(' ');
             return output;
         }
 
@@ -190,42 +112,69 @@ namespace FGLogDog.Application.Helper
             {
                 string inputString = GetMatch(message, filters.Patterns[i]);
                 ParserTypes pattern = Enum.Parse<ParserTypes>(filters.FilterPatterns[i]);
-                //var value = GetObjectByPattern(inputString, pattern);
+
+                MatchCollection matches;
 
                 switch (pattern)
                 {
                     case ParserTypes.INT:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = Regex.Matches(inputString, _int);
+                        if (matches.Count > 0)
+                            if (Int32.TryParse(matches.First().Value, out var data))
+                                bson.Add(new BsonElement(filters.FilterKeys[i], data));
                         break;
                     case ParserTypes.TIME:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = Regex.Matches(inputString, _time);
+                        if (matches.Count > 0)
+                            if (TimeOnly.TryParse(matches.First().Value, out var data))
+                                bson.Add(new BsonElement(filters.FilterKeys[i], data.ToString()));
                         break;
                     case ParserTypes.DATE:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = Regex.Matches(inputString, _date);
+                        if (matches.Count > 0)
+                            if (DateOnly.TryParse(matches.First().Value, out var data))
+                                bson.Add(new BsonElement(filters.FilterKeys[i], data.ToString()));
                         break;
                     case ParserTypes.STRING:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = Regex.Matches(inputString, _string);
+                        if (matches.Count > 0)
+                            bson.Add(new BsonElement(filters.FilterKeys[i], matches[2].Value));
                         break;
                     case ParserTypes.GUID:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = Regex.Matches(inputString, _guid);
+                        if (matches.Count > 0)
+                            if (Guid.TryParse(matches.First().Value, out var data))
+                                bson.Add(new BsonElement(filters.FilterKeys[i], data));
                         break;
                     case ParserTypes.MAC:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = Regex.Matches(inputString, _mac);
+                        if (matches.Count > 0)
+                            bson.Add(new BsonElement(filters.FilterKeys[i], matches[0].Value));
                         break;
                     case ParserTypes.IP:
-                        break;
-                    case ParserTypes.SYSLOG:
-                        break;
-                    case ParserTypes.LOGID:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = Regex.Matches(inputString, _ip);
+                        if (matches.Count > 0)
+                            bson.Add(new BsonElement(filters.FilterKeys[i], matches[0].Value));
                         break;
                     default:
                         throw new ArgumentException("Invalid incoming data of ParserTypes.");
                 }
-
-                //if (value is null)
-                //    continue;
-
-                //output.Add(filters.FilterKeys[i], JsonValue.Create(value));
             }
-
-            //if (output.Count > 0)
-            //    return output;
-
-            return null;
+            return bson;
         }
     }
 }

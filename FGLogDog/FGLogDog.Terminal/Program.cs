@@ -1,14 +1,14 @@
-﻿using FGLogDog.Application.Contracts;
+﻿using FGLogDog.Application;
+using FGLogDog.Application.Contracts;
+using FGLogDog.Console.Producer;
+using FGLogDog.Logging;
+using FGLogDog.UDP.Receiver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using FGLogDog.Application;
-using FGLogDog.UDP.Receiver;
-using FGLogDog.Console.Producer;
-using FGLogDog.Logging;
 
 namespace FGLogDog.Terminal
 {
