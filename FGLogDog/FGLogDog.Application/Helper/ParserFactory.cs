@@ -84,7 +84,6 @@ namespace FGLogDog.Application.Helper
                 sb.Replace("MAC", _mac);
                 sb.Replace("IP", _ip);
                 
-                System.Console.WriteLine(sb.ToString());
                 output[i] = sb.ToString();
             }
 
@@ -166,7 +165,7 @@ namespace FGLogDog.Application.Helper
                         matches = Regex.Matches(inputString, _guid);
                         if (matches.Count > 0)
                             if (Guid.TryParse(matches.First().Value, out var data))
-                                bson.Add(new BsonElement(filters.FilterKeys[i], data));
+                                bson.Add(new BsonElement(filters.FilterKeys[i], new BsonBinaryData(data, GuidRepresentation.Standard)));
                         break;
                     case ParserTypes.MAC:
                         if (string.IsNullOrWhiteSpace(inputString))
@@ -182,10 +181,36 @@ namespace FGLogDog.Application.Helper
                         if (matches.Count > 0)
                             bson.Add(new BsonElement(filters.FilterKeys[i], matches[0].Value));
                         break;
+                    case ParserTypes.DATETIME:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        StringBuilder temp = new StringBuilder();
+                        matches = Regex.Matches(inputString, _date);
+                        if (matches.Count > 0)
+                        {
+                            if (DateOnly.TryParse(matches.First().Value, out var date))
+                                temp.Append(date);
+                        }
+                        else
+                            break;
+                        temp.Append(' ');
+                        matches = Regex.Matches(inputString, _time);
+                        if (matches.Count > 0)
+                        {
+                            if (TimeOnly.TryParse(matches.First().Value, out var time))
+                                temp.Append(time);
+                        }
+                        else
+                            break;
+                        if (DateTime.TryParse(temp.ToString(), out DateTime dateTime))
+                            bson.Add(new BsonElement(filters.FilterKeys[i], dateTime));
+                        break;
                     default:
                         throw new ArgumentException("Invalid incoming data of ParserTypes.");
                 }
             }
+            if (bson.ElementCount is 0)
+                return null;    
             return bson;
         }
     }

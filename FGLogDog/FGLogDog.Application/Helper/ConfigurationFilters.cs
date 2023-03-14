@@ -11,15 +11,10 @@ namespace FGLogDog.FGLogDog.Application.Helper
 
         public ConfigurationFilters(IConfiguration configuration)
         {
-            _filterKeys = ParserFactory.GetKeysFromConfigurationFilters(configuration.GetSection("ConfigurationString")
-                                                                                     .GetSection("Filter")
-                                                                                     .Value);
-            _filterPatterns = ParserFactory.GetPatternsFromConfigurationFilters(configuration.GetSection("ConfigurationString")
-                                                                                             .GetSection("Filter")
-                                                                                             .Value);
-            _searchSubStrings = ParserFactory.ReplaceReadablePatterns(configuration.GetSection("ConfigurationString")
-                                                                           .GetSection("Filter")
-                                                                           .Value);
+            string filter = configuration.GetSection("ConfigurationString").GetSection("Filter").Value;
+            _filterKeys = ParserFactory.GetKeysFromConfigurationFilters(filter);
+            _filterPatterns = ParserFactory.GetPatternsFromConfigurationFilters(filter);
+            _searchSubStrings = ParserFactory.ReplaceReadablePatterns(filter);
         }
 
         public string[] FilterKeys { get => _filterKeys; }
