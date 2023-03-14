@@ -63,19 +63,31 @@ namespace FGLogDog.Application.Helper
 
         internal static string[] ReplaceReadablePatterns(string filters)
         {
-            StringBuilder patterns = new StringBuilder(filters);
+            string[] substrings = filters.Split(' ');
+            string[] output = new string[substrings.Length];
+            int startIndex;
+            int length;
+            for (int i = 0; i < substrings.Length; i++)
+            {
+                StringBuilder sb = new StringBuilder(substrings[i].Split("=>")[1]);
+                sb.Replace("{", string.Empty);
+                sb.Replace("}", string.Empty);
+                startIndex = sb.ToString().IndexOf(':');
+                length = sb.Length - startIndex;
+                sb.Remove(startIndex, length);
 
-            patterns.Replace("STRING", _string);
-            patterns.Replace("INT", _int);
-            patterns.Replace("DATE", _date);
-            patterns.Replace("TIME", _time);
-            patterns.Replace("GUID", _guid);
-            patterns.Replace("MAC", _mac);
-            patterns.Replace("IP", _ip);
+                sb.Replace("STRING", _string);
+                sb.Replace("INT", _int);
+                sb.Replace("DATE", _date);
+                sb.Replace("TIME", _time);
+                sb.Replace("GUID", _guid);
+                sb.Replace("MAC", _mac);
+                sb.Replace("IP", _ip);
+                
+                System.Console.WriteLine(sb.ToString());
+                output[i] = sb.ToString();
+            }
 
-            patterns.Replace(";", string.Empty);
-
-            string[] output = patterns.ToString().Split(' ');
             return output;
         }
 
@@ -84,9 +96,7 @@ namespace FGLogDog.Application.Helper
             string[] substrings = value.Split(' ');
             string[] output = new string[substrings.Length];
             for (int i = 0; i < substrings.Length; i++)
-            {
-                output[i] = (substrings[i].Split('=')[0]);
-            }
+                output[i] = substrings[i].Split("=>")[0];
             return output;
         }
 
@@ -96,10 +106,12 @@ namespace FGLogDog.Application.Helper
             string[] output = new string[substrings.Length];
             for (int i = 0; i < substrings.Length; i++)
             {
-                StringBuilder sb = new StringBuilder(substrings[i].Split('=')[1]);
-                sb.Replace("\"", string.Empty);
-                sb.Replace(";", string.Empty);
-                output[i] = (sb.ToString());
+                StringBuilder sb = new StringBuilder(substrings[i].Split("=>")[1]);
+                sb.Replace("{", string.Empty);
+                sb.Replace("}", string.Empty);
+                var endIndex = sb.ToString().IndexOf(':');
+                sb.Remove(0, ++endIndex);
+                output[i] = sb.ToString();
             }
             return output;
         }

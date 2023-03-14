@@ -7,7 +7,7 @@ namespace FGLogDog.FGLogDog.Application.Helper
     {
         readonly string[] _filterKeys;
         readonly string[] _filterPatterns;
-        readonly string[] _patterns;
+        readonly string[] _searchSubStrings;
 
         public ConfigurationFilters(IConfiguration configuration)
         {
@@ -17,13 +17,13 @@ namespace FGLogDog.FGLogDog.Application.Helper
             _filterPatterns = ParserFactory.GetPatternsFromConfigurationFilters(configuration.GetSection("ConfigurationString")
                                                                                              .GetSection("Filter")
                                                                                              .Value);
-            _patterns = ParserFactory.ReplaceReadablePatterns(configuration.GetSection("ConfigurationString")
+            _searchSubStrings = ParserFactory.ReplaceReadablePatterns(configuration.GetSection("ConfigurationString")
                                                                            .GetSection("Filter")
                                                                            .Value);
         }
 
         public string[] FilterKeys { get => _filterKeys; }
         public string[] FilterPatterns { get => _filterPatterns; }
-        public string[] Patterns { get => _patterns; }
+        public string[] Patterns { get => _searchSubStrings; }
     }
 }

@@ -20,6 +20,21 @@ namespace FGLogDog.Terminal
                                                   .CreateLogger();
             try
             {
+                // string test = "logid=>{logid=\"INT\";:STRING}";
+                // var several = test.Split("=>");
+                // var field = several[0];
+                // var parser = several[1].Substring(several[1].IndexOf('{') + 1, several[1].IndexOf('}') - several[1].IndexOf('{') - 1);
+
+                // for (int i = 0; i < several.Length; i++)
+                //     System.Console.WriteLine(several[i]);
+
+                // System.Console.WriteLine(parser);
+
+                // var couple = parser.Split(':');
+
+                // for (int i = 0; i < couple.Length; i++)
+                //     System.Console.WriteLine(couple[i]);
+
                 // Setup IConfiguration
                 var builder = new ConfigurationBuilder();
 
