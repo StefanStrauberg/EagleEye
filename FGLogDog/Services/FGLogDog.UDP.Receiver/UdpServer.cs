@@ -3,55 +3,65 @@ using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Reciver;
 using FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers;
 using System;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FGLogDog.UDP.Receiver
 {
     internal class UdpServer : IUdPReceiver
     {   
         readonly IAppLogger<UdpServer> _logger;
+        Socket _socket;
+        EndPoint _endPoint;
+        byte[] _bufferRecv;
+        ArraySegment<byte> _bufferRecvSegment;
 
         public UdpServer(IAppLogger<UdpServer> logger)
             => _logger = logger;
 
         void IReceiver<TcpUdpReceiverParams>.Run(TcpUdpReceiverParams parameters)
         {
-            IPEndPoint ipPoint = new IPEndPoint(parameters.ipAddress, parameters.port);
-            UdpClient udpClient = new UdpClient(ipPoint);
-            IPEndPoint RemoteIpEndPoint = null;
-
-            _logger.LogInformation($"LogDog started UDP reciver on {parameters.ipAddress}:{parameters.port}");
-
             try
             {
-                while (true)
+                Initialize(parameters.ipAddress, parameters.port);
+                _logger.LogInformation($"LogDog started UDP reciver on {parameters.ipAddress}:{parameters.port}");
+                _ = Task.Run(async () =>
                 {
-                    byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
-                    string message = Encoding.UTF8.GetString(receiveBytes);
-                    bool Success = false;
-                    if (parameters.IsCommonCheck)
+                    SocketReceiveMessageFromResult res;
+                    while (true) 
                     {
-                        for (int i = 0; i < parameters.common.Length; i++)
-                        {
-                            if (message.Contains(parameters.common[i]))
-                                Success = true;
-                        }
-                        if (Success)
+                        res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment,
+                                                                    SocketFlags.None,
+                                                                    _endPoint);
+                        var message = Encoding.UTF8.GetString(_bufferRecv,
+                                                             0,
+                                                             res.ReceivedBytes);
+                        if (parameters.IsCommonCheck)
+                            if (message.Contains(parameters.common))
+                                parameters.parse(message);
+                            else
+                                continue;
+                        else
                             parameters.parse(message);
                     }
-                    else
-                    {
-                        parameters.parse(message);
-                    }
-                }
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogWarning($"LogDog reciver stoped.\n{ex.Message}");
             }
+        }
+
+        void Initialize(IPAddress iPAddress, int port)
+        {
+            _bufferRecv = new byte[4096];
+            _bufferRecvSegment = new(_bufferRecv);
+            _endPoint = new IPEndPoint(iPAddress, port);
+            _socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
+            _socket.Bind(_endPoint);
         }
 
         void IDisposable.Dispose()

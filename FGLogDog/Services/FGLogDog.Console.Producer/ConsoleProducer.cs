@@ -2,6 +2,7 @@
 using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Producer;
 using FGLogDog.FGLogDog.Application.Models.ParametersOfProducers;
+using MongoDB.Bson;
 using System;
 
 namespace FGLogDog.Console.Producer
@@ -22,7 +23,7 @@ namespace FGLogDog.Console.Producer
                 while (true)
                 {
                     var message = parameters.getMessage();
-                    System.Console.WriteLine(message);
+                    System.Console.WriteLine(message.ToString());
                 }
             }
             catch (Exception ex)

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace RabbitMqMessenger
+namespace WebAPI.EagleEye.RabbitMqMessenger
 {
     public static class RabbitMQMessengerService
     {

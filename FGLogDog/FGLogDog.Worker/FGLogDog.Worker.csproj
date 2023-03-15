@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UserSecretsId>dotnet-FGLogDog.Worker-bda69a43-3672-419c-a90c-08863b53ef3c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FGLogDog.Application\FGLogDog.Application.csproj" />
+    <ProjectReference Include="..\Services\FGLogDog.Console.Producer\FGLogDog.Console.Producer.csproj" />
+    <ProjectReference Include="..\Services\FGLogDog.Logging\FGLogDog.Logging.csproj" />
+    <ProjectReference Include="..\Services\FGLogDog.RabbitMQ.Producer\FGLogDog.RabbitMQ.Producer.csproj" />
+    <ProjectReference Include="..\Services\FGLogDog.UDP.Receiver\FGLogDog.UDP.Receiver.csproj" />
+  </ItemGroup>
+</Project>

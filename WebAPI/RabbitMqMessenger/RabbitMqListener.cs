@@ -1,24 +1,25 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using EagleEye.Application.Contracts.Logger;
+using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Diagnostics;
 using System.Text;
 
-namespace RabbitMqMessenger
+namespace WebAPI.EagleEye.RabbitMqMessenger
 {
     internal class RabbitMqListener : BackgroundService
     {
         readonly IConnection _connection;
         readonly IModel _channel;
+        readonly IAppLogger<RabbitMqListener> _logger;
 
-        public RabbitMqListener(IConnection connection, IModel channel)
+        public RabbitMqListener(IAppLogger<RabbitMqListener> logger)
         {
-            var factory = new ConnectionFactory 
+            var factory = new ConnectionFactory
             {
                 HostName = "127.0.0.1",
                 Port = 5672,
-                UserName = "admin",
-                Password = "admin-password"
+                UserName = "guest",
+                Password = "guest"
             };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
@@ -27,6 +28,7 @@ namespace RabbitMqMessenger
                                   exclusive: false,
                                   autoDelete: false,
                                   arguments: null);
+            _logger = logger;
         }
 
         protected override Task ExecuteAsync(CancellationToken cancellationToken)
@@ -39,7 +41,8 @@ namespace RabbitMqMessenger
             {
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-                Debug.WriteLine(content);
+                // TODO push input log to local API buffer
+                _logger.LogInformation(content);
 
                 _channel.BasicAck(ea.DeliveryTag, false);
             };

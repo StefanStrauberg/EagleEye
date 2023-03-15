@@ -7,7 +7,7 @@ namespace FGLogDog.Logging
     {
         public static IServiceCollection AddLoggerServices(this IServiceCollection services)
         {
-            services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
+            services.AddSingleton(typeof(IAppLogger<>), typeof(AppLogger<>));
             return services;
         }
     }

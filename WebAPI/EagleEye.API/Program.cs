@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WebAPI.EagleEye.Application;
 using WebAPI.EagleEye.Infrastructure;
 using WebAPI.EagleEye.Application.Middleware;
+using WebAPI.EagleEye.RabbitMqMessenger;
 using WebAPI.EagleEye.Logging;
 using Serilog;
 using System;
@@ -18,6 +19,7 @@ try
     builder.Services.AddLoggingServices();
     builder.Services.AddApplicationServices();
     builder.Services.AddInfrastructureServices(builder.Configuration);
+    builder.Services.AddRabbitMQMessengerServices();
     builder.Services.AddControllers();
     builder.Services.AddCors(options =>
     {
