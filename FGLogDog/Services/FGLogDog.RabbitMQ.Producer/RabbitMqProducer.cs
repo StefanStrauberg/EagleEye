@@ -20,20 +20,20 @@ namespace FGLogDog.RabbitMQ.Producer
         {
             var factory = new ConnectionFactory
             {
-                HostName = parameters.ipAddress.ToString(),
-                Port = parameters.port,
-                UserName = parameters.username,
-                Password = parameters.password
+                HostName = parameters.IpAddress.ToString(),
+                Port = parameters.Port,
+                UserName = parameters.Username,
+                Password = parameters.Password
             };
             var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
-            channel.QueueDeclare(queue: parameters.queue,
+            channel.QueueDeclare(queue: parameters.Queue,
                                          durable: false,
                                          autoDelete: false,
                                          exclusive: false,
                                          arguments: null);
 
-            _logger.LogInformation($"LogDog started rabbitmq producer to {parameters.ipAddress}:{parameters.port}");
+            _logger.LogInformation($"LogDog started rabbitmq producer to {parameters.IpAddress}:{parameters.Port}");
 
             try
             {
@@ -43,7 +43,7 @@ namespace FGLogDog.RabbitMQ.Producer
                                             .ToJson();
                     var body = Encoding.UTF8.GetBytes(message);
                     channel.BasicPublish(exchange: "",
-                                         routingKey: parameters.queue,
+                                         routingKey: parameters.Queue,
                                          body: body);
                 }
             }

@@ -1,15 +1,13 @@
+using FGLogDog.Application;
+using FGLogDog.Application.Contracts;
+using FGLogDog.Logging;
+using FGLogDog.RabbitMQ.Producer;
+using FGLogDog.UDP.Receiver;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
-using FGLogDog.Logging;
-using FGLogDog.Application;
-using FGLogDog.UDP.Receiver;
-using FGLogDog.Console.Producer;
-using FGLogDog.RabbitMQ.Producer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
-using FGLogDog.Application.Contracts;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console()
                                       .CreateLogger();
@@ -24,8 +22,7 @@ try
                          services.AddLoggerServices();
                          services.AddApplicationServices();
                          services.AddUDPReciverServices();
-                         services.AddConsoleProducerServices();
-                         services.AddRabbitMQRServices();
+                         services.AddRabbitMQProducerServices();
                      })
                      .Build();
     var serviceProvider = host.Services;

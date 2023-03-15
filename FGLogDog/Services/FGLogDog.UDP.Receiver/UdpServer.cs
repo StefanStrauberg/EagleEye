@@ -25,8 +25,8 @@ namespace FGLogDog.UDP.Receiver
         {
             try
             {
-                Initialize(parameters.ipAddress, parameters.port);
-                _logger.LogInformation($"LogDog started UDP reciver on {parameters.ipAddress}:{parameters.port}");
+                Initialize(parameters.IpAddress, parameters.Port);
+                _logger.LogInformation($"LogDog started UDP reciver on {parameters.IpAddress}:{parameters.Port}");
                 _ = Task.Run(async () =>
                 {
                     SocketReceiveMessageFromResult res;
@@ -39,7 +39,7 @@ namespace FGLogDog.UDP.Receiver
                                                              0,
                                                              res.ReceivedBytes);
                         if (parameters.IsCommonCheck)
-                            if (message.Contains(parameters.common))
+                            if (message.Contains(parameters.Common))
                                 parameters.parse(message);
                             else
                                 continue;

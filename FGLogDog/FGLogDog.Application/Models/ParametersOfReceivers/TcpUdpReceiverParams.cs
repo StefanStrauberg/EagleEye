@@ -19,9 +19,9 @@ namespace FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers
             _common = common;
         }
 
-        public IPAddress ipAddress { get => _ipAddress; }
-        public int port { get => _port; }
-        public string common { get => _common; }
+        public IPAddress IpAddress { get => _ipAddress; }
+        public int Port { get => _port; }
+        public string Common { get => _common; }
         public bool IsCommonCheck { get => _common.Length > 0; }
     }
 }

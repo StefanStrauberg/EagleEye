@@ -19,14 +19,12 @@ namespace FGLogDog.FGLogDog.Application.Services
         readonly string _output;
         readonly string _common;
         readonly IUdPReceiver _udpReceiver;
-        readonly IConsoleProducer _consoleProducer;
         readonly IBufferManager _bufferManager;
         readonly IParserManager _parserManager;
         readonly IRabbitMQProducer _rabbitMQProducer;
 
         public Server(IConfiguration configuration,
                       IUdPReceiver udpReceiver,
-                      IConsoleProducer consoleProducer,
                       IBufferManager bufferManager,
                       IParserManager parserManager,
                       IRabbitMQProducer rabbitMQProducer)
@@ -35,7 +33,6 @@ namespace FGLogDog.FGLogDog.Application.Services
             _output = configuration.GetSection("ConfigurationString").GetSection("Output").Value;
             _common = configuration.GetSection("ConfigurationString").GetSection("Common").Value;
             _udpReceiver = udpReceiver;
-            _consoleProducer = consoleProducer;
             _bufferManager = bufferManager;
             _parserManager = parserManager;
             _rabbitMQProducer = rabbitMQProducer;
@@ -49,7 +46,7 @@ namespace FGLogDog.FGLogDog.Application.Services
             switch (typeOfReciver)
             {
                 case TypeOfReceiver.udp:
-                    new Task(() => ReceiverRun(_udpReceiver, new TcpUdpReceiverParams(_input, _common, Parser))).Start();
+                    Task.Run(() => ReceiverRun(_udpReceiver, new TcpUdpReceiverParams(_input, _common, Parser)));
                     break;
                 default:
                 throw new ArgumentException($"Invalid incomming type of input protocol: {typeOfReciver}.");
@@ -57,11 +54,8 @@ namespace FGLogDog.FGLogDog.Application.Services
 
             switch (typeOfProducer)
             {
-                case TypeOfProducer.console:
-                    new Task(() => ProducerRun(_consoleProducer, new ConsoleProducerParams(Producer))).Start();
-                    break;
                 case TypeOfProducer.amqp:
-                    new Task(() => ProducerRun(_rabbitMQProducer, new RabbitMQProducerParams(_output, Producer))).Start();
+                    Task.Run(() => ProducerRun(_rabbitMQProducer, new RabbitMQProducerParams(_output, Producer)));
                     break;
                 default:
                     throw new ArgumentException($"Invalid incomming type of output protocol: {typeOfProducer}.");

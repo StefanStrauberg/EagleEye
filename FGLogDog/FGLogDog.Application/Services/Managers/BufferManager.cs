@@ -8,10 +8,9 @@ namespace FGLogDog.Application.Services.Managers
     {
         public BsonDocument PullMessage()
         {
-            BsonDocument result;
             while (!Buffer.buffer.IsCompleted)
             {
-                if (Buffer.buffer.TryTake(out result))
+                if (Buffer.buffer.TryTake(out BsonDocument result))
                     return result;
             }
             return null;

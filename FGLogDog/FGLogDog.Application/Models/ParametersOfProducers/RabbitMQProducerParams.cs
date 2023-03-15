@@ -23,10 +23,10 @@ namespace FGLogDog.FGLogDog.Application.Models.ParametersOfProducers
             _queue = ParserFactory.GetSTRING(configuration, "queue=");
         }
 
-        public IPAddress ipAddress { get => _ipAddress; }
-        public int port { get => _port; }
-        public string username { get => _userName; }
-        public string password { get => _password; }
-        public string queue { get => _queue; }
+        public IPAddress IpAddress { get => _ipAddress; }
+        public int Port { get => _port; }
+        public string Username { get => _userName; }
+        public string Password { get => _password; }
+        public string Queue { get => _queue; }
     }
 }
