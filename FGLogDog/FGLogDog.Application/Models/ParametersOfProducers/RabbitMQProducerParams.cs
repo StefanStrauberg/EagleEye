@@ -1,6 +1,7 @@
 using FGLogDog.Application.Helper;
 using FGLogDog.Application.Models;
 using FGLogDog.FGLogDog.Application.Helper;
+using Microsoft.Extensions.Configuration;
 using System.Net;
 
 namespace FGLogDog.FGLogDog.Application.Models.ParametersOfProducers
@@ -13,14 +14,15 @@ namespace FGLogDog.FGLogDog.Application.Models.ParametersOfProducers
         readonly string _password;
         readonly string _queue;
 
-        public RabbitMQProducerParams(string configuration, ProducerDelegate producer) 
+        public RabbitMQProducerParams(IConfiguration configuration, ProducerDelegate producer) 
             : base(producer)
         {
-            _ipAddress = ParserFactory.GetIP(configuration, "dstip=");
-            _port = ParserFactory.GetINT(configuration, "dstport=");
-            _userName = ParserFactory.GetSTRING(configuration, "username=");
-            _password = ParserFactory.GetSTRING(configuration, "password=");
-            _queue = ParserFactory.GetSTRING(configuration, "queue=");
+            var output = configuration.GetSection("ConfigurationString").GetSection("Output").Value;
+            _ipAddress = ParserFactory.GetIP(output, "dstip=");
+            _port = ParserFactory.GetINT(output, "dstport=");
+            _userName = ParserFactory.GetSTRING(output, "username=");
+            _password = ParserFactory.GetSTRING(output, "password=");
+            _queue = ParserFactory.GetSTRING(output, "queue=");
         }
 
         public IPAddress IpAddress { get => _ipAddress; }

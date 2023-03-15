@@ -2,6 +2,7 @@ using System.Net;
 using FGLogDog.Application.Helper;
 using FGLogDog.Application.Models;
 using FGLogDog.FGLogDog.Application.Helper;
+using Microsoft.Extensions.Configuration;
 
 namespace FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers
 {
@@ -11,12 +12,13 @@ namespace FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers
         readonly int _port;
         readonly string _common;
 
-        public UdpReceiverParams(string configuration, string common, ParserDelegate parser)
+        public UdpReceiverParams(IConfiguration configuration, ParserDelegate parser)
             : base(parser)
         {
-            _ipAddress = ParserFactory.GetIP(configuration, "srcip=");
-            _port = ParserFactory.GetINT(configuration, "srcport=");
-            _common = common;
+            var input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
+            _common = configuration.GetSection("ConfigurationString").GetSection("Common").Value;
+            _ipAddress = ParserFactory.GetIP(input, "srcip=");
+            _port = ParserFactory.GetINT(input, "srcport=");
         }
 
         public IPAddress IpAddress { get => _ipAddress; }

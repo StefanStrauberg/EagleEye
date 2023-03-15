@@ -15,13 +15,13 @@ namespace FGLogDog.FGLogDog.Application.Services
 {
     internal class Server : IServer
     {
-        readonly string _input;
-        readonly string _output;
-        readonly string _common;
+        readonly IConfiguration _configuration;
         readonly IUdPReceiver _udpReceiver;
         readonly IBufferManager _bufferManager;
         readonly IParserManager _parserManager;
         readonly IRabbitMQProducer _rabbitMQProducer;
+        readonly TypeOfReceiver _typeOfReciver;
+        readonly TypeOfProducer _typeOfProducer;
 
         public Server(IConfiguration configuration,
                       IUdPReceiver udpReceiver,
@@ -29,9 +29,11 @@ namespace FGLogDog.FGLogDog.Application.Services
                       IParserManager parserManager,
                       IRabbitMQProducer rabbitMQProducer)
         {
-            _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
-            _output = configuration.GetSection("ConfigurationString").GetSection("Output").Value;
-            _common = configuration.GetSection("ConfigurationString").GetSection("Common").Value;
+            var _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
+            var _output = configuration.GetSection("ConfigurationString").GetSection("Output").Value;
+            _typeOfReciver = Enum.Parse<TypeOfReceiver>(ParserFactory.GetSTRING(_input, "protocol="));
+            _typeOfProducer = Enum.Parse<TypeOfProducer>(ParserFactory.GetSTRING(_output, "protocol="));
+            _configuration = configuration;
             _udpReceiver = udpReceiver;
             _bufferManager = bufferManager;
             _parserManager = parserManager;
@@ -40,25 +42,22 @@ namespace FGLogDog.FGLogDog.Application.Services
 
         public Task StartServer()
         {
-            var typeOfReciver = Enum.Parse<TypeOfReceiver>(ParserFactory.GetSTRING(_input, "protocol="));
-            var typeOfProducer = Enum.Parse<TypeOfProducer>(ParserFactory.GetSTRING(_output, "protocol="));
-
-            switch (typeOfReciver)
+            switch (_typeOfReciver)
             {
                 case TypeOfReceiver.udp:
-                    Task.Run(() => ReceiverRun(_udpReceiver, new UdpReceiverParams(_input, _common, Parser)));
+                    Task.Run(() => ReceiverRun(_udpReceiver, new UdpReceiverParams(_configuration, Parser)));
                     break;
                 default:
-                throw new ArgumentException($"Invalid incomming type of input protocol: {typeOfReciver}.");
+                throw new ArgumentException("Invalid incomming type of input protocol");
             }
 
-            switch (typeOfProducer)
+            switch (_typeOfProducer)
             {
                 case TypeOfProducer.amqp:
-                    Task.Run(() => ProducerRun(_rabbitMQProducer, new RabbitMQProducerParams(_output, Producer)));
+                    Task.Run(() => ProducerRun(_rabbitMQProducer, new RabbitMQProducerParams(_configuration, Producer)));
                     break;
                 default:
-                    throw new ArgumentException($"Invalid incomming type of output protocol: {typeOfProducer}.");
+                    throw new ArgumentException("Invalid incomming type of output protocol");
             }
 
             return Task.CompletedTask;
