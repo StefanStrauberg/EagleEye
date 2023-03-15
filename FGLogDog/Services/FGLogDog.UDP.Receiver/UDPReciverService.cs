@@ -7,7 +7,7 @@ namespace FGLogDog.UDP.Receiver
     {
         public static IServiceCollection AddUDPReciverServices(this IServiceCollection services)
         {
-            services.AddSingleton<IUdpServer, UdpServer>();
+            services.AddSingleton<IUdPReceiver, UdpServer>();
             return services;
         }
     }

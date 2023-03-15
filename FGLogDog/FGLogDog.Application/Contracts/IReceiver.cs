@@ -3,7 +3,7 @@ using System;
 
 namespace FGLogDog.Application.Contracts
 {
-    public interface IReciver<in T> : IDisposable where T : ReceiverParameters
+    public interface IReceiver<in T> : IDisposable where T : ReceiverParameters
     {
         void Run(T parameters);
     }

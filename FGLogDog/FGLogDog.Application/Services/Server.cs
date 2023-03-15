@@ -17,14 +17,14 @@ namespace FGLogDog.FGLogDog.Application.Services
     {
         readonly string _input;
         readonly string _output;
-        readonly IUdpServer _udpServer;
+        readonly IUdPReceiver _udpReceiver;
         readonly IConsoleProducer _consoleProducer;
         readonly IBufferManager _bufferManager;
         readonly IParserManager _parserManager;
         readonly IRabbitMQProducer _rabbitMQProducer;
 
         public Server(IConfiguration configuration,
-                      IUdpServer udpServer,
+                      IUdPReceiver udpReceiver,
                       IConsoleProducer consoleProducer,
                       IBufferManager bufferManager,
                       IParserManager parserManager,
@@ -32,7 +32,7 @@ namespace FGLogDog.FGLogDog.Application.Services
         {
             _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
             _output = configuration.GetSection("ConfigurationString").GetSection("Output").Value;
-            _udpServer = udpServer;
+            _udpReceiver = udpReceiver;
             _consoleProducer = consoleProducer;
             _bufferManager = bufferManager;
             _parserManager = parserManager;
@@ -47,7 +47,7 @@ namespace FGLogDog.FGLogDog.Application.Services
             switch (typeOfReciver)
             {
                 case TypeOfReceiver.udp:
-                    new Task(() => ReciverRun(_udpServer, new TcpUdpReceiverParams(_input, Parser))).Start();
+                    new Task(() => ReceiverRun(_udpReceiver, new TcpUdpReceiverParams(_input, Parser))).Start();
                     break;
                 default:
                 throw new ArgumentException($"Invalid incomming type of input protocol: {typeOfReciver}.");
@@ -68,16 +68,16 @@ namespace FGLogDog.FGLogDog.Application.Services
             return Task.CompletedTask;
         }
 
-        private void ReciverRun<T, K>(T reciver, K parameters) where T : IReciver<K> where K : ReceiverParameters
+        static void ReceiverRun<T, K>(T reciver, K parameters) where T : IReceiver<K> where K : ReceiverParameters
             => reciver.Run(parameters);
 
-        private void ProducerRun<T, K>(T producer, K parameters) where T : IProducer<K> where K : ProducerParameters
+        static void ProducerRun<T, K>(T producer, K parameters) where T : IProducer<K> where K : ProducerParameters
             => producer.Run(parameters);
 
-        private void Parser(string message)
+        void Parser(string message)
             => _parserManager.ParseLogAndBufferize(message);
 
-        private BsonDocument Producer()
+        BsonDocument Producer()
             => _bufferManager.PullMessage();
 
         void IDisposable.Dispose()

@@ -7,8 +7,8 @@ namespace FGLogDog.FGLogDog.Application.Models.ParametersOfProducers
 {
     public class RabbitMQProducerParams : ProducerParameters
     {
-        private readonly IPAddress _ipAddress;
-        private readonly int _port;
+        readonly IPAddress _ipAddress;
+        readonly int _port;
 
         public RabbitMQProducerParams(string configuration, ProducerDelegate producer) 
             : base(producer)

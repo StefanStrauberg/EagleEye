@@ -7,8 +7,8 @@ namespace FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers
 {
     public class TcpUdpReceiverParams : ReceiverParameters
     {
-        private readonly IPAddress _ipAddress;
-        private readonly int _port;
+        readonly IPAddress _ipAddress;
+        readonly int _port;
 
         public TcpUdpReceiverParams(string configuration, ParserDelegate parser)
             : base(parser)

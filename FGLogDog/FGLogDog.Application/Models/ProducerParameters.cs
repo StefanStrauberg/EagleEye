@@ -4,7 +4,7 @@ namespace FGLogDog.Application.Models
 {
     public class ProducerParameters
     {
-        private readonly ProducerDelegate _producer;
+        readonly ProducerDelegate _producer;
 
         public ProducerParameters(ProducerDelegate producer)
             => _producer = producer;

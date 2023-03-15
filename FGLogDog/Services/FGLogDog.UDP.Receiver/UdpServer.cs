@@ -9,14 +9,14 @@ using System.Text;
 
 namespace FGLogDog.UDP.Receiver
 {
-    internal class UdpServer : IUdpServer
+    internal class UdpServer : IUdPReceiver
     {   
         readonly IAppLogger<UdpServer> _logger;
 
         public UdpServer(IAppLogger<UdpServer> logger)
             => _logger = logger;
 
-        void IReciver<TcpUdpReceiverParams>.Run(TcpUdpReceiverParams parameters)
+        void IReceiver<TcpUdpReceiverParams>.Run(TcpUdpReceiverParams parameters)
         {
             IPEndPoint ipPoint = new IPEndPoint(parameters.ipAddress, parameters.port);
             UdpClient udpClient = new UdpClient(ipPoint);

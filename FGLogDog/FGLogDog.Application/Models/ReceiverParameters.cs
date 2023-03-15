@@ -2,9 +2,9 @@ using FGLogDog.FGLogDog.Application.Helper;
 
 namespace FGLogDog.Application.Models
 {
-    public abstract class ReceiverParameters
+    public class ReceiverParameters
     {
-        private readonly ParserDelegate _parser;
+        readonly ParserDelegate _parser;
 
         public ReceiverParameters(ParserDelegate parser)
             => _parser = parser;
