@@ -9,15 +9,19 @@ namespace FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers
     {
         readonly IPAddress _ipAddress;
         readonly int _port;
+        readonly string[] _common;
 
-        public TcpUdpReceiverParams(string configuration, ParserDelegate parser)
+        public TcpUdpReceiverParams(string configuration, string common, ParserDelegate parser)
             : base(parser)
         {
             _ipAddress = ParserFactory.GetIP(configuration, "srcip=");
             _port = ParserFactory.GetINT(configuration, "srcport=");
+            _common = common.Split(' ');
         }
 
         public IPAddress ipAddress { get => _ipAddress; }
         public int port { get => _port; }
+        public string[] common { get => _common; }
+        public bool IsCommonCheck { get => _common.Length > 0; }
     }
 }

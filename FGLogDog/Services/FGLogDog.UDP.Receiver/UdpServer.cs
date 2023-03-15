@@ -3,6 +3,7 @@ using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Reciver;
 using FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -30,7 +31,21 @@ namespace FGLogDog.UDP.Receiver
                 {
                     byte[] receiveBytes = udpClient.Receive(ref RemoteIpEndPoint);
                     string message = Encoding.UTF8.GetString(receiveBytes);
-                    parameters.parse(message);
+                    bool Success = false;
+                    if (parameters.IsCommonCheck)
+                    {
+                        for (int i = 0; i < parameters.common.Length; i++)
+                        {
+                            if (message.Contains(parameters.common[i]))
+                                Success = true;
+                        }
+                        if (Success)
+                            parameters.parse(message);
+                    }
+                    else
+                    {
+                        parameters.parse(message);
+                    }
                 }
             }
             catch (Exception ex)

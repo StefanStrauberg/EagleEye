@@ -17,6 +17,7 @@ namespace FGLogDog.FGLogDog.Application.Services
     {
         readonly string _input;
         readonly string _output;
+        readonly string _common;
         readonly IUdPReceiver _udpReceiver;
         readonly IConsoleProducer _consoleProducer;
         readonly IBufferManager _bufferManager;
@@ -32,6 +33,7 @@ namespace FGLogDog.FGLogDog.Application.Services
         {
             _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
             _output = configuration.GetSection("ConfigurationString").GetSection("Output").Value;
+            _common = configuration.GetSection("ConfigurationString").GetSection("Common").Value;
             _udpReceiver = udpReceiver;
             _consoleProducer = consoleProducer;
             _bufferManager = bufferManager;
@@ -47,7 +49,7 @@ namespace FGLogDog.FGLogDog.Application.Services
             switch (typeOfReciver)
             {
                 case TypeOfReceiver.udp:
-                    new Task(() => ReceiverRun(_udpReceiver, new TcpUdpReceiverParams(_input, Parser))).Start();
+                    new Task(() => ReceiverRun(_udpReceiver, new TcpUdpReceiverParams(_input, _common, Parser))).Start();
                     break;
                 default:
                 throw new ArgumentException($"Invalid incomming type of input protocol: {typeOfReciver}.");
@@ -58,7 +60,7 @@ namespace FGLogDog.FGLogDog.Application.Services
                 case TypeOfProducer.console:
                     new Task(() => ProducerRun(_consoleProducer, new ConsoleProducerParams(Producer))).Start();
                     break;
-                case TypeOfProducer.icmp:
+                case TypeOfProducer.amqp:
                     new Task(() => ProducerRun(_rabbitMQProducer, new RabbitMQProducerParams(_output, Producer))).Start();
                     break;
                 default:

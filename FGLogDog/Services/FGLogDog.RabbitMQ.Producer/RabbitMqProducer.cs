@@ -21,10 +21,17 @@ namespace FGLogDog.RabbitMQ.Producer
             var factory = new ConnectionFactory
             {
                 HostName = parameters.ipAddress.ToString(),
-                Port = parameters.port
+                Port = parameters.port,
+                UserName = parameters.username,
+                Password = parameters.password
             };
             var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
+            channel.QueueDeclare(queue: parameters.queue,
+                                         durable: false,
+                                         autoDelete: false,
+                                         exclusive: false,
+                                         arguments: null);
 
             _logger.LogInformation($"LogDog started rabbitmq producer to {parameters.ipAddress}:{parameters.port}");
 
@@ -34,9 +41,10 @@ namespace FGLogDog.RabbitMQ.Producer
                 {
                     var message = parameters.getMessage()
                                             .ToJson();
-                    channel.QueueDeclare("fortigate", exclusive: false);
                     var body = Encoding.UTF8.GetBytes(message);
-                    channel.BasicPublish(exchange: "", routingKey: "fortigate", body: body);
+                    channel.BasicPublish(exchange: "",
+                                         routingKey: parameters.queue,
+                                         body: body);
                 }
             }
             catch (Exception ex)
