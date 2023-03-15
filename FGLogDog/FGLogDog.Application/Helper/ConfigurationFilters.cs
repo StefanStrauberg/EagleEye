@@ -7,18 +7,18 @@ namespace FGLogDog.FGLogDog.Application.Helper
     {
         readonly string[] _filterKeys;
         readonly string[] _filterPatterns;
-        readonly string[] _searchSubStrings;
+        readonly string[] _searchableSubStrings;
 
         public ConfigurationFilters(IConfiguration configuration)
         {
             string filter = configuration.GetSection("ConfigurationString").GetSection("Filter").Value;
             _filterKeys = ParserFactory.GetKeysFromConfigurationFilters(filter);
             _filterPatterns = ParserFactory.GetPatternsFromConfigurationFilters(filter);
-            _searchSubStrings = ParserFactory.ReplaceReadablePatterns(filter);
+            _searchableSubStrings = ParserFactory.ReplaceReadablePatterns(filter);
         }
 
         public string[] FilterKeys { get => _filterKeys; }
         public string[] FilterPatterns { get => _filterPatterns; }
-        public string[] Patterns { get => _searchSubStrings; }
+        public string[] SearchableSubStrings { get => _searchableSubStrings; }
     }
 }

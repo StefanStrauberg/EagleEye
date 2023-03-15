@@ -1,4 +1,4 @@
-﻿using FGLogDog.Application.Models;
+﻿using FGLogDog.FGLogDog.Application.Models.ParametersOfProducers;
 
 namespace FGLogDog.Application.Contracts.Producer
 {

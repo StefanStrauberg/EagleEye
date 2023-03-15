@@ -1,6 +1,7 @@
-﻿using FGLogDog.FGLogDog.Application.Helper;
+﻿using FGLogDog.Application.Models;
+using FGLogDog.FGLogDog.Application.Helper;
 
-namespace FGLogDog.Application.Models
+namespace FGLogDog.FGLogDog.Application.Models.ParametersOfProducers
 {
     public class ConsoleProducerParams : ProducerParameters
     {

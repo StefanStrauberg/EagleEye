@@ -1,8 +1,8 @@
-﻿using FGLogDog.Application.Contracts.Logger;
+﻿using FGLogDog.Application.Contracts;
+using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Producer;
-using FGLogDog.Application.Models;
+using FGLogDog.FGLogDog.Application.Models.ParametersOfProducers;
 using System;
-using System.Threading.Tasks;
 
 namespace FGLogDog.Console.Producer
 {
@@ -13,16 +13,17 @@ namespace FGLogDog.Console.Producer
         public ConsoleProducer(IAppLogger<ConsoleProducer> logger)
             => _logger = logger;
 
-        public async Task Run(ConsoleProducerParams parameters)
+        void IProducer<ConsoleProducerParams>.Run(ConsoleProducerParams parameters)
         {
             _logger.LogInformation($"LogDog started console producer");
+
             try
             {
                 while (true)
                 {
-                    var message = await parameters.getMessage();
+                    var message = parameters.getMessage();
                     System.Console.WriteLine(message);
-                } 
+                }
             }
             catch (Exception ex)
             {

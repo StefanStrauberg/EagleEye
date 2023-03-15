@@ -1,6 +1,6 @@
 namespace FGLogDog.Application.Models
 {
-    internal enum TypeOfReciver
+    internal enum TypeOfReceiver
     {
         udp
     }

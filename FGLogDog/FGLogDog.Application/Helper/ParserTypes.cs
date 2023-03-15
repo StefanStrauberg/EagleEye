@@ -1,4 +1,4 @@
-namespace FGLogDog.Application.Models
+namespace FGLogDog.Application.Helper
 {
     internal enum ParserTypes
     {

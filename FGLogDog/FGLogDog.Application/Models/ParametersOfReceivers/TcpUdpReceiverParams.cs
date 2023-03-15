@@ -1,15 +1,16 @@
 using System.Net;
 using FGLogDog.Application.Helper;
+using FGLogDog.Application.Models;
 using FGLogDog.FGLogDog.Application.Helper;
 
-namespace FGLogDog.Application.Models
+namespace FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers
 {
-    public class TcpUdpReciverParams : ReciverParameters
+    public class TcpUdpReceiverParams : ReceiverParameters
     {
         private readonly IPAddress _ipAddress;
         private readonly int _port;
 
-        public TcpUdpReciverParams(string configuration, ParserDelegate parser)
+        public TcpUdpReceiverParams(string configuration, ParserDelegate parser)
             : base(parser)
         {
             _ipAddress = ParserFactory.GetIP(configuration, "srcip=");

@@ -1,11 +1,10 @@
 using FGLogDog.Application.Models;
 using System;
-using System.Threading.Tasks;
 
 namespace FGLogDog.Application.Contracts
 {
-    public interface IReciver<in T> : IDisposable where T : ReciverParameters
+    public interface IReciver<in T> : IDisposable where T : ReceiverParameters
     {
-        Task Run(T parameters);
+        void Run(T parameters);
     }
 }

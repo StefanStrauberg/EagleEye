@@ -1,4 +1,3 @@
-using FGLogDog.Application.Models;
 using FGLogDog.FGLogDog.Application.Helper;
 using MongoDB.Bson;
 using System;
@@ -119,9 +118,9 @@ namespace FGLogDog.Application.Helper
         {
             BsonDocument bson = new BsonDocument();
 
-            for (int i = 0; i < filters.Patterns.Length; i++)
+            for (int i = 0; i < filters.SearchableSubStrings.Length; i++)
             {
-                string inputString = GetMatch(message, filters.Patterns[i]);
+                string inputString = GetMatch(message, filters.SearchableSubStrings[i]);
                 ParserTypes pattern = Enum.Parse<ParserTypes>(filters.FilterPatterns[i]);
 
                 MatchCollection matches;

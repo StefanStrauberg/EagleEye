@@ -8,7 +8,7 @@ namespace FGLogDog.RabbitMQ.Producer
     {
         public static IServiceCollection AddRabbitMQRServices(this IServiceCollection services)
         {
-            services.AddSingleton<IRabbitMQProducer, MessageProducer>();
+            services.AddSingleton<IRabbitMQProducer, RabbitMqProducer>();
             return services;
         }
     }

@@ -1,7 +1,8 @@
-﻿namespace FGLogDog.Application.Contracts.Producer
+﻿using FGLogDog.FGLogDog.Application.Models.ParametersOfProducers;
+
+namespace FGLogDog.Application.Contracts.Producer
 {
-    public interface IRabbitMQProducer
+    public interface IRabbitMQProducer : IProducer<RabbitMQProducerParams>
     {
-        void SendMessage(string message);
     }
 }
