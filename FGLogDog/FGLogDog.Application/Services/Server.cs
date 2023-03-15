@@ -46,7 +46,7 @@ namespace FGLogDog.FGLogDog.Application.Services
             switch (typeOfReciver)
             {
                 case TypeOfReceiver.udp:
-                    Task.Run(() => ReceiverRun(_udpReceiver, new TcpUdpReceiverParams(_input, _common, Parser)));
+                    Task.Run(() => ReceiverRun(_udpReceiver, new UdpReceiverParams(_input, _common, Parser)));
                     break;
                 default:
                 throw new ArgumentException($"Invalid incomming type of input protocol: {typeOfReciver}.");

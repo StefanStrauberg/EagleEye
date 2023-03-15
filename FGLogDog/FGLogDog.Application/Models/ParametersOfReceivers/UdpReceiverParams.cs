@@ -5,13 +5,13 @@ using FGLogDog.FGLogDog.Application.Helper;
 
 namespace FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers
 {
-    public class TcpUdpReceiverParams : ReceiverParameters
+    public class UdpReceiverParams : ReceiverParameters
     {
         readonly IPAddress _ipAddress;
         readonly int _port;
         readonly string _common;
 
-        public TcpUdpReceiverParams(string configuration, string common, ParserDelegate parser)
+        public UdpReceiverParams(string configuration, string common, ParserDelegate parser)
             : base(parser)
         {
             _ipAddress = ParserFactory.GetIP(configuration, "srcip=");

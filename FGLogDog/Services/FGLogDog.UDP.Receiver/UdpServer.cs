@@ -21,7 +21,7 @@ namespace FGLogDog.UDP.Receiver
         public UdpServer(IAppLogger<UdpServer> logger)
             => _logger = logger;
 
-        void IReceiver<TcpUdpReceiverParams>.Run(TcpUdpReceiverParams parameters)
+        void IReceiver<UdpReceiverParams>.Run(UdpReceiverParams parameters)
         {
             try
             {
