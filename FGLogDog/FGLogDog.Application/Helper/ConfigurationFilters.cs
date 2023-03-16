@@ -11,7 +11,7 @@ namespace FGLogDog.FGLogDog.Application.Helper
 
         public ConfigurationFilters(IConfiguration configuration)
         {
-            string filter = configuration.GetSection("ConfigurationString").GetSection("Filter").Value;
+            string filter = configuration.GetSection("ServiceConfiguration").GetSection("Filter").Value;
             _filterKeys = ParserFactory.GetKeysFromConfigurationFilters(filter);
             _filterPatterns = ParserFactory.GetPatternsFromConfigurationFilters(filter);
             _searchableSubStrings = ParserFactory.ReplaceReadablePatterns(filter);

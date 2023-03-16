@@ -1,23 +1,22 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using FGLogDog.Application.Contracts;
 using FGLogDog.Application.Contracts.Commands;
 using FGLogDog.Application.Contracts.Producer;
 using FGLogDog.Application.Contracts.Reciver;
-using FGLogDog.Application.Helper;
 using FGLogDog.Application.Models;
 using FGLogDog.FGLogDog.Application.Models.ParametersOfProducers;
 using FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FGLogDog.FGLogDog.Application.Services
 {
     internal class Server : BackgroundService
     {
-        readonly IConfiguration _configuration;
         readonly IUdPReceiver _udpReceiver;
         readonly IBufferManager _bufferManager;
         readonly IParserManager _parserManager;
@@ -31,11 +30,16 @@ namespace FGLogDog.FGLogDog.Application.Services
                       IParserManager parserManager,
                       IRabbitMQProducer rabbitMQProducer)
         {
-            var _input = configuration.GetSection("ConfigurationString").GetSection("Input").Value;
-            var _output = configuration.GetSection("ConfigurationString").GetSection("Output").Value;
-            _typeOfReciver = Enum.Parse<TypeOfReceiver>(ParserFactory.GetSTRING(_input, "protocol="));
-            _typeOfProducer = Enum.Parse<TypeOfProducer>(ParserFactory.GetSTRING(_output, "protocol="));
-            _configuration = configuration;
+            _typeOfReciver = Enum.Parse<TypeOfReceiver>(configuration.GetSection("ServiceConfiguration")
+                                                                     .GetSection("Receiver")
+                                                                     .GetChildren()
+                                                                     .FirstOrDefault()
+                                                                     .Key);
+            _typeOfProducer = Enum.Parse<TypeOfProducer>(configuration.GetSection("ServiceConfiguration")
+                                                                      .GetSection("Producer")
+                                                                      .GetChildren()
+                                                                      .FirstOrDefault()
+                                                                      .Key);
             _udpReceiver = udpReceiver;
             _bufferManager = bufferManager;
             _parserManager = parserManager;
@@ -49,7 +53,7 @@ namespace FGLogDog.FGLogDog.Application.Services
             switch (_typeOfReciver)
             {
                 case TypeOfReceiver.udp:
-                    Task.Run(() => ReceiverRun(_udpReceiver, new UdpReceiverParams(_configuration, Parser)));
+                    Task.Run(() => ReceiverRun(_udpReceiver, new UdpReceiverParams(Parser)));
                     break;
                 default:
                 throw new ArgumentException("Invalid incomming type of input protocol");
@@ -58,7 +62,7 @@ namespace FGLogDog.FGLogDog.Application.Services
             switch (_typeOfProducer)
             {
                 case TypeOfProducer.amqp:
-                    Task.Run(() => ProducerRun(_rabbitMQProducer, new RabbitMQProducerParams(_configuration, Producer)));
+                    Task.Run(() => ProducerRun(_rabbitMQProducer, new RabbitMQProducerParams(Producer)));
                     break;
                 default:
                     throw new ArgumentException("Invalid incomming type of output protocol");

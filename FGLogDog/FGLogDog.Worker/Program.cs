@@ -19,8 +19,8 @@ try
                          services.AddSingleton<IConfiguration>(hostContext.Configuration);
                          services.AddLoggerServices();
                          services.AddApplicationServices();
-                         services.AddUDPReciverServices();
-                         services.AddRabbitMQProducerServices();
+                         services.AddUDPReciverServices(hostContext.Configuration);
+                         services.AddRabbitMQProducerServices(hostContext.Configuration);
                      })
                      .Build();
     host.Run();

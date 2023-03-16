@@ -17,19 +17,6 @@ namespace FGLogDog.Application.Helper
         const string _guid = @"([({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?)";
         const string _mac = @"(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2})";
         const string _ip = @"(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
-
-        static string GetPattern(ParserTypes type)
-            => type switch
-            {
-                ParserTypes.INT => _int,
-                ParserTypes.TIME => _time,
-                ParserTypes.DATE => _date,
-                ParserTypes.STRING => _string,
-                ParserTypes.GUID => _guid,
-                ParserTypes.MAC => _mac,
-                ParserTypes.IP => _ip,
-                _ => throw new ArgumentException("Invalid incoming data of ParserTypes.")
-            };
         
         static string GetMatch(string input, string pattern)
         {
@@ -38,27 +25,6 @@ namespace FGLogDog.Application.Helper
                 return matches.First().Value;
             return null;
         }
-
-        static string GetSubStringFromString(string inputString, string startWith)
-        {
-            string[] subStrings = inputString.Split(' ');
-            foreach (var item in subStrings)
-                if(item.StartsWith(startWith))
-                    return item;
-            return null;
-        }
-
-        static string GetSTRINGFromSubString(string inputSubString, ParserTypes typeOfParse)
-            => ParserFactory.GetMatch(inputSubString, ParserFactory.GetPattern(typeOfParse));
-
-        internal static int GetINT(string inputSubString, string startWith)
-            => Int32.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), ParserTypes.INT));
-
-        internal static IPAddress GetIP(string inputSubString, string startWith)
-            => IPAddress.Parse(GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith), ParserTypes.IP));
-
-        internal static string GetSTRING(string inputSubString, string startWith)
-            => GetSTRINGFromSubString(GetSubStringFromString(inputSubString, startWith).Split('=')[1], ParserTypes.STRING).Replace(";", string.Empty);
 
         internal static string[] ReplaceReadablePatterns(string filters)
         {
