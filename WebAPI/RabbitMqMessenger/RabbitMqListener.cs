@@ -3,27 +3,32 @@ using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using WebAPI.EagleEye.RabbitMqMessenger.RabbitMQConfig;
 
 namespace WebAPI.EagleEye.RabbitMqMessenger
 {
     internal class RabbitMqListener : BackgroundService
     {
+        readonly IMessengerConnection _messengerConnection;
         readonly IConnection _connection;
         readonly IModel _channel;
         readonly IAppLogger<RabbitMqListener> _logger;
 
-        public RabbitMqListener(IAppLogger<RabbitMqListener> logger)
+        public RabbitMqListener(IAppLogger<RabbitMqListener> logger, IMessengerConnection messengerConnection)
         {
+            _messengerConnection = messengerConnection;
             var factory = new ConnectionFactory
             {
-                HostName = "127.0.0.1",
-                Port = 5672,
-                UserName = "guest",
-                Password = "guest"
+                HostName = _messengerConnection.IpAddress,
+                Port = _messengerConnection.Port,
+                UserName = _messengerConnection.UserName,
+                Password = _messengerConnection.Password
             };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: "FG6H0ETB20901717",
+            _channel.QueueDeclare(queue: _messengerConnection.Queue,
                                   durable: false,
                                   exclusive: false,
                                   autoDelete: false,
@@ -47,7 +52,7 @@ namespace WebAPI.EagleEye.RabbitMqMessenger
                 _channel.BasicAck(ea.DeliveryTag, false);
             };
 
-            _channel.BasicConsume("FG6H0ETB20901717", false, consumer);
+            _channel.BasicConsume(_messengerConnection.Queue, false, consumer);
 
             return Task.CompletedTask;
         }

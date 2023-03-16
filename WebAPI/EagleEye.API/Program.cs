@@ -19,7 +19,7 @@ try
     builder.Services.AddLoggingServices();
     builder.Services.AddApplicationServices();
     builder.Services.AddInfrastructureServices(builder.Configuration);
-    builder.Services.AddRabbitMQMessengerServices();
+    builder.Services.AddRabbitMQMessengerServices(builder.Configuration);
     builder.Services.AddControllers();
     builder.Services.AddCors(options =>
     {
