@@ -6,7 +6,6 @@ using FGLogDog.UDP.Receiver.Config;
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FGLogDog.UDP.Receiver
@@ -15,7 +14,6 @@ namespace FGLogDog.UDP.Receiver
     {
         readonly IReceiverConfiguration _receiverConfiguration;
         readonly IAppLogger<UdpServer> _logger;
-        readonly ICommonFilter _commonFilter;
         Socket _socket;
         EndPoint _endPoint;
         byte[] _bufferRecv;
@@ -23,12 +21,10 @@ namespace FGLogDog.UDP.Receiver
         bool _isBrockenInitialize;
 
         public UdpServer(IAppLogger<UdpServer> logger,
-                         IReceiverConfiguration receiverConfiguration,
-                         ICommonFilter commonFilter)
+                         IReceiverConfiguration receiverConfiguration)
         {
             _logger = logger;
             _receiverConfiguration = receiverConfiguration;
-            _commonFilter = commonFilter;
         }
 
         void IReceiver.Run(ReceiverParameters parameters)
@@ -43,19 +39,8 @@ namespace FGLogDog.UDP.Receiver
                         SocketReceiveMessageFromResult res;
                         while (true)
                         {
-                            res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment,
-                                                                        SocketFlags.None,
-                                                                        _endPoint);
-                            var message = Encoding.UTF8.GetString(_bufferRecv,
-                                                                 0,
-                                                                 res.ReceivedBytes);
-                            if (_commonFilter.Common is not null)
-                                if (message.Contains(_commonFilter.Common))
-                                    parameters.parse(message);
-                                else
-                                    continue;
-                            else
-                                parameters.parse(message);
+                            res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment, _endPoint);
+                            parameters.Parse(_bufferRecv);
                         }
                     });
                 }

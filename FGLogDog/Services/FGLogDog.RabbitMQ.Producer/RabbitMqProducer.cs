@@ -3,10 +3,9 @@ using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Producer;
 using FGLogDog.Application.Models;
 using FGLogDog.RabbitMQ.Producer.Config;
-using MongoDB.Bson;
 using RabbitMQ.Client;
 using System;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace FGLogDog.RabbitMQ.Producer
 {
@@ -31,15 +30,17 @@ namespace FGLogDog.RabbitMQ.Producer
             {
                 try
                 {
-                    while (true)
+                    _ = Task.Run(() =>
                     {
-                        var message = parameters.getMessage().ToJson();
-                        var body = Encoding.UTF8.GetBytes(message);
-                        _channel.BasicPublish(exchange: "",
-                                              routingKey: _producerConfiguration.Queue,
-                                              basicProperties: null,
-                                              body: body);
-                    }
+                        while (true)
+                        {
+                            var body = parameters.GetMessage();
+                            _channel.BasicPublish(exchange: "",
+                                                  routingKey: _producerConfiguration.Queue,
+                                                  basicProperties: null,
+                                                  body: body);
+                        }
+                    });
                 }
                 catch (Exception ex)
                 {

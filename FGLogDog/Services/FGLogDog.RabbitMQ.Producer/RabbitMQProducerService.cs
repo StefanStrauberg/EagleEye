@@ -14,7 +14,9 @@ namespace FGLogDog.RabbitMQ.Producer
                 configuration.GetSection("ServiceConfiguration").GetSection("Producer").GetSection("amqp"));
             services.AddSingleton<IProducerConfiguration>(provider =>
                 provider.GetRequiredService<IOptions<ProducerConfiguration>>().Value);
+
             services.AddSingleton<IRabbitMQProducer, RabbitMqProducer>();
+
             return services;
         }
     }

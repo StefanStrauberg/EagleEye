@@ -6,7 +6,7 @@ namespace FGLogDog.FGLogDog.Application.Helper
     internal class ConfigurationFilters : IConfigurationFilters
     {
         readonly string[] _filterKeys;
-        readonly string[] _filterPatterns;
+        readonly ParserTypes[] _filterPatterns;
         readonly string[] _searchableSubStrings;
 
         public ConfigurationFilters(IConfiguration configuration)
@@ -18,7 +18,7 @@ namespace FGLogDog.FGLogDog.Application.Helper
         }
 
         public string[] FilterKeys { get => _filterKeys; }
-        public string[] FilterPatterns { get => _filterPatterns; }
+        public ParserTypes[] FilterPatterns { get => _filterPatterns; }
         public string[] SearchableSubStrings { get => _searchableSubStrings; }
     }
 }

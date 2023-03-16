@@ -9,6 +9,6 @@ namespace FGLogDog.Application.Models
         public ProducerParameters(ProducerDelegate producer)
             => _producer = producer;
 
-        public ProducerDelegate getMessage { get => _producer; }
+        public ProducerDelegate GetMessage { get => _producer; }
     }
 }
