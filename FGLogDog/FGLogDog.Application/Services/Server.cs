@@ -49,24 +49,22 @@ namespace FGLogDog.FGLogDog.Application.Services
             stoppingToken.ThrowIfCancellationRequested();
             _ = _typeOfReciver switch
             {
-                TypeOfReceiver.udp => Task.Run(() => ReceiverRun(_udpReceiver, new ReceiverParameters(Parser)),
-                                               stoppingToken),
+                TypeOfReceiver.udp => Task.Run(() => ReceiverRun(_udpReceiver), stoppingToken),
                 _ => throw new ArgumentException("Invalid incomming type of input protocol"),
             };
             _ = _typeOfProducer switch
             {
-                TypeOfProducer.amqp => Task.Run(() => ProducerRun(_rabbitMQProducer, new ProducerParameters(Producer)),
-                                                stoppingToken),
+                TypeOfProducer.amqp => Task.Run(() => ProducerRun(_rabbitMQProducer), stoppingToken),
                 _ => throw new ArgumentException("Invalid incomming type of output protocol"),
             };
             return Task.CompletedTask;
         }
 
-        static void ReceiverRun<T>(T reciver, ReceiverParameters parameters) where T : IReceiver
-            => reciver.Run(parameters);
+        void ReceiverRun<T>(T reciver) where T : IReceiver
+            => reciver.Run(new ReceiverParameters(Parser));
 
-        static void ProducerRun<T>(T producer, ProducerParameters parameters) where T : IProducer
-            => producer.Run(parameters);
+        void ProducerRun<T>(T producer) where T : IProducer
+            => producer.Run(new ProducerParameters(Producer));
 
         void Parser(string message)
             => _parserManager.ParseLogAndBufferize(message);

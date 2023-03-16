@@ -20,7 +20,7 @@ namespace FGLogDog.UDP.Receiver
         EndPoint _endPoint;
         byte[] _bufferRecv;
         ArraySegment<byte> _bufferRecvSegment;
-        bool _isBrocken;
+        bool _isBrockenInitialize;
 
         public UdpServer(IAppLogger<UdpServer> logger,
                          IReceiverConfiguration receiverConfiguration,
@@ -34,9 +34,9 @@ namespace FGLogDog.UDP.Receiver
         void IReceiver.Run(ReceiverParameters parameters)
         {
             Initialize();
-            try
+            if (!_isBrockenInitialize)
             {
-                if (!_isBrocken)
+                try
                 {
                     _ = Task.Run(async () =>
                     {
@@ -59,10 +59,10 @@ namespace FGLogDog.UDP.Receiver
                         }
                     });
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
+                }
             }
         }
 
@@ -81,7 +81,7 @@ namespace FGLogDog.UDP.Receiver
             catch (Exception ex)
             {
                 _logger.LogError(GetExceptionMessages(ex, nameof(UdpServer)));
-                _isBrocken = true;
+                _isBrockenInitialize = true;
             }
         }
 

@@ -16,7 +16,7 @@ namespace FGLogDog.RabbitMQ.Producer
         readonly IAppLogger<RabbitMqProducer> _logger;
         IConnection _connection;
         IModel _channel;
-        bool _isBrocken;
+        bool _isBrockenInitialize;
         
         public RabbitMqProducer(IAppLogger<RabbitMqProducer> logger, IProducerConfiguration producerConfiguration)
         {
@@ -27,9 +27,9 @@ namespace FGLogDog.RabbitMQ.Producer
         void IProducer.Run(ProducerParameters parameters)
         {
             Initialize();
-            try
+            if (!_isBrockenInitialize)
             {
-                if (!_isBrocken)
+                try
                 {
                     while (true)
                     {
@@ -41,10 +41,10 @@ namespace FGLogDog.RabbitMQ.Producer
                                               body: body);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
+                }
             }
         }
 
@@ -71,7 +71,7 @@ namespace FGLogDog.RabbitMQ.Producer
             catch (Exception ex)
             {
                 _logger.LogError(GetExceptionMessages(ex, nameof(RabbitMqProducer)));
-                _isBrocken = true;
+                _isBrockenInitialize = true;
             }
         }
 

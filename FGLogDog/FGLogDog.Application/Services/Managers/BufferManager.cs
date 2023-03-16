@@ -11,9 +11,10 @@ namespace FGLogDog.Application.Services.Managers
         {
             while (!Buffer.buffer.IsCompleted)
             {
-                if (Buffer.buffer.TryTake(out BsonDocument document))
-                    return document;
-                //Thread.Sleep(100);
+                if (Buffer.buffer.Count > 0)
+                    if(Buffer.buffer.TryTake(out BsonDocument document))
+                        return document;
+                Thread.Sleep(1000);
             }
             return null;
         }
