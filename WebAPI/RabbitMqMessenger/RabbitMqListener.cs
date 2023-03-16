@@ -36,9 +36,9 @@ namespace WebAPI.EagleEye.RabbitMqMessenger
             _logger = logger;
         }
 
-        protected override Task ExecuteAsync(CancellationToken cancellationToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            stoppingToken.ThrowIfCancellationRequested();
 
             var consumer = new EventingBasicConsumer(_channel);
 

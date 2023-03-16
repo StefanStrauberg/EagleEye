@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using FGLogDog.Application.Contracts;
 using FGLogDog.Application.Contracts.Commands;
 using FGLogDog.Application.Contracts.Producer;
@@ -7,13 +10,12 @@ using FGLogDog.Application.Models;
 using FGLogDog.FGLogDog.Application.Models.ParametersOfProducers;
 using FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
-using System;
-using System.Threading.Tasks;
 
 namespace FGLogDog.FGLogDog.Application.Services
 {
-    internal class Server : IServer
+    internal class Server : BackgroundService
     {
         readonly IConfiguration _configuration;
         readonly IUdPReceiver _udpReceiver;
@@ -40,8 +42,10 @@ namespace FGLogDog.FGLogDog.Application.Services
             _rabbitMQProducer = rabbitMQProducer;
         }
 
-        public Task StartServer()
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            stoppingToken.ThrowIfCancellationRequested();
+
             switch (_typeOfReciver)
             {
                 case TypeOfReceiver.udp:
@@ -74,8 +78,5 @@ namespace FGLogDog.FGLogDog.Application.Services
 
         BsonDocument Producer()
             => _bufferManager.PullMessage();
-
-        void IDisposable.Dispose()
-            => GC.SuppressFinalize(this);
     }
 }

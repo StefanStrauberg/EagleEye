@@ -1,4 +1,3 @@
-using FGLogDog.Application.Contracts;
 using FGLogDog.Application.Contracts.Commands;
 using FGLogDog.Application.Services.Managers;
 using FGLogDog.FGLogDog.Application.Helper;
@@ -14,7 +13,7 @@ namespace FGLogDog.Application
             services.AddSingleton<IConfigurationFilters, ConfigurationFilters>();
             services.AddSingleton<IBufferManager, BufferManager>();
             services.AddSingleton<IParserManager, ParserManager>();
-            services.AddSingleton<IServer, Server>();
+            services.AddHostedService<Server>();
             return services;
         }
     }
