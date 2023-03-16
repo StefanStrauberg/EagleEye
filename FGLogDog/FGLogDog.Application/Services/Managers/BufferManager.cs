@@ -1,17 +1,19 @@
 ﻿using FGLogDog.Application.Contracts.Commands;
-using FGLogDog.Application.Models;
 using MongoDB.Bson;
+using System.Threading;
+using Buffer = FGLogDog.Application.Models.Buffer;
 
 namespace FGLogDog.Application.Services.Managers
 {
     internal class BufferManager : IBufferManager
     {
-        public BsonDocument PullMessage()
+        public BsonDocument TakeMessage()
         {
             while (!Buffer.buffer.IsCompleted)
             {
-                if (Buffer.buffer.TryTake(out BsonDocument result))
-                    return result;
+                if (Buffer.buffer.TryTake(out BsonDocument document))
+                    return document;
+                //Thread.Sleep(100);
             }
             return null;
         }

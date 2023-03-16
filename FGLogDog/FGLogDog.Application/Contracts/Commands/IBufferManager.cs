@@ -4,6 +4,6 @@ namespace FGLogDog.Application.Contracts.Commands
 {
     internal interface IBufferManager
     {
-        BsonDocument PullMessage();
+        BsonDocument TakeMessage();
     }
 }

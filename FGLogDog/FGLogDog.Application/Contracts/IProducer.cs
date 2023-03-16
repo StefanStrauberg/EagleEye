@@ -3,8 +3,8 @@ using System;
 
 namespace FGLogDog.Application.Contracts
 {
-    public interface IProducer<T> : IDisposable where T : ProducerParameters
+    public interface IProducer : IDisposable
     {
-        void Run(T parameters);
+        void Run(ProducerParameters parameters);
     }
 }

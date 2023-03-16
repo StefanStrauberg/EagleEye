@@ -3,8 +3,6 @@ using FGLogDog.Application.Contracts.Commands;
 using FGLogDog.Application.Contracts.Producer;
 using FGLogDog.Application.Contracts.Reciver;
 using FGLogDog.Application.Models;
-using FGLogDog.FGLogDog.Application.Models.ParametersOfProducers;
-using FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
@@ -49,38 +47,31 @@ namespace FGLogDog.FGLogDog.Application.Services
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
-
-            switch (_typeOfReciver)
+            _ = _typeOfReciver switch
             {
-                case TypeOfReceiver.udp:
-                    Task.Run(() => ReceiverRun(_udpReceiver, new UdpReceiverParams(Parser)));
-                    break;
-                default:
-                throw new ArgumentException("Invalid incomming type of input protocol");
-            }
-
-            switch (_typeOfProducer)
+                TypeOfReceiver.udp => Task.Run(() => ReceiverRun(_udpReceiver, new ReceiverParameters(Parser)),
+                                               stoppingToken),
+                _ => throw new ArgumentException("Invalid incomming type of input protocol"),
+            };
+            _ = _typeOfProducer switch
             {
-                case TypeOfProducer.amqp:
-                    Task.Run(() => ProducerRun(_rabbitMQProducer, new RabbitMQProducerParams(Producer)));
-                    break;
-                default:
-                    throw new ArgumentException("Invalid incomming type of output protocol");
-            }
-
+                TypeOfProducer.amqp => Task.Run(() => ProducerRun(_rabbitMQProducer, new ProducerParameters(Producer)),
+                                                stoppingToken),
+                _ => throw new ArgumentException("Invalid incomming type of output protocol"),
+            };
             return Task.CompletedTask;
         }
 
-        static void ReceiverRun<T, K>(T reciver, K parameters) where T : IReceiver<K> where K : ReceiverParameters
+        static void ReceiverRun<T>(T reciver, ReceiverParameters parameters) where T : IReceiver
             => reciver.Run(parameters);
 
-        static void ProducerRun<T, K>(T producer, K parameters) where T : IProducer<K> where K : ProducerParameters
+        static void ProducerRun<T>(T producer, ProducerParameters parameters) where T : IProducer
             => producer.Run(parameters);
 
         void Parser(string message)
             => _parserManager.ParseLogAndBufferize(message);
 
         BsonDocument Producer()
-            => _bufferManager.PullMessage();
+            => _bufferManager.TakeMessage();
     }
 }

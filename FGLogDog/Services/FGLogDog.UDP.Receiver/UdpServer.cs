@@ -1,7 +1,7 @@
 using FGLogDog.Application.Contracts;
 using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Reciver;
-using FGLogDog.FGLogDog.Application.Models.ParametersOfReceivers;
+using FGLogDog.Application.Models;
 using FGLogDog.UDP.Receiver.Config;
 using System;
 using System.Net;
@@ -15,46 +15,54 @@ namespace FGLogDog.UDP.Receiver
     {
         readonly IReceiverConfiguration _receiverConfiguration;
         readonly IAppLogger<UdpServer> _logger;
+        readonly ICommonFilter _commonFilter;
         Socket _socket;
         EndPoint _endPoint;
         byte[] _bufferRecv;
         ArraySegment<byte> _bufferRecvSegment;
+        bool _isBrocken;
 
-        public UdpServer(IAppLogger<UdpServer> logger, IReceiverConfiguration receiverConfiguration)
+        public UdpServer(IAppLogger<UdpServer> logger,
+                         IReceiverConfiguration receiverConfiguration,
+                         ICommonFilter commonFilter)
         {
             _logger = logger;
             _receiverConfiguration = receiverConfiguration;
+            _commonFilter = commonFilter;
         }
 
-        void IReceiver<UdpReceiverParams>.Run(UdpReceiverParams parameters)
+        void IReceiver.Run(ReceiverParameters parameters)
         {
             Initialize();
             try
             {
-                _ = Task.Run(async () =>
+                if (!_isBrocken)
                 {
-                    SocketReceiveMessageFromResult res;
-                    while (true) 
+                    _ = Task.Run(async () =>
                     {
-                        res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment,
-                                                                    SocketFlags.None,
-                                                                    _endPoint);
-                        var message = Encoding.UTF8.GetString(_bufferRecv,
-                                                             0,
-                                                             res.ReceivedBytes);
-                        //if (parameters.IsCommonCheck)
-                        //    if (message.Contains(parameters.Common))
-                        //        parameters.parse(message);
-                        //    else
-                        //        continue;
-                        //else
-                            parameters.parse(message);
-                    }
-                });
+                        SocketReceiveMessageFromResult res;
+                        while (true)
+                        {
+                            res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment,
+                                                                        SocketFlags.None,
+                                                                        _endPoint);
+                            var message = Encoding.UTF8.GetString(_bufferRecv,
+                                                                 0,
+                                                                 res.ReceivedBytes);
+                            if (_commonFilter.Common is not null)
+                                if (message.Contains(_commonFilter.Common))
+                                    parameters.parse(message);
+                                else
+                                    continue;
+                            else
+                                parameters.parse(message);
+                        }
+                    });
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(GetExceptionMessages(ex, nameof(UdpServer)));
+                _logger.LogError(ex.ToString());
             }
         }
 
@@ -72,7 +80,8 @@ namespace FGLogDog.UDP.Receiver
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(GetExceptionMessages(ex, nameof(UdpServer)));
+                _logger.LogError(GetExceptionMessages(ex, nameof(UdpServer)));
+                _isBrocken = true;
             }
         }
 
@@ -86,9 +95,6 @@ namespace FGLogDog.UDP.Receiver
         }
 
         void IDisposable.Dispose()
-        {
-            _socket.Close();
-            _socket.Dispose();
-        }
+            => GC.SuppressFinalize(this);
     }
 }

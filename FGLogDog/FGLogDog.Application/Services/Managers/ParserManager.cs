@@ -1,7 +1,7 @@
 ﻿using FGLogDog.Application.Contracts.Commands;
 using FGLogDog.Application.Helper;
-using FGLogDog.Application.Models;
 using FGLogDog.FGLogDog.Application.Helper;
+using Buffer = FGLogDog.Application.Models.Buffer;
 
 namespace FGLogDog.Application.Services.Managers
 {
@@ -15,7 +15,7 @@ namespace FGLogDog.Application.Services.Managers
         void IParserManager.ParseLogAndBufferize(string inputLog)
         {
             var document = ParserFactory.GetJsonFromMessage(inputLog, _filters);
-            while (!Buffer.buffer.TryAdd(document))
+            while(!Buffer.buffer.TryAdd(document))
             { }
         }
     }

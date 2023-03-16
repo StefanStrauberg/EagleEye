@@ -1,7 +1,7 @@
 ﻿using FGLogDog.Application.Contracts;
 using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Producer;
-using FGLogDog.FGLogDog.Application.Models.ParametersOfProducers;
+using FGLogDog.Application.Models;
 using FGLogDog.RabbitMQ.Producer.Config;
 using MongoDB.Bson;
 using RabbitMQ.Client;
@@ -16,6 +16,7 @@ namespace FGLogDog.RabbitMQ.Producer
         readonly IAppLogger<RabbitMqProducer> _logger;
         IConnection _connection;
         IModel _channel;
+        bool _isBrocken;
         
         public RabbitMqProducer(IAppLogger<RabbitMqProducer> logger, IProducerConfiguration producerConfiguration)
         {
@@ -23,27 +24,27 @@ namespace FGLogDog.RabbitMQ.Producer
             _producerConfiguration = producerConfiguration;
         }
 
-        void IProducer<RabbitMQProducerParams>.Run(RabbitMQProducerParams parameters)
+        void IProducer.Run(ProducerParameters parameters)
         {
             Initialize();
             try
             {
-                while (true)
+                if (!_isBrocken)
                 {
-                    var message = parameters.getMessage().ToJson();
-                    if (message is null)
-                        continue;
-                    var body = Encoding.UTF8.GetBytes(message);
-                    _channel.BasicPublish(exchange: "",
-                                          routingKey: _producerConfiguration.Queue,
-                                          basicProperties: null,
-                                          body: body);
+                    while (true)
+                    {
+                        var message = parameters.getMessage().ToJson();
+                        var body = Encoding.UTF8.GetBytes(message);
+                        _channel.BasicPublish(exchange: "",
+                                              routingKey: _producerConfiguration.Queue,
+                                              basicProperties: null,
+                                              body: body);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(GetExceptionMessages(ex, nameof(RabbitMqProducer)));
-                _logger.LogWarning($"LogDog reciver stoped");
+                _logger.LogError(ex.ToString());
             }
         }
 
@@ -69,7 +70,8 @@ namespace FGLogDog.RabbitMQ.Producer
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(GetExceptionMessages(ex, nameof(RabbitMqProducer)));
+                _logger.LogError(GetExceptionMessages(ex, nameof(RabbitMqProducer)));
+                _isBrocken = true;
             }
         }
 
@@ -84,8 +86,7 @@ namespace FGLogDog.RabbitMQ.Producer
 
         void IDisposable.Dispose()
         {
-            _channel.Close();
-            _connection.Close();
+            GC.SuppressFinalize(this);
         }
     }
 }

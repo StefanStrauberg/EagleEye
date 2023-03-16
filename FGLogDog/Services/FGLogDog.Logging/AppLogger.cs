@@ -15,5 +15,8 @@ namespace FGLogDog.Logging
 
         public void LogWarning(string message, params object[] args)
             => _logger.LogWarning(message, args);
+
+        public void LogError(string message, params object[] args)
+            => _logger.LogError(message, args);
     }
 }

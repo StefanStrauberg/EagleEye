@@ -14,7 +14,14 @@ namespace FGLogDog.UDP.Receiver
                 configuration.GetSection("ServiceConfiguration").GetSection("Receiver").GetSection("udp"));
             services.AddSingleton<IReceiverConfiguration>(provider =>
                 provider.GetRequiredService<IOptions<ReceiverConfiguration>>().Value);
+
+            services.Configure<CommonFilter>(
+                configuration.GetSection("ServiceConfiguration").GetSection("CommonFilter"));
+            services.AddSingleton<ICommonFilter>(provider =>
+                provider.GetRequiredService<IOptions<CommonFilter>>().Value);
+
             services.AddSingleton<IUdPReceiver, UdpServer>();
+
             return services;
         }
     }
