@@ -9,6 +9,6 @@ namespace FGLogDog.Application.Models
         public ReceiverParameters(ParserDelegate parser)
             => _parser = parser;
 
-        public ParserDelegate Parse { get => _parser; }
+        public ParserDelegate PushToBuffer { get => _parser; }
     }
 }

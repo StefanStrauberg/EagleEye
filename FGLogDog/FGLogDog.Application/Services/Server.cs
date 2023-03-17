@@ -16,17 +16,19 @@ namespace FGLogDog.FGLogDog.Application.Services
 {
     internal class Server : BackgroundService
     {
-        readonly IConfigurationFilters _filters;
-        readonly IUdPReceiver _udpReceiver;
+        readonly IUDPReceiver _udpReceiver;
+        readonly ITCPReceiver _tcpReceiver;
         readonly IRabbitMQProducer _rabbitMQProducer;
         readonly TypeOfReceiver _typeOfReciver;
         readonly TypeOfProducer _typeOfProducer;
 
         public Server(IConfiguration configuration,
-                      IUdPReceiver udpReceiver,
+                      IUDPReceiver udpReceiver,
                       IRabbitMQProducer rabbitMQProducer,
-                      IConfigurationFilters filters)
+                      IConfigurationFilters filters,
+                      ITCPReceiver tcpReceiver)
         {
+            ParserFactory.InitFilter(filters);
             _typeOfReciver = Enum.Parse<TypeOfReceiver>(configuration.GetSection("ServiceConfiguration")
                                                                      .GetSection("Receiver")
                                                                      .GetChildren()
@@ -39,7 +41,7 @@ namespace FGLogDog.FGLogDog.Application.Services
                                                                       .Key);
             _udpReceiver = udpReceiver;
             _rabbitMQProducer = rabbitMQProducer;
-            _filters = filters;
+            _tcpReceiver = tcpReceiver;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -48,6 +50,7 @@ namespace FGLogDog.FGLogDog.Application.Services
             _ = _typeOfReciver switch
             {
                 TypeOfReceiver.udp => Task.Run(() => ReceiverRun(_udpReceiver), stoppingToken),
+                TypeOfReceiver.tcp => Task.Run(() => ReceiverRun(_tcpReceiver), stoppingToken),
                 _ => throw new ArgumentException("Invalid incomming type of input protocol"),
             };
             _ = _typeOfProducer switch
@@ -62,6 +65,6 @@ namespace FGLogDog.FGLogDog.Application.Services
             => reciver.Run(new ReceiverParameters((byte[] bytes) => Buffer.buffer.Add(bytes)));
 
         void ProducerRun<T>(T producer) where T : IProducer
-            => producer.Run(new ProducerParameters(() => ParserFactory.GetMessage(Buffer.buffer.Take(), _filters)));
+            => producer.Run(new ProducerParameters(() => ParserFactory.GetMessage(Buffer.buffer.Take())));
     }
 }

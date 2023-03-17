@@ -2,6 +2,7 @@ using FGLogDog.Application;
 using FGLogDog.Logging;
 using FGLogDog.RabbitMQ.Producer;
 using FGLogDog.UDP.Receiver;
+using FGLogDog.TCP.Receiver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,6 +21,7 @@ try
                          services.AddLoggerServices();
                          services.AddApplicationServices();
                          services.AddUDPReciverServices(hostContext.Configuration);
+                         services.AddTCPReciverServices(hostContext.Configuration);
                          services.AddRabbitMQProducerServices(hostContext.Configuration);
                      })
                      .Build();

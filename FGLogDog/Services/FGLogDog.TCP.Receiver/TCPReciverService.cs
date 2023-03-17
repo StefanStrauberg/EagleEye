@@ -1,21 +1,21 @@
 using FGLogDog.Application.Contracts.Reciver;
-using FGLogDog.UDP.Receiver.Config;
+using FGLogDog.TCP.Receiver.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace FGLogDog.UDP.Receiver
+namespace FGLogDog.TCP.Receiver
 {
-    public static class UDPReciverService
+    public static class TCPReciverService
     {
-        public static IServiceCollection AddUDPReciverServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddTCPReciverServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ReceiverConfiguration>(
-                configuration.GetSection("ServiceConfiguration").GetSection("Receiver").GetSection("udp"));
+                configuration.GetSection("ServiceConfiguration").GetSection("Receiver").GetSection("tcp"));
             services.AddSingleton<IReceiverConfiguration>(provider =>
                 provider.GetRequiredService<IOptions<ReceiverConfiguration>>().Value);
-
-            services.AddSingleton<IUDPReceiver, UDPServer>();
+                
+            services.AddSingleton<ITCPReceiver, TCPServer>();
 
             return services;
         }

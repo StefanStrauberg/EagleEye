@@ -17,7 +17,8 @@ namespace FGLogDog.RabbitMQ.Producer
         IModel _channel;
         bool _isBrockenInitialize;
         
-        public RabbitMqProducer(IAppLogger<RabbitMqProducer> logger, IProducerConfiguration producerConfiguration)
+        public RabbitMqProducer(IAppLogger<RabbitMqProducer> logger,
+                                IProducerConfiguration producerConfiguration)
         {
             _logger = logger;
             _producerConfiguration = producerConfiguration;
@@ -34,7 +35,7 @@ namespace FGLogDog.RabbitMQ.Producer
                     {
                         while (true)
                         {
-                            var body = parameters.GetMessage();
+                            var body = parameters.PullFromBuffer();
                             _channel.BasicPublish(exchange: "",
                                                   routingKey: _producerConfiguration.Queue,
                                                   basicProperties: null,
@@ -73,6 +74,10 @@ namespace FGLogDog.RabbitMQ.Producer
             {
                 _logger.LogError(GetExceptionMessages(ex, nameof(RabbitMqProducer)));
                 _isBrockenInitialize = true;
+            }
+            finally
+            {
+                ((IDisposable)this).Dispose();
             }
         }
 

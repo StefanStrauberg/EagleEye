@@ -4,6 +4,6 @@ namespace FGLogDog.Application.Models
 {
     internal static class Buffer
     {
-        public static BlockingCollection<byte[]> buffer = new();
+        public static BlockingCollection<byte[]> buffer = new BlockingCollection<byte[]>(400000);
     }
 }
