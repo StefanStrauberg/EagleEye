@@ -27,7 +27,7 @@ namespace FGLogDog.TCP.Receiver
             _receiverConfiguration = receiverConfiguration;
         }
 
-        void IReceiver.Run(ReceiverParameters parameters)
+        void IReceiver.Run(Action<byte[]> PushToBuffer)
         {
             Initialize();
             if (!_isBrockenInitialize)
@@ -40,7 +40,7 @@ namespace FGLogDog.TCP.Receiver
                             while(true)
                             {
                                 int bytesRec = await handler.ReceiveAsync(_bufferRecvSegment);
-                                parameters.PushToBuffer(_bufferRecv);
+                                PushToBuffer(_bufferRecv);
                             }
                     });
                 }

@@ -62,9 +62,9 @@ namespace FGLogDog.FGLogDog.Application.Services
         }
 
         static void ReceiverRun<T>(T reciver) where T : IReceiver
-            => reciver.Run(new ReceiverParameters((byte[] bytes) => Buffer.buffer.Add(bytes)));
+            => reciver.Run((byte[] bytes) => Buffer.buffer.Add(bytes));
 
         void ProducerRun<T>(T producer) where T : IProducer
-            => producer.Run(new ProducerParameters(() => ParserFactory.GetMessage(Buffer.buffer.Take())));
+            => producer.Run(() => ParserFactory.GetMessage(Buffer.buffer.Take()));
     }
 }

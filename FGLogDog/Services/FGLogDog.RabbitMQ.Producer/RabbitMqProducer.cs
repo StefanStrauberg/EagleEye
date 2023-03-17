@@ -1,7 +1,6 @@
 ﻿using FGLogDog.Application.Contracts;
 using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Producer;
-using FGLogDog.Application.Models;
 using FGLogDog.RabbitMQ.Producer.Config;
 using RabbitMQ.Client;
 using System;
@@ -24,7 +23,7 @@ namespace FGLogDog.RabbitMQ.Producer
             _producerConfiguration = producerConfiguration;
         }
 
-        void IProducer.Run(ProducerParameters parameters)
+        void IProducer.Run(Func<byte[]> PullFromBuffer)
         {
             Initialize();
             if (!_isBrockenInitialize)
@@ -35,7 +34,7 @@ namespace FGLogDog.RabbitMQ.Producer
                     {
                         while (true)
                         {
-                            var body = parameters.PullFromBuffer();
+                            var body = PullFromBuffer();
                             _channel.BasicPublish(exchange: "",
                                                   routingKey: _producerConfiguration.Queue,
                                                   basicProperties: null,

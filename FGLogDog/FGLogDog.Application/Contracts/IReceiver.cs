@@ -5,6 +5,6 @@ namespace FGLogDog.Application.Contracts
 {
     public interface IReceiver : IDisposable
     {
-        void Run(ReceiverParameters parameters);
+        void Run(Action<byte[]> PushToBuffer);
     }
 }

@@ -88,74 +88,92 @@ namespace FGLogDog.Application.Helper
         {
             string message = Encoding.UTF8.GetString(bytes);
 
-            StringBuilder inputString = new();
-
             BsonDocument bson = new();
-
-            MatchCollection matches;
 
             for (int i = 0; i < _filters.SearchableSubStrings.Length; i++)
             {
-                inputString.Clear();
+                var inputString = GetMatch(message, _filters.SearchableSubStrings[i]);
 
-                inputString.Append(GetMatch(message, _filters.SearchableSubStrings[i]));
-
-                if (inputString.ToString() is null)
-                    continue;
+                MatchCollection matches;
 
                 switch (_filters.FilterPatterns[i])
                 {
                     case ParserTypes.INT:
-                        matches = MyRegex().Matches(inputString.ToString());
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = MyRegex().Matches(inputString);
                         if (matches.Count > 0)
-                            bson.Add(new BsonElement(_filters.FilterKeys[i], Int32.Parse(matches[0].Value)));
+                            if (int.TryParse(matches.First().Value, out var data))
+                                bson.Add(new BsonElement(_filters.FilterKeys[i], data));
                         break;
                     case ParserTypes.TIME:
-                        matches = MyRegex1().Matches(inputString.ToString());
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = MyRegex1().Matches(inputString);
                         if (matches.Count > 0)
-                            bson.Add(new BsonElement(_filters.FilterKeys[i], matches[0].Value));
+                            if (TimeOnly.TryParse(matches.First().Value, out var data))
+                                bson.Add(new BsonElement(_filters.FilterKeys[i], data.ToString()));
                         break;
                     case ParserTypes.DATE:
-                        matches = MyRegex2().Matches(inputString.ToString());
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = MyRegex2().Matches(inputString);
                         if (matches.Count > 0)
-                            bson.Add(new BsonElement(_filters.FilterKeys[i], matches[0].Value));
+                            if (DateOnly.TryParse(matches.First().Value, out var data))
+                                bson.Add(new BsonElement(_filters.FilterKeys[i], data.ToString()));
                         break;
                     case ParserTypes.STRING:
-                        matches = MyRegex3().Matches(inputString.ToString());
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = MyRegex3().Matches(inputString);
                         if (matches.Count > 0)
                             bson.Add(new BsonElement(_filters.FilterKeys[i], matches[2].Value));
                         break;
                     case ParserTypes.GUID:
-                        matches = MyRegex4().Matches(inputString.ToString());
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = MyRegex4().Matches(inputString);
                         if (matches.Count > 0)
-                            bson.Add(new BsonElement(_filters.FilterKeys[i],
-                                                     new BsonBinaryData(Guid.Parse(matches[0].Value),
-                                                                        GuidRepresentation.Standard)));
+                            if (Guid.TryParse(matches.First().Value, out var data))
+                                bson.Add(new BsonElement(_filters.FilterKeys[i], new BsonBinaryData(data, GuidRepresentation.Standard)));
                         break;
                     case ParserTypes.MAC:
-                        matches = MyRegex5().Matches(inputString.ToString());
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = MyRegex5().Matches(inputString);
                         if (matches.Count > 0)
                             bson.Add(new BsonElement(_filters.FilterKeys[i], matches[0].Value));
                         break;
                     case ParserTypes.IP:
-                        matches = MyRegex6().Matches(inputString.ToString());
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
+                        matches = MyRegex6().Matches(inputString);
                         if (matches.Count > 0)
                             bson.Add(new BsonElement(_filters.FilterKeys[i], matches[0].Value));
                         break;
                     case ParserTypes.DATETIME:
+                        if (string.IsNullOrWhiteSpace(inputString))
+                            break;
                         StringBuilder temp = new();
-                        matches = MyRegex7().Matches(inputString.ToString());
+                        matches = MyRegex7().Matches(inputString);
                         if (matches.Count > 0)
-                            temp.Append(matches[0].Value);
+                        {
+                            if (DateOnly.TryParse(matches.First().Value, out var date))
+                                temp.Append(date);
+                        }
                         else
                             break;
                         temp.Append(' ');
-                        matches = MyRegex8().Matches(inputString.ToString());
+                        matches = MyRegex8().Matches(inputString);
                         if (matches.Count > 0)
-                            temp.Append(matches[0].Value);
+                        {
+                            if (TimeOnly.TryParse(matches.First().Value, out var time))
+                                temp.Append(time);
+                        }
                         else
                             break;
-                            bson.Add(new BsonElement(_filters.FilterKeys[i], DateTime.Parse(temp.ToString())));
+                        if (DateTime.TryParse(temp.ToString(), out DateTime dateTime))
+                            bson.Add(new BsonElement(_filters.FilterKeys[i], dateTime));
                         break;
                     default:
                         throw new ArgumentException("Invalid incoming data of ParserTypes.");
