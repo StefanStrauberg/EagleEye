@@ -23,12 +23,14 @@ namespace FGLogDog.FGLogDog.Application.Services
         readonly TypeOfProducer _typeOfProducer;
 
         public Server(IConfiguration configuration,
+                      ICommonFilter commonFilter,
                       IUDPReceiver udpReceiver,
                       IRabbitMQProducer rabbitMQProducer,
                       IConfigurationFilters filters,
                       ITCPReceiver tcpReceiver)
         {
             ParserFactory.InitFilter(filters);
+            Filter.InitFilter(commonFilter);
             _typeOfReciver = Enum.Parse<TypeOfReceiver>(configuration.GetSection("ServiceConfiguration")
                                                                      .GetSection("Receiver")
                                                                      .GetChildren()
@@ -64,7 +66,7 @@ namespace FGLogDog.FGLogDog.Application.Services
         static void ReceiverRun<T>(T reciver) where T : IReceiver
             => reciver.Run((byte[] bytes) => Buffer.buffer.Add(bytes));
 
-        void ProducerRun<T>(T producer) where T : IProducer
+        static void ProducerRun<T>(T producer) where T : IProducer
             => producer.Run(() => ParserFactory.GetMessage(Buffer.buffer.Take()));
     }
 }

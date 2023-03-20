@@ -19,7 +19,7 @@ try
                      {
                          services.AddSingleton<IConfiguration>(hostContext.Configuration);
                          services.AddLoggerServices();
-                         services.AddApplicationServices();
+                         services.AddApplicationServices(hostContext.Configuration);
                          services.AddUDPReciverServices(hostContext.Configuration);
                          services.AddTCPReciverServices(hostContext.Configuration);
                          services.AddRabbitMQProducerServices(hostContext.Configuration);
