@@ -91,7 +91,7 @@ namespace FGLogDog.Application.Helper
             if(string.IsNullOrEmpty(message))
                 return null;
 
-            BsonDocument bson = new();
+            BsonDocument bsonDoc = new();
             MatchCollection matches;
             string inputString;
 
@@ -108,47 +108,47 @@ namespace FGLogDog.Application.Helper
                         matches = MyRegex().Matches(inputString);
                         if (matches.Count > 0)
                             if (int.TryParse(matches.First().Value, out var data))
-                                bson.Add(new BsonElement(_filters.FilterKeys[i],
-                                                         data));
+                                bsonDoc.Add(new BsonElement(_filters.FilterKeys[i],
+                                                            data));
                         break;
                     case ParserTypes.TIME:
                         matches = MyRegex1().Matches(inputString);
                         if (matches.Count > 0)
                             if (TimeOnly.TryParse(matches.First().Value, out var data))
-                                bson.Add(new BsonElement(_filters.FilterKeys[i],
-                                                         data.ToString()));
+                                bsonDoc.Add(new BsonElement(_filters.FilterKeys[i],
+                                                            data.ToString()));
                         break;
                     case ParserTypes.DATE:
                         matches = MyRegex2().Matches(inputString);
                         if (matches.Count > 0)
                             if (DateOnly.TryParse(matches.First().Value, out var data))
-                                bson.Add(new BsonElement(_filters.FilterKeys[i],
-                                                         data.ToString()));
+                                bsonDoc.Add(new BsonElement(_filters.FilterKeys[i],
+                                                            data.ToString()));
                         break;
                     case ParserTypes.STRING:
                         matches = MyRegex3().Matches(inputString);
                         if (matches.Count > 0)
-                            bson.Add(new BsonElement(_filters.FilterKeys[i],
-                                                     matches[2].Value));
+                            bsonDoc.Add(new BsonElement(_filters.FilterKeys[i],
+                                                        matches[2].Value));
                         break;
                     case ParserTypes.GUID:
                         matches = MyRegex4().Matches(inputString);
                         if (matches.Count > 0)
                             if (Guid.TryParse(matches.First().Value, out var data))
-                                bson.Add(new BsonElement(_filters.FilterKeys[i],
-                                                         new BsonBinaryData(data, GuidRepresentation.Standard)));
+                                bsonDoc.Add(new BsonElement(_filters.FilterKeys[i],
+                                                            new BsonBinaryData(data, GuidRepresentation.Standard)));
                         break;
                     case ParserTypes.MAC:
                         matches = MyRegex5().Matches(inputString);
                         if (matches.Count > 0)
-                            bson.Add(new BsonElement(_filters.FilterKeys[i],
-                                                     matches.First().Value));
+                            bsonDoc.Add(new BsonElement(_filters.FilterKeys[i],
+                                                        matches.First().Value));
                         break;
                     case ParserTypes.IP:
                         matches = MyRegex6().Matches(inputString);
                         if (matches.Count > 0)
-                            bson.Add(new BsonElement(_filters.FilterKeys[i],
-                                                     matches.First().Value));
+                            bsonDoc.Add(new BsonElement(_filters.FilterKeys[i],
+                                                        matches.First().Value));
                         break;
                     case ParserTypes.DATETIME:
                         StringBuilder temp = new();
@@ -166,17 +166,17 @@ namespace FGLogDog.Application.Helper
                         else
                             break;
                         if (DateTime.TryParse(temp.ToString(), out DateTime dateTime))
-                            bson.Add(new BsonElement(_filters.FilterKeys[i], dateTime));
+                            bsonDoc.Add(new BsonElement(_filters.FilterKeys[i], dateTime));
                         break;
                     default:
                         throw new ArgumentException("Invalid incoming data of ParserTypes.");
                 }
             }
 
-            if (bson.ElementCount == 0)
+            if (bsonDoc.ElementCount == 0)
                 return null;
 
-            return Encoding.UTF8.GetBytes(bson.ToString());
+            return bsonDoc.ToBson();
         }
 
         [GeneratedRegex("(\\d+)")]

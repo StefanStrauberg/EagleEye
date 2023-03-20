@@ -1,7 +1,10 @@
 ﻿using EagleEye.Application.Contracts.Logger;
 using Microsoft.Extensions.Hosting;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,18 +41,22 @@ namespace WebAPI.EagleEye.RabbitMqMessenger
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation("RabbitMQ listener start");
+
             stoppingToken.ThrowIfCancellationRequested();
 
             var consumer = new EventingBasicConsumer(_channel);
 
-            consumer.Received += (ch, ea) =>
+            consumer.Received += (model, eventArgs) =>
             {
-                var content = Encoding.UTF8.GetString(ea.Body.ToArray());
+                byte[] body = eventArgs.Body.ToArray();
+
+                BsonDocument bsonDoc = BsonSerializer.Deserialize<BsonDocument>(body);
 
                 // TODO push input log to local API buffer
-                _logger.LogInformation(content);
+                _logger.LogInformation(bsonDoc.ToJson());
 
-                _channel.BasicAck(ea.DeliveryTag, false);
+                _channel.BasicAck(eventArgs.DeliveryTag, false);
             };
 
             _channel.BasicConsume(_messengerConnection.Queue, false, consumer);
