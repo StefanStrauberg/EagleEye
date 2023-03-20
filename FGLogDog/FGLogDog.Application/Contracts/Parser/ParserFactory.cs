@@ -16,14 +16,6 @@ namespace FGLogDog.Application.Contracts.Parser
         public ParserFactory(IConfigurationFilters filters)
             => _filters = filters;
 
-        string GetMatch(string input, string pattern)
-        {
-            var matches = Regex.Matches(input, pattern);
-            if (matches.Count > 0)
-                return matches.First().Value;
-            return null;
-        }
-
         byte[] IParserFactory.ParsingMessage(byte[] bytes)
         {
             string message = Encoding.UTF8.GetString(bytes);
@@ -37,9 +29,10 @@ namespace FGLogDog.Application.Contracts.Parser
 
             for (int i = 0; i < _filters.SearchableSubStrings.Length; i++)
             {
-                inputString = GetMatch(message, _filters.SearchableSubStrings[i]);
-
-                if (string.IsNullOrWhiteSpace(inputString))
+                matches = Regex.Matches(message, _filters.SearchableSubStrings[i]);
+                if (matches.Count > 0)
+                    inputString = matches.First().Value;
+                else
                     continue;
 
                 switch (_filters.FilterPatterns[i])
@@ -107,7 +100,8 @@ namespace FGLogDog.Application.Contracts.Parser
                         else
                             break;
                         if (DateTime.TryParse(temp.ToString(), out DateTime dateTime))
-                            bsonDoc.Add(new BsonElement(_filters.FilterKeys[i], dateTime));
+                            bsonDoc.Add(new BsonElement(_filters.FilterKeys[i],
+                                                        dateTime));
                         break;
                     default:
                         throw new ArgumentException("Invalid incoming data of ParserTypes.");

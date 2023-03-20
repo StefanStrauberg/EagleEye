@@ -6,7 +6,7 @@ namespace FGLogDog.Application.Contracts.Parser
     public interface IParserFactory
     {
         /// <summary>
-        /// Parsing incoming butes
+        /// Parsing incoming bytes
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
