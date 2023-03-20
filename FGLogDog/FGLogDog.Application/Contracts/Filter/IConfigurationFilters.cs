@@ -3,7 +3,7 @@ using FGLogDog.Application.Models;
 namespace FGLogDog.Application.Contracts.Filter
 {
     /// <summary>
-    /// Common parameters of server such as FilterKey, FilterPatterns, SearchableSubStrings
+    /// General server parameters for filtering incoming data
     /// </summary>
     internal interface IConfigurationFilters
     {
@@ -13,12 +13,12 @@ namespace FGLogDog.Application.Contracts.Filter
         /// <value></value>
         string[] FilterKeys { get; }
         /// <summary>
-        /// Common keys of filter patterns
+        /// Common filter patterns of filter
         /// </summary>
         /// <value></value>
         ParserTypes[] FilterPatterns { get; }
         /// <summary>
-        /// Common keys of searchable substrings
+        /// Common searchable substrings of filter
         /// </summary>
         /// <value></value>
         string[] SearchableSubStrings { get; }

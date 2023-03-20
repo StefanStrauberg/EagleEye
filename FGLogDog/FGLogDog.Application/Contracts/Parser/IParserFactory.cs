@@ -1,15 +1,15 @@
 namespace FGLogDog.Application.Contracts.Parser
 {
     /// <summary>
-    /// Interface for parsing an incimong bytes to the bson bytes
+    /// Interface for converting inciming bytes to bson bytes
     /// </summary>
     public interface IParserFactory
     {
         /// <summary>
         /// Parsing incoming bytes
         /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
+        /// <param name="bytes">Inciming bytes</param>
+        /// <returns>Bson bytes</returns>
         byte[] ParsingMessage(byte[] bytes);
     }
 }

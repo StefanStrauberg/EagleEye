@@ -9,8 +9,8 @@ namespace FGLogDog.Application.Contracts.Filter
         /// Check if input string contain filter substring from CommonFilter.
         /// If contain return true. Otherwise return false. 
         /// </summary>
-        /// <param name="inputArray">input byte array for checking</param>
-        /// <returns></returns>
+        /// <param name="inputArray">Input bytes array for checking</param>
+        /// <returns>true or false</returns>
         bool Contain(byte[] inputArray);
     }
 }
