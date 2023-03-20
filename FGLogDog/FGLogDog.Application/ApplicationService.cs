@@ -1,4 +1,3 @@
-using FGLogDog.Application.Contracts.Buffer;
 using FGLogDog.Application.Contracts.Filter;
 using FGLogDog.Application.Contracts.Parser;
 using FGLogDog.Application.Contracts.Server;
@@ -14,7 +13,6 @@ namespace FGLogDog.Application
             services.AddSingleton<ITypeOfServer, TypeOfServer>();
             services.AddSingleton<ICommonFilter, CommonFilter>();
             services.AddSingleton<IParserFactory, ParserFactory>();
-            services.AddSingleton<IBufferRepository, BufferRepository>();
             services.AddSingleton<IConfigurationFilters, ConfigurationFilters>();
             services.AddHostedService<Server>();
             return services;

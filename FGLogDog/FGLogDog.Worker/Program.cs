@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
+using FGLogDog.TemporaryBuffer;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console()
                                       .CreateLogger();
@@ -20,6 +21,7 @@ try
                          services.AddSingleton<IConfiguration>(hostContext.Configuration);
                          services.AddLoggerServices();
                          services.AddApplicationServices();
+                         services.AddTemporaryBufferServices();
                          services.AddUDPReciverServices(hostContext.Configuration);
                          services.AddTCPReciverServices(hostContext.Configuration);
                          services.AddRabbitMQProducerServices(hostContext.Configuration);

@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Services\FGLogDog.RabbitMQ.Producer\FGLogDog.RabbitMQ.Producer.csproj" />
     <ProjectReference Include="..\Services\FGLogDog.UDP.Receiver\FGLogDog.UDP.Receiver.csproj" />
     <ProjectReference Include="..\Services\FGLogDog.TCP.Receiver\FGLogDog.TCP.Receiver.csproj" />
+    <ProjectReference Include="..\FGLogDog.TemporaryBuffer\FGLogDog.TemporaryBuffer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
