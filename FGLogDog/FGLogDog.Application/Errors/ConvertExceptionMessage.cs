@@ -1,6 +1,6 @@
 using System;
 
-namespace FGLogDog.Application.Helper
+namespace FGLogDog.Application.Errors
 {
     public static class ConvertExceptionMessage
     {

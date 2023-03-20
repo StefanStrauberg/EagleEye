@@ -1,72 +1,60 @@
 using FGLogDog.Application.Contracts;
+using FGLogDog.Application.Contracts.Buffer;
 using FGLogDog.Application.Contracts.Producer;
 using FGLogDog.Application.Contracts.Reciver;
-using FGLogDog.Application.Helper;
+using FGLogDog.Application.Contracts.Server;
 using FGLogDog.Application.Models;
-using FGLogDog.FGLogDog.Application.Helper;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Buffer = FGLogDog.Application.Models.Buffer;
 
 namespace FGLogDog.FGLogDog.Application.Services
 {
     internal class Server : BackgroundService
     {
+        readonly ITypeOfServer _typeOfServer;
+        readonly IBufferRepository _bufferRepository;
         readonly IUDPReceiver _udpReceiver;
         readonly ITCPReceiver _tcpReceiver;
         readonly IRabbitMQProducer _rabbitMQProducer;
-        readonly TypeOfReceiver _typeOfReciver;
-        readonly TypeOfProducer _typeOfProducer;
 
-        public Server(IConfiguration configuration,
-                      ICommonFilter commonFilter,
+        public Server(ITypeOfServer typeOfServer,
                       IUDPReceiver udpReceiver,
                       IRabbitMQProducer rabbitMQProducer,
-                      IConfigurationFilters filters,
-                      ITCPReceiver tcpReceiver)
+                      ITCPReceiver tcpReceiver,
+                      IBufferRepository bufferRepository)
         {
-            ParserFactory.InitFilter(filters);
-            Filter.InitFilter(commonFilter);
-            _typeOfReciver = Enum.Parse<TypeOfReceiver>(configuration.GetSection("ServiceConfiguration")
-                                                                     .GetSection("Receiver")
-                                                                     .GetChildren()
-                                                                     .FirstOrDefault()
-                                                                     .Key);
-            _typeOfProducer = Enum.Parse<TypeOfProducer>(configuration.GetSection("ServiceConfiguration")
-                                                                      .GetSection("Producer")
-                                                                      .GetChildren()
-                                                                      .FirstOrDefault()
-                                                                      .Key);
+            _typeOfServer = typeOfServer;
             _udpReceiver = udpReceiver;
             _rabbitMQProducer = rabbitMQProducer;
             _tcpReceiver = tcpReceiver;
+            _bufferRepository = bufferRepository;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
-            _ = _typeOfReciver switch
+
+            _ = _typeOfServer.GetTypeOfReceiver() switch
             {
                 TypeOfReceiver.udp => Task.Run(() => ReceiverRun(_udpReceiver), stoppingToken),
                 TypeOfReceiver.tcp => Task.Run(() => ReceiverRun(_tcpReceiver), stoppingToken),
                 _ => throw new ArgumentException("Invalid incomming type of input protocol"),
             };
-            _ = _typeOfProducer switch
+            _ = _typeOfServer.GetTypeOfProducer() switch
             {
                 TypeOfProducer.amqp => Task.Run(() => ProducerRun(_rabbitMQProducer), stoppingToken),
                 _ => throw new ArgumentException("Invalid incomming type of output protocol"),
             };
+            
             return Task.CompletedTask;
         }
 
-        static void ReceiverRun<T>(T reciver) where T : IReceiver
-            => reciver.Run((byte[] bytes) => Buffer.buffer.Add(bytes));
+        void ReceiverRun<T>(T reciver) where T : IReceiver
+            => reciver.Run();
 
-        static void ProducerRun<T>(T producer) where T : IProducer
-            => producer.Run(() => ParserFactory.GetMessage(Buffer.buffer.Take()));
+        void ProducerRun<T>(T producer) where T : IProducer
+            => producer.Run();
     }
 }

@@ -3,9 +3,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using FGLogDog.Application.Contracts;
+using FGLogDog.Application.Contracts.Buffer;
+using FGLogDog.Application.Contracts.Filter;
 using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Reciver;
-using FGLogDog.Application.Helper;
+using FGLogDog.Application.Errors;
 using FGLogDog.TCP.Receiver.Config;
 
 namespace FGLogDog.TCP.Receiver
@@ -14,19 +16,25 @@ namespace FGLogDog.TCP.Receiver
     {
         readonly IReceiverConfiguration _receiverConfiguration;
         readonly IAppLogger<TCPServer> _logger;
+        readonly ICommonFilter _commonFilter;
+        readonly IBufferRepository _bufferRepository;
         Socket _socket;
         EndPoint _endPoint;
         byte[] _bufferRecv;
         ArraySegment<byte> _bufferRecvSegment;
 
         public TCPServer(IAppLogger<TCPServer> logger,
-                         IReceiverConfiguration receiverConfiguration)
+                         IReceiverConfiguration receiverConfiguration,
+                         IBufferRepository bufferRepository,
+                         ICommonFilter commonFilter)
         {
             _logger = logger;
             _receiverConfiguration = receiverConfiguration;
+            _bufferRepository = bufferRepository;
+            _commonFilter = commonFilter;
         }
 
-        void IReceiver.Run(Action<byte[]> PushToBuffer)
+        void IReceiver.Run()
         {
             try
             {
@@ -37,7 +45,8 @@ namespace FGLogDog.TCP.Receiver
                         while(true)
                         {
                             int bytesRec = await handler.ReceiveAsync(_bufferRecvSegment);
-                            PushToBuffer(_bufferRecv);
+                            if (_commonFilter.Contain(_bufferRecv))
+                                _bufferRepository.PushToBuffer(_bufferRecv);
                         }
                 });
             }

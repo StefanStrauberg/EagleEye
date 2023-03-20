@@ -4,6 +4,6 @@ namespace FGLogDog.Application.Contracts
 {
     public interface IProducer : IDisposable
     {
-        void Run(Func<byte[]> PullFromBuffer);
+        void Run();
     }
 }

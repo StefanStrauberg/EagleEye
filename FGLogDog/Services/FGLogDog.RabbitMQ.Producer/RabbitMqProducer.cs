@@ -1,7 +1,9 @@
 ﻿using FGLogDog.Application.Contracts;
+using FGLogDog.Application.Contracts.Buffer;
 using FGLogDog.Application.Contracts.Logger;
+using FGLogDog.Application.Contracts.Parser;
 using FGLogDog.Application.Contracts.Producer;
-using FGLogDog.Application.Helper;
+using FGLogDog.Application.Errors;
 using FGLogDog.RabbitMQ.Producer.Config;
 using RabbitMQ.Client;
 using System;
@@ -13,17 +15,23 @@ namespace FGLogDog.RabbitMQ.Producer
     {
         readonly IProducerConfiguration _producerConfiguration;
         readonly IAppLogger<RabbitMqProducer> _logger;
+        readonly IParserFactory _parserFactory;
+        readonly IBufferRepository _bufferRepository;
         IConnection _connection;
         IModel _channel;
-        
+
         public RabbitMqProducer(IAppLogger<RabbitMqProducer> logger,
-                                IProducerConfiguration producerConfiguration)
+                                IProducerConfiguration producerConfiguration,
+                                IParserFactory parserFactory,
+                                IBufferRepository bufferRepository)
         {
             _logger = logger;
             _producerConfiguration = producerConfiguration;
+            _parserFactory = parserFactory;
+            _bufferRepository = bufferRepository;
         }
 
-        void IProducer.Run(Func<byte[]> PullFromBuffer)
+        void IProducer.Run()
         {
             try
             {
@@ -32,7 +40,8 @@ namespace FGLogDog.RabbitMQ.Producer
                 {
                     while (true)
                     {
-                        var body = PullFromBuffer();
+                        var bytes = _bufferRepository.PullFromBuffer();
+                        var body = _parserFactory.ParsingMessage(bytes);
                         if (body is null)
                             continue;
                         _channel.BasicPublish(exchange: "",
