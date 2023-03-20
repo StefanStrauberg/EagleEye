@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace FGLogDog.Application.Contracts.Server
 {
-    public class TypeOfServer : ITypeOfServer
+    internal class TypeOfServer : ITypeOfServer
     {
         readonly IConfiguration _configuration;
 
