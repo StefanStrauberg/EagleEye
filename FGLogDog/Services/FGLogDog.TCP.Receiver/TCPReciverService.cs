@@ -8,6 +8,12 @@ namespace FGLogDog.TCP.Receiver
 {
     public static class TCPReciverService
     {
+        /// <summary>
+        /// Adding TCP receiver to the application
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddTCPReciverServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ReceiverConfiguration>(

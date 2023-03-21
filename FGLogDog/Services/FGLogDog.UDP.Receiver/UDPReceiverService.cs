@@ -6,8 +6,14 @@ using Microsoft.Extensions.Options;
 
 namespace FGLogDog.UDP.Receiver
 {
-    public static class UDPReciverService
+    public static class UDPReceiverService
     {
+        /// <summary>
+        /// Adding UDP receiver to the application
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddUDPReciverServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ReceiverConfiguration>(

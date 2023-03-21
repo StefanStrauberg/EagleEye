@@ -8,6 +8,12 @@ namespace FGLogDog.RabbitMQ.Producer
 {
     public static class RabbitMQProducerService
     {
+        /// <summary>
+        /// Adding RabbitMQ producer to the application
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
         public static IServiceCollection AddRabbitMQProducerServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<ProducerConfiguration>(

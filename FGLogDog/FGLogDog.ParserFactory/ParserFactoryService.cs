@@ -5,6 +5,11 @@ namespace FGLogDog.ParserFactory
 {
     public static class ParserFactoryService
     {
+        /// <summary>
+        /// Adding parsing logs features to the application
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public static IServiceCollection AddParserFactoryServices(this IServiceCollection services)
         {
             services.AddSingleton<IParserFactory, GeneralParserFactory>();
