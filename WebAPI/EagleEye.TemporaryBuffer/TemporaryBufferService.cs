@@ -14,7 +14,7 @@ namespace EagleEye.TemporaryBuffer
                 configuration.GetSection(nameof(BufferConfiguration)));
             services.AddSingleton<IBufferConfiguration>(provider =>
                 provider.GetRequiredService<IOptions<BufferConfiguration>>().Value);
-            
+
             services.AddSingleton<IBufferRepository, BufferRepository>();
             return services;
         }

@@ -17,7 +17,7 @@ namespace EagleEye.Infrastructure.Repositories
         public CollectionRepository(IMongoDBConnection connection)
             => _database = new MongoClient(connection.ConnectionString).GetDatabase(connection.DatabaseName);
 
-        public async Task CreateAsync(string collectionName, BsonDocument data)
+        public async Task InsertOneAsync(string collectionName, BsonDocument data)
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .InsertOneAsync(data);
 
@@ -74,6 +74,10 @@ namespace EagleEye.Infrastructure.Repositories
                                   .Find(filter)
                                   .FirstOrDefaultAsync();
         }
+
+        public async Task InsertManyAsync(string collectionName, ICollection<BsonDocument> documents)
+            => await _database.GetCollection<BsonDocument>(collectionName)
+                              .InsertManyAsync(documents);
 
         public async Task<bool> UpdateAsync(string collectionName,
                                             string id,
