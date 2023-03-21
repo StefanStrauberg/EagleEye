@@ -8,10 +8,10 @@ namespace FGLogDog.Application.Errors
     public static class ConvertExceptionMessage
     {
         /// <summary>
-        /// Convert full exception to short exception for logging
+        /// Convert full exception to short exception for logging. Present internal exception messages
         /// </summary>
-        /// <param name="e">Exception</param>
-        /// <param name="msgs">Prefix for output short exception, default null</param>
+        /// <param name="e">Incoming exception</param>
+        /// <param name="msgs">Prefix for output short exception, default empty string</param>
         /// <returns>InnerException: An invalid argument was supplied.</returns>
         public static string GetExceptionMessages(Exception e, string msgs = "")
         {

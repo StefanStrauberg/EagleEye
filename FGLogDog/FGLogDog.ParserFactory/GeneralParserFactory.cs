@@ -3,17 +3,17 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using FGLogDog.Application.Contracts.Filter;
-using FGLogDog.Application.Helpers;
 using FGLogDog.Application.Models;
+using FGLogDog.ParserFactory.Helpers;
 using MongoDB.Bson;
 
-namespace FGLogDog.Application.Contracts.Parser
+namespace FGLogDog.ParserFactory
 {
-    internal partial class ParserFactory : IParserFactory
+    internal class GeneralParserFactory : IParserFactory
     {
         readonly IConfigurationFilters _filters;
 
-        public ParserFactory(IConfigurationFilters filters)
+        public GeneralParserFactory(IConfigurationFilters filters)
             => _filters = filters;
 
         byte[] IParserFactory.ParsingMessage(byte[] bytes)

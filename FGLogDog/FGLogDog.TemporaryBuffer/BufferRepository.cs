@@ -1,4 +1,4 @@
-using FGLogDog.Application.Contracts.Buffer;
+using FGLogDog.Application.Contracts.TemporaryBuffer;
 using FGLogDog.TemporaryBuffer.Models;
 
 namespace FGLogDog.TemporaryBuffer

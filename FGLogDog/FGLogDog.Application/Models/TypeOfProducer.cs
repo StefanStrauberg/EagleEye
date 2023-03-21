@@ -1,6 +1,6 @@
 namespace FGLogDog.Application.Models
 {
-    internal enum TypeOfProducer
+    public enum TypeOfProducer
     {
         amqp
     }

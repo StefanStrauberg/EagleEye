@@ -1,8 +1,8 @@
 using FGLogDog.Application.Contracts;
-using FGLogDog.Application.Contracts.Buffer;
 using FGLogDog.Application.Contracts.Filter;
 using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Reciver;
+using FGLogDog.Application.Contracts.TemporaryBuffer;
 using FGLogDog.Application.Errors;
 using FGLogDog.UDP.Receiver.Config;
 using System;

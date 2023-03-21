@@ -2,9 +2,9 @@ using System;
 using System.Text;
 using FGLogDog.Application.Models;
 
-namespace FGLogDog.Application.Helpers
+namespace FGLogDog.ParserFactory.Helpers
 {
-    public static class RegexHelper
+    internal static class RegexHelper
     {
         internal const string _int = @"(\d+)";
         internal const string _time = @"([0-2]?\d|2[0-3])(?::([0-5]?\d))?(?::([0-5]?\d))";

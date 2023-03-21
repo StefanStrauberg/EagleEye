@@ -1,4 +1,4 @@
-namespace FGLogDog.Application.Contracts.Buffer
+namespace FGLogDog.Application.Contracts.TemporaryBuffer
 {
     /// <summary>
     /// Main interface that defines methods for communicating with the buffer

@@ -1,8 +1,9 @@
-using FGLogDog.Application.Helpers;
+using FGLogDog.Application.Contracts.Filter;
 using FGLogDog.Application.Models;
+using FGLogDog.ParserFactory.Helpers;
 using Microsoft.Extensions.Configuration;
 
-namespace FGLogDog.Application.Contracts.Filter
+namespace FGLogDog.ParserFactory
 {
     internal class ConfigurationFilters : IConfigurationFilters
     {

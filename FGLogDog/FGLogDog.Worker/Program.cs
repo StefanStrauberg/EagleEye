@@ -9,6 +9,8 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using FGLogDog.TemporaryBuffer;
+using FGLogDog.ParserFactory;
+using FGLogDog.ComponentsOfServer;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console()
                                       .CreateLogger();
@@ -21,7 +23,9 @@ try
                          services.AddSingleton<IConfiguration>(hostContext.Configuration);
                          services.AddLoggerServices();
                          services.AddApplicationServices();
+                         services.AddParserFactoryServices();
                          services.AddTemporaryBufferServices();
+                         services.AddComponentsOfServerServices();
                          services.AddUDPReciverServices(hostContext.Configuration);
                          services.AddTCPReciverServices(hostContext.Configuration);
                          services.AddRabbitMQProducerServices(hostContext.Configuration);

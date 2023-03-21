@@ -1,7 +1,8 @@
 using System.Text;
+using FGLogDog.Application.Contracts.Filter;
 using Microsoft.Extensions.Configuration;
 
-namespace FGLogDog.Application.Contracts.Filter
+namespace FGLogDog.ParserFactory
 {
     internal class CommonFilter : ICommonFilter
     {

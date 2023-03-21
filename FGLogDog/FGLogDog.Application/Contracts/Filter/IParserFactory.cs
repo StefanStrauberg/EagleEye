@@ -1,4 +1,4 @@
-namespace FGLogDog.Application.Contracts.Parser
+namespace FGLogDog.Application.Contracts.Filter
 {
     /// <summary>
     /// Interface for converting inciming bytes to bson bytes

@@ -5,7 +5,7 @@ namespace FGLogDog.Application.Contracts.Server
     /// <summary>
     /// Interface represent the enum type of server and reciver
     /// </summary>
-    internal interface ITypeOfServer
+    public interface ITypeOfComponentsServer
     {
         /// <summary>
         /// Get enum type of receiver

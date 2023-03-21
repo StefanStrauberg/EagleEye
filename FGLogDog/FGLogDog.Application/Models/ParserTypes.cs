@@ -1,6 +1,6 @@
 namespace FGLogDog.Application.Models
 {
-    internal enum ParserTypes
+    public enum ParserTypes
     {
         DATETIME,
         INT,

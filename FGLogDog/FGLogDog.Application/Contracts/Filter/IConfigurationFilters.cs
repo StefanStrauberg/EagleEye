@@ -5,7 +5,7 @@ namespace FGLogDog.Application.Contracts.Filter
     /// <summary>
     /// General server parameters for filtering incoming data
     /// </summary>
-    internal interface IConfigurationFilters
+    public interface IConfigurationFilters
     {
         /// <summary>
         /// Common keys of filter

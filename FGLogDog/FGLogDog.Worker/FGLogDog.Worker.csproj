@@ -20,6 +20,8 @@
     <ProjectReference Include="..\Services\FGLogDog.UDP.Receiver\FGLogDog.UDP.Receiver.csproj" />
     <ProjectReference Include="..\Services\FGLogDog.TCP.Receiver\FGLogDog.TCP.Receiver.csproj" />
     <ProjectReference Include="..\FGLogDog.TemporaryBuffer\FGLogDog.TemporaryBuffer.csproj" />
+    <ProjectReference Include="..\FGLogDog.ParserFactory\FGLogDog.ParserFactory.csproj" />
+    <ProjectReference Include="..\FGLogDog.ComponentsOfServer\FGLogDog.ComponentsOfServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

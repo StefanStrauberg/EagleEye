@@ -1,4 +1,4 @@
-using FGLogDog.Application.Contracts.Buffer;
+using FGLogDog.Application.Contracts.TemporaryBuffer;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FGLogDog.TemporaryBuffer
