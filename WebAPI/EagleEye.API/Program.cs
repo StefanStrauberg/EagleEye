@@ -7,6 +7,7 @@ using WebAPI.EagleEye.RabbitMqMessenger;
 using WebAPI.EagleEye.Logging;
 using Serilog;
 using System;
+using EagleEye.TemporaryBuffer;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
@@ -18,6 +19,7 @@ try
 
     builder.Services.AddLoggingServices();
     builder.Services.AddApplicationServices();
+    builder.Services.AddTemporaryBufferServices(builder.Configuration);
     builder.Services.AddInfrastructureServices(builder.Configuration);
     builder.Services.AddRabbitMQMessengerServices(builder.Configuration);
     builder.Services.AddControllers();

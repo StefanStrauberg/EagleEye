@@ -13,6 +13,7 @@ namespace WebAPI.EagleEye.RabbitMqMessenger
                 configuration.GetSection(nameof(MessengerConnection)));
             services.AddSingleton<IMessengerConnection>(provider =>
                 provider.GetRequiredService<IOptions<MessengerConnection>>().Value);
+                
             services.AddHostedService<RabbitMqListener>();
             return services;
         }

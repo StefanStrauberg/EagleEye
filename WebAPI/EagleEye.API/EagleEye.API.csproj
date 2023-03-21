@@ -18,6 +18,7 @@
     <ProjectReference Include="..\EagleEye.Infrastructure\EagleEye.Infrastructure.csproj" />
     <ProjectReference Include="..\EagleEye.Logging\EagleEye.Logging.csproj" />
     <ProjectReference Include="..\RabbitMqMessenger\EagleEye.RabbitMqMessenger.csproj" />
+    <ProjectReference Include="..\EagleEye.TemporaryBuffer\EagleEye.TemporaryBuffer.csproj" />
   </ItemGroup>
 
 </Project>

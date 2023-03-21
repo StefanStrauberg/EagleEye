@@ -1,11 +1,8 @@
 ﻿using EagleEye.Application.Contracts.Logger;
+using EagleEye.Application.Contracts.TemporaryBuffer;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Diagnostics;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebAPI.EagleEye.RabbitMqMessenger.RabbitMQConfig;
@@ -18,8 +15,11 @@ namespace WebAPI.EagleEye.RabbitMqMessenger
         readonly IConnection _connection;
         readonly IModel _channel;
         readonly IAppLogger<RabbitMqListener> _logger;
+        readonly IBufferRepository _bufferRepository;
 
-        public RabbitMqListener(IAppLogger<RabbitMqListener> logger, IMessengerConnection messengerConnection)
+        public RabbitMqListener(IAppLogger<RabbitMqListener> logger,
+                                IMessengerConnection messengerConnection,
+                                IBufferRepository bufferRepository)
         {
             _messengerConnection = messengerConnection;
             var factory = new ConnectionFactory
@@ -37,6 +37,7 @@ namespace WebAPI.EagleEye.RabbitMqMessenger
                                   autoDelete: false,
                                   arguments: null);
             _logger = logger;
+            _bufferRepository = bufferRepository;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -51,10 +52,7 @@ namespace WebAPI.EagleEye.RabbitMqMessenger
             {
                 byte[] body = eventArgs.Body.ToArray();
 
-                BsonDocument bsonDoc = BsonSerializer.Deserialize<BsonDocument>(body);
-
-                // TODO push input log to local API buffer
-                _logger.LogInformation(bsonDoc.ToJson());
+                _bufferRepository.PushToBuffer(body);
 
                 _channel.BasicAck(eventArgs.DeliveryTag, false);
             };

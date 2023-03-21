@@ -1,4 +1,4 @@
-namespace EagleEye.Application.Contracts.Buffer
+namespace EagleEye.Application.Contracts.TemporaryBuffer
 {
     /// <summary>
     /// Main interface that defines methods for communicating with the buffer
@@ -10,10 +10,5 @@ namespace EagleEye.Application.Contracts.Buffer
         /// </summary>
         /// <param name="bytes"></param>
         void PushToBuffer(byte[] bytes);
-        /// <summary>
-        /// Take an item from the buffer
-        /// </summary>
-        /// <returns></returns>
-        byte[] PullFromBuffer();
     }
 }
