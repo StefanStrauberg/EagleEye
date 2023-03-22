@@ -75,9 +75,9 @@ namespace EagleEye.Infrastructure.Repositories
                                   .FirstOrDefaultAsync();
         }
 
-        public async Task InsertManyAsync(string collectionName, ICollection<BsonDocument> documents)
-            => await _database.GetCollection<BsonDocument>(collectionName)
-                              .InsertManyAsync(documents);
+        public void InsertMany(string collectionName, ICollection<BsonDocument> documents)
+            => _database.GetCollection<BsonDocument>(collectionName)
+                        .InsertMany(documents);
 
         public async Task<bool> UpdateAsync(string collectionName,
                                             string id,

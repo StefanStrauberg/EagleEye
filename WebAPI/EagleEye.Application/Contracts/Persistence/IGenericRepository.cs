@@ -13,7 +13,7 @@ namespace WebAPI.EagleEye.Application.Contracts.Persistence
         Task<(List<TDocument> data, long countItemsByFilter)> GetAllAsync(string collectionName, QueryParameters parameters);
         Task<TDocument> GetByIdAsync(string collectionName, string id);
         Task InsertOneAsync(string collectionName, TDocument data);
-        Task InsertManyAsync(string collectionName, ICollection<TDocument> documents);
+        void InsertMany(string collectionName, ICollection<TDocument> documents);
         Task<bool> UpdateAsync(string collectionName, string id, TDocument data);
         Task<bool> DeleteAsync(string collectionName, string id);
     }
