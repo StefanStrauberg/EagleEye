@@ -38,12 +38,10 @@ namespace FGLogDog.RabbitMQ.Producer
             try
             {
                 Initialize();
-                int hash = 0;
                 while (true)
                 {
                     var bytes = _bufferRepository.PullFromBuffer();
-                    var temp = Hashing(bytes);
-                    if (_commonFilter.Contain(bytes) && temp != hash)
+                    if (_commonFilter.Contain(bytes))
                     {
                         var body = _parserFactory.ParsingMessage(bytes);
 
@@ -53,7 +51,6 @@ namespace FGLogDog.RabbitMQ.Producer
                                             routingKey: _producerConfiguration.Queue,
                                             basicProperties: null,
                                             body: body);
-                        hash = temp;
                     }
                 }
             }
@@ -65,16 +62,6 @@ namespace FGLogDog.RabbitMQ.Producer
             {
                 (this as IDisposable).Dispose();
             }
-        }
-
-        static int Hashing(byte[] array)
-        {
-            int value = 0;
-            for (var i = 0; i < array.Length; i++)
-            {
-                value = HashCode.Combine(array[i], value);
-            }
-            return value;
         }
 
         void Initialize()
