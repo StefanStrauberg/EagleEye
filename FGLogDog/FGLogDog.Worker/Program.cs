@@ -1,18 +1,21 @@
 using FGLogDog.Application;
+using FGLogDog.ComponentsOfServer;
 using FGLogDog.Logging;
+using FGLogDog.ParserFactory;
 using FGLogDog.RabbitMQ.Producer;
-using FGLogDog.UDP.Receiver;
 using FGLogDog.TCP.Receiver;
+using FGLogDog.TemporaryBuffer;
+using FGLogDog.UDP.Receiver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Events;
 using System;
-using FGLogDog.TemporaryBuffer;
-using FGLogDog.ParserFactory;
-using FGLogDog.ComponentsOfServer;
 
-Log.Logger = new LoggerConfiguration().WriteTo.Console()
+Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
+                                      .WriteTo.File($"FGLogDog-{DateTime.Now.Day}_{DateTime.Now.Month}_{DateTime.Now.Year}.log")
+                                      .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
                                       .CreateLogger();
 try
 {

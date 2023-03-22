@@ -15,10 +15,9 @@ namespace FGLogDog.UDP.Receiver
         readonly IReceiverConfiguration _receiverConfiguration;
         readonly IAppLogger<UDPServer> _logger;
         readonly IBufferRepository _bufferRepository;
-        Socket _socket;
-        EndPoint _endPoint;
-        byte[] _bufferRecv;
-        ArraySegment<byte> _bufferRecvSegment;
+        readonly IPEndPoint _endPoint;
+        readonly UdpClient _udpClient;
+        IPEndPoint _remoteIpEndPoint;
 
         public UDPServer(IAppLogger<UDPServer> logger,
                          IReceiverConfiguration receiverConfiguration,
@@ -27,18 +26,20 @@ namespace FGLogDog.UDP.Receiver
             _logger = logger;
             _receiverConfiguration = receiverConfiguration;
             _bufferRepository = bufferRepository;
+            _endPoint = new IPEndPoint(IPAddress.Parse(_receiverConfiguration.IpAddress), _receiverConfiguration.Port);
+            _udpClient = _udpClient = new UdpClient(_endPoint);
         }
 
-        async void IReceiver.Run()
+        void IReceiver.Run()
         {
+            _logger.LogInformation($"LogDog started UDP reciver on " +
+                                   $"{_receiverConfiguration.IpAddress}:{_receiverConfiguration.Port}");
             try
             {
-                Initialize();
-                SocketReceiveMessageFromResult res;
                 while (true)
                 {
-                    res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment, _endPoint);
-                    _bufferRepository.PushToBuffer(_bufferRecv);
+                    byte[] receiveBytes = _udpClient.Receive(ref _remoteIpEndPoint);
+                    _bufferRepository.PushToBuffer(receiveBytes);
                 }
             }
             catch (Exception ex)
@@ -49,19 +50,6 @@ namespace FGLogDog.UDP.Receiver
             {
                 (this as IDisposable).Dispose();
             }
-        }
-
-        void Initialize()
-        {
-            _bufferRecv = new byte[_receiverConfiguration.SizeOfBuffer];
-            _bufferRecvSegment = new(_bufferRecv);
-            _endPoint = new IPEndPoint(IPAddress.Parse(_receiverConfiguration.IpAddress), _receiverConfiguration.Port);
-            _socket = new(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.PacketInformation, true);
-            _socket.Bind(_endPoint);
-            _logger.LogInformation($"LogDog started UDP reciver on "+ 
-                                   $"{_receiverConfiguration.IpAddress}:{_receiverConfiguration.Port} "+
-                                   $"with BufferSize:{_receiverConfiguration.SizeOfBuffer}");
         }
 
         void IDisposable.Dispose()

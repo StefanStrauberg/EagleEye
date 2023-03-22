@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using FGLogDog.Application.Contracts.Filter;
+using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Models;
 using FGLogDog.ParserFactory.Helpers;
 using MongoDB.Bson;
@@ -12,9 +13,14 @@ namespace FGLogDog.ParserFactory
     internal class GeneralParserFactory : IParserFactory
     {
         readonly IConfigurationFilters _filters;
+        readonly IAppLogger<GeneralParserFactory> _logger;
 
-        public GeneralParserFactory(IConfigurationFilters filters)
-            => _filters = filters;
+        public GeneralParserFactory(IConfigurationFilters filters,
+                                    IAppLogger<GeneralParserFactory> logger)
+        {
+            _filters = filters;
+            _logger = logger;
+        }
 
         byte[] IParserFactory.ParsingMessage(byte[] bytes)
         {
@@ -108,8 +114,11 @@ namespace FGLogDog.ParserFactory
                 }
             }
 
-            if (bsonDoc.ElementCount == 0)
+            if (bsonDoc.ElementCount is 0)
                 return null;
+
+            if (bsonDoc.ElementCount != _filters.FilterKeys.Length)
+                _logger.LogWarning(message);
 
             return bsonDoc.ToBson();
         }

@@ -15,10 +15,5 @@
         /// </summary>
         /// <value></value>
         int Port { get; set; }
-        /// <summary>
-        /// The number of bytes in the incoming message
-        /// </summary>
-        /// <value></value>
-        int SizeOfBuffer { get; set; }
     }
 }
