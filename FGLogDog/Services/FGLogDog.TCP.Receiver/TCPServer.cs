@@ -34,21 +34,18 @@ namespace FGLogDog.TCP.Receiver
             _commonFilter = commonFilter;
         }
 
-        void IReceiver.Run()
+        async void IReceiver.Run()
         {
             try
             {
                 Initialize();
-                _ = Task.Run(async () =>
+                Socket handler = _socket.Accept();
+                while(true)
                 {
-                        Socket handler = _socket.Accept();
-                        while(true)
-                        {
-                            int bytesRec = await handler.ReceiveAsync(_bufferRecvSegment);
-                            if (_commonFilter.Contain(_bufferRecv))
-                                _bufferRepository.PushToBuffer(_bufferRecv);
-                        }
-                });
+                    int bytesRec = await handler.ReceiveAsync(_bufferRecvSegment);
+                    if (_commonFilter.Contain(_bufferRecv))
+                        _bufferRepository.PushToBuffer(_bufferRecv);
+                }
             }
             catch (Exception ex)
             {
@@ -56,7 +53,7 @@ namespace FGLogDog.TCP.Receiver
             }
             finally
             {
-                ((IDisposable)this).Dispose();
+                (this as IDisposable).Dispose();
             }
         }
 

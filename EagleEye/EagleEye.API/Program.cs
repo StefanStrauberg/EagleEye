@@ -1,14 +1,14 @@
+using System;
+using EagleEye.BackGround;
+using EagleEye.TemporaryBuffer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using WebAPI.EagleEye.Application;
-using WebAPI.EagleEye.Infrastructure;
-using WebAPI.EagleEye.Application.Middleware;
-using WebAPI.EagleEye.RabbitMqMessenger;
-using WebAPI.EagleEye.Logging;
 using Serilog;
-using System;
-using EagleEye.TemporaryBuffer;
-using EagleEye.BackGround;
+using WebAPI.EagleEye.Application;
+using WebAPI.EagleEye.Application.Middleware;
+using WebAPI.EagleEye.Infrastructure;
+using WebAPI.EagleEye.Logging;
+using WebAPI.EagleEye.RabbitMqMessenger;
 
 Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 

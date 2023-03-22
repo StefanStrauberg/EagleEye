@@ -8,7 +8,6 @@ using FGLogDog.UDP.Receiver.Config;
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 
 namespace FGLogDog.UDP.Receiver
 {
@@ -34,21 +33,18 @@ namespace FGLogDog.UDP.Receiver
             _bufferRepository = bufferRepository;
         }
 
-        void IReceiver.Run()
+        async void IReceiver.Run()
         {
             try
             {
                 Initialize();
-                _ = Task.Run(async () =>
+                SocketReceiveMessageFromResult res;
+                while (true)
                 {
-                    SocketReceiveMessageFromResult res;
-                    while (true)
-                    {
-                        res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment, _endPoint);
-                        if (_commonFilter.Contain(_bufferRecv))
-                            _bufferRepository.PushToBuffer(_bufferRecv);
-                    }
-                });
+                    res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment, _endPoint);
+                    if (_commonFilter.Contain(_bufferRecv))
+                        _bufferRepository.PushToBuffer(_bufferRecv);
+                }
             }
             catch (Exception ex)
             {
@@ -56,7 +52,7 @@ namespace FGLogDog.UDP.Receiver
             }
             finally
             {
-                ((IDisposable)this).Dispose();
+                (this as IDisposable).Dispose();
             }
         }
 

@@ -7,7 +7,6 @@ using FGLogDog.Application.Errors;
 using FGLogDog.RabbitMQ.Producer.Config;
 using RabbitMQ.Client;
 using System;
-using System.Threading.Tasks;
 
 namespace FGLogDog.RabbitMQ.Producer
 {
@@ -36,20 +35,17 @@ namespace FGLogDog.RabbitMQ.Producer
             try
             {
                 Initialize();
-                _ = Task.Run(() =>
+                while (true)
                 {
-                    while (true)
-                    {
-                        var bytes = _bufferRepository.PullFromBuffer();
-                        var body = _parserFactory.ParsingMessage(bytes);
-                        if (body is null)
-                            continue;
-                        _channel.BasicPublish(exchange: "",
-                                              routingKey: _producerConfiguration.Queue,
-                                              basicProperties: null,
-                                              body: body);
-                    }
-                });
+                    var bytes = _bufferRepository.PullFromBuffer();
+                    var body = _parserFactory.ParsingMessage(bytes);
+                    if (body is null)
+                        continue;
+                    _channel.BasicPublish(exchange: "",
+                                          routingKey: _producerConfiguration.Queue,
+                                          basicProperties: null,
+                                          body: body);
+                }
             }
             catch (Exception ex)
             {
@@ -57,7 +53,7 @@ namespace FGLogDog.RabbitMQ.Producer
             }
             finally
             {
-                ((IDisposable)this).Dispose();
+                (this as IDisposable).Dispose();
             }
         }
 
