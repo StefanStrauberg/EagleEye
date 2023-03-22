@@ -1,5 +1,4 @@
 using FGLogDog.Application.Contracts;
-using FGLogDog.Application.Contracts.Filter;
 using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Reciver;
 using FGLogDog.Application.Contracts.TemporaryBuffer;
@@ -15,7 +14,6 @@ namespace FGLogDog.UDP.Receiver
     {
         readonly IReceiverConfiguration _receiverConfiguration;
         readonly IAppLogger<UDPServer> _logger;
-        readonly ICommonFilter _commonFilter;
         readonly IBufferRepository _bufferRepository;
         Socket _socket;
         EndPoint _endPoint;
@@ -24,12 +22,10 @@ namespace FGLogDog.UDP.Receiver
 
         public UDPServer(IAppLogger<UDPServer> logger,
                          IReceiverConfiguration receiverConfiguration,
-                         ICommonFilter commonFilter,
                          IBufferRepository bufferRepository)
         {
             _logger = logger;
             _receiverConfiguration = receiverConfiguration;
-            _commonFilter = commonFilter;
             _bufferRepository = bufferRepository;
         }
 
@@ -42,8 +38,7 @@ namespace FGLogDog.UDP.Receiver
                 while (true)
                 {
                     res = await _socket.ReceiveMessageFromAsync(_bufferRecvSegment, _endPoint);
-                    if (_commonFilter.Contain(_bufferRecv))
-                        _bufferRepository.PushToBuffer(_bufferRecv);
+                    _bufferRepository.PushToBuffer(_bufferRecv);
                 }
             }
             catch (Exception ex)

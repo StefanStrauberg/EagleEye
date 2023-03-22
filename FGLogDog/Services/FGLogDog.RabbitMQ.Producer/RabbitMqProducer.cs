@@ -16,18 +16,21 @@ namespace FGLogDog.RabbitMQ.Producer
         readonly IAppLogger<RabbitMqProducer> _logger;
         readonly IParserFactory _parserFactory;
         readonly IBufferRepository _bufferRepository;
+        readonly ICommonFilter _commonFilter;
         IConnection _connection;
         IModel _channel;
 
         public RabbitMqProducer(IAppLogger<RabbitMqProducer> logger,
                                 IProducerConfiguration producerConfiguration,
                                 IParserFactory parserFactory,
-                                IBufferRepository bufferRepository)
+                                IBufferRepository bufferRepository,
+                                ICommonFilter commonFilter)
         {
             _logger = logger;
             _producerConfiguration = producerConfiguration;
             _parserFactory = parserFactory;
             _bufferRepository = bufferRepository;
+            _commonFilter = commonFilter;
         }
 
         void IProducer.Run()
@@ -38,13 +41,16 @@ namespace FGLogDog.RabbitMQ.Producer
                 while (true)
                 {
                     var bytes = _bufferRepository.PullFromBuffer();
-                    var body = _parserFactory.ParsingMessage(bytes);
-                    if (body is null)
-                        continue;
-                    _channel.BasicPublish(exchange: "",
-                                          routingKey: _producerConfiguration.Queue,
-                                          basicProperties: null,
-                                          body: body);
+                    if (_commonFilter.Contain(bytes))
+                    {
+                        var body = _parserFactory.ParsingMessage(bytes);
+                        if (body is null)
+                            continue;
+                        _channel.BasicPublish(exchange: "",
+                                            routingKey: _producerConfiguration.Queue,
+                                            basicProperties: null,
+                                            body: body);
+                    }
                 }
             }
             catch (Exception ex)

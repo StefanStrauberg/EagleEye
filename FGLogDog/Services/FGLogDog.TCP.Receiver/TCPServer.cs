@@ -1,9 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 using FGLogDog.Application.Contracts;
-using FGLogDog.Application.Contracts.Filter;
 using FGLogDog.Application.Contracts.Logger;
 using FGLogDog.Application.Contracts.Reciver;
 using FGLogDog.Application.Contracts.TemporaryBuffer;
@@ -16,7 +14,6 @@ namespace FGLogDog.TCP.Receiver
     {
         readonly IReceiverConfiguration _receiverConfiguration;
         readonly IAppLogger<TCPServer> _logger;
-        readonly ICommonFilter _commonFilter;
         readonly IBufferRepository _bufferRepository;
         Socket _socket;
         EndPoint _endPoint;
@@ -25,13 +22,11 @@ namespace FGLogDog.TCP.Receiver
 
         public TCPServer(IAppLogger<TCPServer> logger,
                          IReceiverConfiguration receiverConfiguration,
-                         IBufferRepository bufferRepository,
-                         ICommonFilter commonFilter)
+                         IBufferRepository bufferRepository)
         {
             _logger = logger;
             _receiverConfiguration = receiverConfiguration;
             _bufferRepository = bufferRepository;
-            _commonFilter = commonFilter;
         }
 
         async void IReceiver.Run()
@@ -43,8 +38,7 @@ namespace FGLogDog.TCP.Receiver
                 while(true)
                 {
                     int bytesRec = await handler.ReceiveAsync(_bufferRecvSegment);
-                    if (_commonFilter.Contain(_bufferRecv))
-                        _bufferRepository.PushToBuffer(_bufferRecv);
+                    _bufferRepository.PushToBuffer(_bufferRecv);
                 }
             }
             catch (Exception ex)

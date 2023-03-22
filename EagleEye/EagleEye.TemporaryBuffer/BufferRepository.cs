@@ -47,13 +47,13 @@ namespace EagleEye.TemporaryBuffer
             lock(_locker)
             {
                 string index = $"{_index}_{DateTime.Now.Day}_{DateTime.Now.Month}_{DateTime.Now.Year}";
-                _logger.LogInformation("Migrate buffer data to Database");
+                _logger.LogInformation("EagleEye started migration the buffer data to Database");
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var service = scope.ServiceProvider.GetService<ICollectionRepository>();
                     service.InsertMany(index, _buffer);
                 }
-                _logger.LogInformation("The buffer has been migrated");
+                _logger.LogInformation("EagleEye finished migration the buffer data to Database");
                 _cursor = 0;
                 _buffer.Clear();
             }

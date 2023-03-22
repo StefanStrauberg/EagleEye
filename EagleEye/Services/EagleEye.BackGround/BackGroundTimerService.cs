@@ -25,7 +25,7 @@ namespace EagleEye.BackGround
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Background timer service started");
+            _logger.LogInformation("EagleEye started background timer service");
 
             _timer = new Timer(ResetBuffer,
                                null,
