@@ -17,11 +17,13 @@ namespace EagleEye.Infrastructure.Repositories
         public CollectionRepository(IMongoDBConnection connection)
             => _database = new MongoClient(connection.ConnectionString).GetDatabase(connection.DatabaseName);
 
-        public async Task InsertOneAsync(string collectionName, BsonDocument data)
+        async Task ICollectionRepository.InsertOneAsync(string collectionName,
+                                                        BsonDocument data)
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .InsertOneAsync(data);
 
-        public async Task<bool> DeleteAsync(string collectionName, string id)
+        async Task<bool> ICollectionRepository.DeleteAsync(string collectionName,
+                                                           string id)
         {
             var objectId = new ObjectId(id);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
@@ -32,19 +34,19 @@ namespace EagleEye.Infrastructure.Repositories
             return (result.IsAcknowledged && result.DeletedCount > 0);
         }
 
-        public async Task<List<BsonDocument>> FilterBy(string collectionName,
-                                                       Expression<Func<BsonDocument, bool>> filterExpression)
+        async Task<List<BsonDocument>> ICollectionRepository.FilterBy(string collectionName,
+                                                                      Expression<Func<BsonDocument, bool>> filterExpression)
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .Find(filterExpression)
                               .ToListAsync();
 
-        public async Task<List<BsonDocument>> GetAllAsync(string collectionName)
+        async Task<List<BsonDocument>> ICollectionRepository.GetAllAsync(string collectionName)
             => await _database.GetCollection<BsonDocument>(collectionName)
                               .Find(x => true)
                               .ToListAsync();
 
-        public async Task<(List<BsonDocument> data , long countItemsByFilter)> GetAllAsync(string collectionName,
-                                                                                           QueryParameters parameters)
+        async Task<(List<BsonDocument> data , long countItemsByFilter)> ICollectionRepository.GetAllAsync(string collectionName,
+                                                                                                          QueryParameters parameters)
         {
             var minDate = Builders<BsonDocument>.Filter.Gte("date", parameters.MinSearchDate);
             var maxDate = Builders<BsonDocument>.Filter.Lte("date", parameters.MaxSearchDate);
@@ -64,8 +66,8 @@ namespace EagleEye.Infrastructure.Repositories
             return (data, countItemsByFilter);
         }
 
-        public async Task<BsonDocument> GetByIdAsync(string collectionName,
-                                                     string id)
+        async Task<BsonDocument> ICollectionRepository.GetByIdAsync(string collectionName,
+                                                                    string id)
         {
             var objectId = new ObjectId(id);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
@@ -75,13 +77,14 @@ namespace EagleEye.Infrastructure.Repositories
                                   .FirstOrDefaultAsync();
         }
 
-        public void InsertMany(string collectionName, ICollection<BsonDocument> documents)
+        void ICollectionRepository.InsertMany(string collectionName,
+                                              ICollection<BsonDocument> documents)
             => _database.GetCollection<BsonDocument>(collectionName)
                         .InsertMany(documents);
 
-        public async Task<bool> UpdateAsync(string collectionName,
-                                            string id,
-                                            BsonDocument data)
+        async Task<bool> ICollectionRepository.UpdateAsync(string collectionName,
+                                                           string id,
+                                                           BsonDocument data)
         {
             var objectId = new ObjectId(id);
             var filter = Builders<BsonDocument>.Filter.Eq("_id", objectId);
@@ -91,5 +94,8 @@ namespace EagleEye.Infrastructure.Repositories
 
             return (result.IsAcknowledged && result.ModifiedCount > 0);
         }
+
+        void IDisposable.Dispose()
+            => GC.SuppressFinalize(this);
     }
 }

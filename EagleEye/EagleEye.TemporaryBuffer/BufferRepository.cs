@@ -14,31 +14,30 @@ namespace EagleEye.TemporaryBuffer
     {
         readonly IAppLogger<BufferRepository> _logger;
         readonly string _index;
+        readonly IBufferConfiguration _bufferConfiguration;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        readonly List<BsonDocument> _buffer;
         readonly object _locker;
-        int _cursor;
+        readonly List<BsonDocument> _temp;
 
         public BufferRepository(IAppLogger<BufferRepository> logger,
                                 IBufferConfiguration bufferConfiguration,
                                 IServiceScopeFactory serviceScopeFactory)
         {
-            _locker = new();
-            _cursor = 0;
             _logger = logger;
             _index = bufferConfiguration.CollectionNameIndex;
-            _buffer = new(bufferConfiguration.SizeOfBuffer);
             _serviceScopeFactory = serviceScopeFactory;
+            _bufferConfiguration = bufferConfiguration;
+            _locker = new();
+            _temp = new(bufferConfiguration.SizeOfBuffer);
         }
 
         void IBufferRepository.PushToBuffer(byte[] bytes)
         {
             lock(_locker)
             {
-                _buffer.Add(BsonSerializer.Deserialize<BsonDocument>(bytes));
-                _cursor++;
-                if (_cursor == _buffer.Capacity)
+                if (_temp.Count == _bufferConfiguration.SizeOfBuffer)
                     ((IBufferRepository)this).ClearBuffer();
+                _temp.Add(BsonSerializer.Deserialize<BsonDocument>(bytes));
             }
         }
 
@@ -51,11 +50,10 @@ namespace EagleEye.TemporaryBuffer
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var service = scope.ServiceProvider.GetService<ICollectionRepository>();
-                    service.InsertMany(index, _buffer);
+                    service.InsertMany(index, _temp);
                 }
                 _logger.LogInformation("EagleEye finished migration the buffer data to Database");
-                _cursor = 0;
-                _buffer.Clear();
+                _temp.Clear();
             }
         }
 
@@ -63,7 +61,7 @@ namespace EagleEye.TemporaryBuffer
         {
             lock(_locker)
             {
-                return _buffer.Count;
+                return _temp.Count;
             }
         }
     }
